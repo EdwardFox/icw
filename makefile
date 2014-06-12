@@ -1,5 +1,5 @@
 CXX = g++
-SOURCES =  src/Main.cpp src/Game.cpp src/GameObject.cpp src/World.cpp src/Grid.cpp src/components/TestAIComponent.cpp src/components/DefaultGraphicComponent.cpp src/components/TestInputComponent.cpp
+SOURCES = src/Main.cpp src/Game.cpp src/GameObject.cpp src/World.cpp src/Grid.cpp src/components/TestAIComponent.cpp src/components/DefaultGraphicComponent.cpp src/components/TestInputComponent.cpp
 EXE = build/run
 PROJECT_ROOT = $(shell pwd)
 INC = /home/adrian/dev/cpp/projects/plat
