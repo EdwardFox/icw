@@ -1,3 +1,4 @@
+#include "lib/interfaces/IPhysicsComponent.hpp"
 #include "lib/components/TestAIComponent.hpp"
 #include "lib/GameObject.hpp"
 
@@ -6,16 +7,18 @@ mThreshold(50.f)
 , mCurrent(0.f)
 , mIncreaser(1.f)
 {
-    this->setType("TestAIComponent");
+    this->setType("InputComponent");
 }
 
 void TestAIComponent::update(GameObject& object, sf::Time dt)
 {
-    if(mCurrent > mThreshold || mCurrent < -mThreshold)
-        mIncreaser = -mIncreaser;
+    ComponentCommand<IPhysicsComponent&> command;
+    command.targetType = "PhysicsComponent";
+    command.execute = [] (IPhysicsComponent& comp) {
+        if(comp.getBodyType() != b2_staticBody) {
+            comp.setLinearVelocity(b2Vec2(0.f, -0.5f));
+        }
+    };
 
-    sf::Vector2f pos = object.getPosition();
-    pos.y += mIncreaser;
-    mCurrent += mIncreaser;
-    object.setPosition(pos);
+    object.broadcastComponentCommand(command);
 }

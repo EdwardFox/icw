@@ -1,6 +1,7 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
+#include <Box2D/Box2D.h>
 #include "lib/Grid.hpp"
 
 class World
@@ -12,6 +13,9 @@ class World
 
     private:
         Grid mGrid;
+        b2World mPhysics;
+
+        GameObject test;
 };
 
 #endif

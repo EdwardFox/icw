@@ -2,8 +2,9 @@
 #define TEST_INPUT_COMPONENT_HPP
 
 #include "lib/interfaces/IComponent.hpp"
+#include "lib/interfaces/IInputComponent.hpp"
 
-class TestInputComponent : public IComponent
+class TestInputComponent : public IComponent, public IInputComponent
 {
     public:
         TestInputComponent();

@@ -3,7 +3,7 @@
 
 TestInputComponent::TestInputComponent()
 {
-    this->setType("TestInputComponent");
+    this->setType("InputComponent");
 }
 
 void TestInputComponent::update(GameObject& object, sf::Time dt)

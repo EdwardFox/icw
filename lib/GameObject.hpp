@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include "lib/Data.hpp"
 #include "lib/components/DefaultGraphicComponent.hpp"
+#include "lib/components/ComponentCommand.hpp"
 
 // Forward Declaration
 class IComponent;
@@ -35,6 +36,13 @@ class GameObject
         void setSize(sf::Vector2f size);
         void setVelocity(sf::Vector2f velocity);
         void setRotation(float rotation);
+
+        template<typename T>
+        void broadcastComponentCommand(ComponentCommand<T&> command) {
+            for(std::unordered_map<std::string, std::unique_ptr<IComponent>>::iterator it = mComponents.begin(); it != mComponents.end(); ++it) {
+                it->second->onCommand(command);
+            }
+        };
 
     private:
         std::unordered_map<std::string, std::unique_ptr<IComponent>> mComponents;
