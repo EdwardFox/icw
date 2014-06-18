@@ -2,3 +2,4 @@
 .ycm*
 tags
 build/*
+*.swp
