@@ -2,58 +2,62 @@
 #include <stdexcept>
 
 GameObject::GameObject() :
-mComponents(),
-mGraphicComponent(nullptr),
-mPosition(0, 0),
-mSize(TILE_SIZE, TILE_SIZE),
-mVelocity(0, 0),
-mRotation(0)
+        mComponents()
+        , mGraphicComponent( nullptr )
+        , mPosition( 0, 0 )
+        , mSize( TILE_SIZE, TILE_SIZE )
+        , mVelocity( 0, 0 )
+        , mRotation( 0 )
 {
-    
+
 }
 
-void GameObject::attachComponent(std::string key, IComponent* component)
+void GameObject::attachComponent( std::string key, IComponent* component )
 {
-    mComponents[key] = std::unique_ptr<IComponent>(component);
+    mComponents[key] = std::unique_ptr<IComponent>( component );
 }
 
-void GameObject::detachComponent(std::string key)
+void GameObject::detachComponent( std::string key )
 {
-    mComponents.erase(key);
+    mComponents.erase( key );
 }
 
-IComponent* const GameObject::getComponent(std::string key) const
+IComponent* const GameObject::getComponent( std::string key ) const
 {
-    try {
-        return mComponents.at(key).get();
-    } catch(const std::out_of_range& oor) {
+    try
+    {
+        return mComponents.at( key ).get();
+    }
+    catch ( const std::out_of_range& oor )
+    {
         return nullptr;
     }
 }
 
-void GameObject::setGraphicComponent(IGraphicComponent* component)
+void GameObject::setGraphicComponent( IGraphicsComponent* component )
 {
-    mGraphicComponent = std::unique_ptr<IGraphicComponent>(component);
+    mGraphicComponent = std::unique_ptr<IGraphicsComponent>( component );
 }
 
-IGraphicComponent* const GameObject::getGraphicComponent() const
+IGraphicsComponent* const GameObject::getGraphicComponent() const
 {
     return mGraphicComponent.get();
 }
 
-void GameObject::update(sf::Time dt)
+void GameObject::update( sf::Time dt )
 {
-    for(std::unordered_map<std::string, std::unique_ptr<IComponent>>::iterator it = mComponents.begin(); it != mComponents.end(); ++it) {
-        it->second->update(*(this), dt);
+    for ( std::unordered_map<std::string, std::unique_ptr<IComponent>>::iterator it = mComponents.begin(); it != mComponents.end(); ++it )
+    {
+        it->second->update( *(this), dt );
     }
 
-    mGraphicComponent->update(*(this), dt);
+    mGraphicComponent->update( *(this), dt );
 }
 
-void GameObject::render(sf::RenderTarget& target, sf::Time dt) const
+void GameObject::render( sf::RenderTarget& target, sf::Time dt ) const
 {
-    if(mGraphicComponent.get() != nullptr)
-        mGraphicComponent->render(target, dt);
+    if ( mGraphicComponent.get() != nullptr )
+        mGraphicComponent->render( target, dt );
 }
 
 sf::Vector2f GameObject::getPosition() const
@@ -76,22 +80,22 @@ float GameObject::getRotation() const
     return mRotation;
 }
 
-void GameObject::setPosition(sf::Vector2f position)
+void GameObject::setPosition( sf::Vector2f position )
 {
     mPosition = position;
 }
 
-void GameObject::setSize(sf::Vector2f size)
+void GameObject::setSize( sf::Vector2f size )
 {
     mSize = size;
 }
 
-void GameObject::setVelocity(sf::Vector2f velocity)
+void GameObject::setVelocity( sf::Vector2f velocity )
 {
     mVelocity = velocity;
 }
 
-void GameObject::setRotation(float rotation)
+void GameObject::setRotation( float rotation )
 {
     mRotation = rotation;
 }

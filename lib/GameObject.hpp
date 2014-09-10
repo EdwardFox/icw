@@ -6,52 +6,62 @@
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
 #include "lib/Data.hpp"
-#include "lib/components/DefaultGraphicComponent.hpp"
 #include "lib/components/ComponentCommand.hpp"
+#include "lib/interfaces/IGraphicsComponent.hpp"
 
-// Forward Declaration
-class IComponent;
-class IGraphicComponent;
 
 class GameObject
 {
-    public:
-        GameObject();
+public:
+    GameObject();
 
-        void attachComponent(std::string key, IComponent* component);
-        void detachComponent(std::string key);
-        IComponent* const getComponent(std::string key) const;
-        void setGraphicComponent(IGraphicComponent* component);
-        IGraphicComponent* const getGraphicComponent() const;
+    void attachComponent( std::string key, IComponent* component );
 
-        void update(sf::Time dt);
-        void render(sf::RenderTarget& target, sf::Time dt) const;
+    void detachComponent( std::string key );
 
-        sf::Vector2f getPosition() const;
-        sf::Vector2f getSize() const;
-        sf::Vector2f getVelocity() const;
-        float getRotation() const;
+    IComponent* const getComponent( std::string key ) const;
 
-        void setPosition(sf::Vector2f position);
-        void setSize(sf::Vector2f size);
-        void setVelocity(sf::Vector2f velocity);
-        void setRotation(float rotation);
+    void setGraphicComponent( IGraphicsComponent* component );
 
-        template<typename T>
-        void broadcastComponentCommand(ComponentCommand<T&> command) {
-            for(std::unordered_map<std::string, std::unique_ptr<IComponent>>::iterator it = mComponents.begin(); it != mComponents.end(); ++it) {
-                it->second->onCommand(command);
-            }
-        };
+    IGraphicsComponent* const getGraphicComponent() const;
 
-    private:
-        std::unordered_map<std::string, std::unique_ptr<IComponent>> mComponents;
-        std::unique_ptr<IGraphicComponent> mGraphicComponent;
+    void update( sf::Time dt );
 
-        sf::Vector2f mPosition;
-        sf::Vector2f mSize;
-        sf::Vector2f mVelocity;
-        float mRotation;
+    void render( sf::RenderTarget& target, sf::Time dt ) const;
+
+    sf::Vector2f getPosition() const;
+
+    sf::Vector2f getSize() const;
+
+    sf::Vector2f getVelocity() const;
+
+    float getRotation() const;
+
+    void setPosition( sf::Vector2f position );
+
+    void setSize( sf::Vector2f size );
+
+    void setVelocity( sf::Vector2f velocity );
+
+    void setRotation( float rotation );
+
+    template< typename T >
+    void broadcastComponentCommand( ComponentCommand<T&> command )
+    {
+        for ( std::unordered_map<std::string, std::unique_ptr<IComponent>>::iterator it = mComponents.begin(); it != mComponents.end(); ++it )
+        {
+            it->second->onCommand( command );
+        }
+    };
+
+private:
+    std::unordered_map<std::string, std::unique_ptr<IComponent>> mComponents;
+    std::unique_ptr<IGraphicsComponent> mGraphicComponent;
+
+    sf::Vector2f mPosition;
+    sf::Vector2f mSize;
+    sf::Vector2f mVelocity;
+    float mRotation;
 };
 
 #endif

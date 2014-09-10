@@ -9,24 +9,37 @@ class GameObject;
 
 class IComponent
 {
-    public:
-        virtual void update(GameObject& object, sf::Time dt) = 0;
-        std::string getType() { return mType; }
-        void setType(std::string type) { mType = type; }
+public:
+    virtual void update( GameObject& object, sf::Time dt ) = 0;
 
-        template<typename T>
-        void onCommand(ComponentCommand<T&> command) {
-            if(command.targetType == mType) {
-                if(T* temp = dynamic_cast<T*>(this)) {
-                    command.execute(*temp);
-                } else {
-                    // Unsuccessful cast
-                }
+    std::string getType()
+    {
+        return mType;
+    }
+
+    void setType( std::string type )
+    {
+        mType = type;
+    }
+
+    template< typename T >
+    void onCommand( ComponentCommand<T&> command )
+    {
+        if ( command.targetType == mType )
+        {
+            if ( T* temp = dynamic_cast<T*>(this) )
+            {
+                command.execute( *temp );
+            }
+            else
+            {
+                // Unsuccessful cast
             }
         }
+    }
 
-    private:
-        std::string mType;
+private:
+    std::string mType;
 };
 
 #endif

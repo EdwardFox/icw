@@ -3,22 +3,24 @@
 #include "lib/GameObject.hpp"
 
 TestAIComponent::TestAIComponent() :
-mThreshold(50.f)
-, mCurrent(0.f)
-, mIncreaser(1.f)
+        mThreshold( 50.f )
+        , mCurrent( 0.f )
+        , mIncreaser( 1.f )
 {
-    this->setType("InputComponent");
+    this->setType( "InputComponent" );
 }
 
-void TestAIComponent::update(GameObject& object, sf::Time dt)
+void TestAIComponent::update( GameObject& object, sf::Time dt )
 {
     ComponentCommand<IPhysicsComponent&> command;
     command.targetType = "PhysicsComponent";
-    command.execute = [] (IPhysicsComponent& comp) {
-        if(comp.getBodyType() != b2_staticBody) {
-            comp.setLinearVelocity(b2Vec2(0.f, -0.5f));
+    command.execute = []( IPhysicsComponent& comp )
+    {
+        if ( comp.getBodyType() != b2_staticBody )
+        {
+            comp.setLinearVelocity( b2Vec2( 0.f, -0.5f ) );
         }
     };
 
-    object.broadcastComponentCommand(command);
+    object.broadcastComponentCommand( command );
 }

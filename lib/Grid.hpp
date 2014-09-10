@@ -10,25 +10,33 @@
 
 class Grid
 {
-    public:
-        typedef std::unique_ptr<GameObject> entPtr;
+public:
+    typedef std::unique_ptr<GameObject> entPtr;
 
-        Grid();
+    Grid();
 
-        GameObject* const getTile(std::string key) const;
-        sf::Vector2i getGridPosition(sf::Vector2f position);
-        std::string getTileKeyByPosition(sf::Vector2f position);
-        unsigned getTileSize() const;
-        void addTile(std::string key, GameObject* ent);
-        void removeTile(std::string key);
-        void setTileSize(unsigned tileSize);
-        void render(sf::RenderTarget& target, sf::Time dt) const;
-        void update(sf::Time dt);
+    GameObject* const getTile( std::string key ) const;
 
-    private:
+    sf::Vector2i getGridPosition( sf::Vector2f position );
 
-        std::map<std::string, entPtr> mGrid;
-        unsigned mTileSize;
+    std::string getTileKeyByPosition( sf::Vector2f position );
+
+    unsigned getTileSize() const;
+
+    void addTile( std::string key, GameObject* ent );
+
+    void removeTile( std::string key );
+
+    void setTileSize( unsigned tileSize );
+
+    void render( sf::RenderTarget& target, sf::Time dt ) const;
+
+    void update( sf::Time dt );
+
+private:
+
+    std::map<std::string, entPtr> mGrid;
+    unsigned mTileSize;
 };
 
 #endif

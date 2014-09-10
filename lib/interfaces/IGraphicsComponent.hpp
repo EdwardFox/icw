@@ -3,7 +3,7 @@
 
 #include "lib/interfaces/IComponent.hpp"
 
-class IGraphicComponent : public IComponent
+class IGraphicsComponent : public IComponent
 {
     public:
         virtual void update(GameObject& object, sf::Time dt) = 0;
