@@ -7,23 +7,32 @@
 
 class World
 {
-    public:
-        World();
+public:
+    World();
 
-        void initializeTextures();
+    void initializeTextures();
 
-        void update(sf::Time dt);
-        void render(sf::RenderTarget& target, sf::Time dt) const;
+    void update( sf::Time dt );
 
-    private:
-        // Resources
-        ResourceHolder<sf::Texture, std::string> mTextures;
+    void render( sf::RenderTarget& target, sf::Time dt ) const;
 
-        // Game World
-        Grid mGrid;
-        b2World mPhysics;
+private:
+    void createPlayer();
 
-        GameObject test;
+    void createPlayerAnimations();
+
+    void createPlayerStates();
+
+    std::function<std::string( GameObject& object )> createStateAction(std::string animation, std::string action);
+
+    // Resources
+    ResourceHolder<sf::Texture, std::string> mTextures;
+
+    // Game World
+    Grid mGrid;
+    b2World mPhysics;
+
+    GameObject mPlayer;
 };
 
 #endif

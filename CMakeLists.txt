@@ -15,7 +15,7 @@ add_definitions(-g -Wall -std=c++11)
 include_directories(${CMAKE_SOURCE_DIR})
 
 # Source files
-set(SOURCE_FILES src/Main.cpp src/Game.cpp src/GameObject.cpp src/Grid.cpp src/World.cpp src/components/SolidColorGraphicsComponent.cpp src/components/TextureGraphicsComponent.cpp src/components/AnimationGraphicsComponent.cpp src/components/Box2DPhysicsComponent.cpp src/components/TestAIComponent.cpp src/components/TestInputComponent.cpp src/Animation.cpp)
+set(SOURCE_FILES src/Main.cpp src/Game.cpp src/GameObject.cpp src/Grid.cpp src/World.cpp src/components/SolidColorGraphicsComponent.cpp src/components/TextureGraphicsComponent.cpp src/components/AnimationGraphicsComponent.cpp src/components/Box2DPhysicsComponent.cpp src/components/TestAIComponent.cpp src/components/PlayerInputComponent.cpp src/Animation.cpp src/components/PlayerStateHandlerComponent.cpp src/State.cpp src/PhysicsGroundContactListener.cpp src/components/PlayerMovementComponent.cpp)
 
 # Executable
 add_executable(ICW ${SOURCE_FILES})

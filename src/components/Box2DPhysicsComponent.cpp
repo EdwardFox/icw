@@ -1,7 +1,9 @@
+#include <cstdint>
 #include "lib/components/Box2DPhysicsComponent.hpp"
 #include "lib/GameObject.hpp"
 
-Box2DPhysicsComponent::Box2DPhysicsComponent( b2World& physics, GameObject& object, b2BodyType type )
+Box2DPhysicsComponent::Box2DPhysicsComponent( b2World& physics, GameObject& object, b2BodyType type ) :
+        mPhysContactListener()
 {
     this->setType( "PhysicsComponent" );
     createCollisionBody( physics, object, type );
@@ -47,4 +49,21 @@ void Box2DPhysicsComponent::createCollisionBody( b2World& physics, GameObject& o
         mFixtureDef.friction = 0.3f;
         mBody->CreateFixture( &mFixtureDef );
     }
+}
+
+void Box2DPhysicsComponent::createGroundSensor( b2World& physics, GameObject& object, int tag )
+{
+    mBodyShape.SetAsBox( (object.getSize().x / 2.f) / SCALE, 1.f / SCALE, b2Vec2( 0, ((object.getSize().y / 2.f) / SCALE) ), 0 );
+    mFixtureDef.isSensor = true;
+    mGroundSensorFixture = mBody->CreateFixture( &mFixtureDef );
+    intptr_t tmp = tag;
+    mGroundSensorFixture->SetUserData( ( void* )tmp );
+
+    physics.SetContactListener( &mPhysContactListener );
+    this->setPhysicsGroundContactListener( &mPhysContactListener );
+}
+
+void Box2DPhysicsComponent::setFixedRotation( bool rotation )
+{
+    mBody->SetFixedRotation( rotation );
 }
