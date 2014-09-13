@@ -46,14 +46,14 @@ void Box2DPhysicsComponent::createCollisionBody( b2World& physics, GameObject& o
     {
         mFixtureDef.shape = &mBodyShape;
         mFixtureDef.density = 1.f;
-        mFixtureDef.friction = 0.3f;
+        mFixtureDef.friction = 0.0f;
         mBody->CreateFixture( &mFixtureDef );
     }
 }
 
 void Box2DPhysicsComponent::createGroundSensor( b2World& physics, GameObject& object, int tag )
 {
-    mBodyShape.SetAsBox( (object.getSize().x / 2.f) / SCALE, 1.f / SCALE, b2Vec2( 0, ((object.getSize().y / 2.f) / SCALE) ), 0 );
+    mBodyShape.SetAsBox( (object.getSize().x / 2.f - 1.f) / SCALE, 1.f / SCALE, b2Vec2( 0, ((object.getSize().y / 2.f) / SCALE) ), 0 );
     mFixtureDef.isSensor = true;
     mGroundSensorFixture = mBody->CreateFixture( &mFixtureDef );
     intptr_t tmp = tag;

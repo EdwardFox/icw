@@ -5,8 +5,8 @@
 #include "lib/components/SolidColorGraphicsComponent.hpp"
 #include "lib/components/TextureGraphicsComponent.hpp"
 #include "lib/components/AnimationGraphicsComponent.hpp"
-#include "lib/components/PlayerStateHandlerComponent.hpp"
-#include "lib/components/PlayerMovementComponent.hpp"
+#include "lib/components/DefaultStateHandlerComponent.hpp"
+#include "lib/components/DefaultMovementComponent.hpp"
 
 World::World() :
         mTextures()
@@ -82,16 +82,16 @@ void World::createPlayer()
     createPlayerStates();
 
     Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( mPhysics, mPlayer, b2_dynamicBody );
-    dynPhysics->createGroundSensor( mPhysics, mPlayer, 3 );
+    dynPhysics->createGroundSensor( mPhysics, mPlayer, 1 );
     dynPhysics->setFixedRotation( true );
-    dynPhysics->setTag( 3 );
+    dynPhysics->setTag( 1 );
     mPlayer.attachComponent( "PhysicsComponent", dynPhysics );
 
     PlayerInputComponent* tic = new PlayerInputComponent();
     mPlayer.attachComponent( "PlayerInputComponent", tic );
 
-    PlayerMovementComponent* pmc = new PlayerMovementComponent();
-    mPlayer.attachComponent( "PlayerMovementComponent", pmc );
+    DefaultMovementComponent* pmc = new DefaultMovementComponent();
+    mPlayer.attachComponent( "DefaultMovementComponent", pmc );
 }
 
 void World::createPlayerAnimations()
@@ -176,7 +176,7 @@ void World::createPlayerStates()
     hitGround.addAction( "runLeft", runLeftAction );
     hitGround.addAction( "runRight", runRightAction );
 
-    PlayerStateHandlerComponent* pshc = new PlayerStateHandlerComponent();
+    DefaultStateHandlerComponent* pshc = new DefaultStateHandlerComponent();
     pshc->addState( "idle", idle );
     pshc->addState( "runLeft", runLeft );
     pshc->addState( "runRight", runRight );

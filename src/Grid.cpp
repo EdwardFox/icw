@@ -2,7 +2,7 @@
 
 Grid::Grid() :
         mGrid()
-        , mTileSize( TILE_SIZE*2 )
+        , mTileSize( TILE_SIZE )
 {
 
 }

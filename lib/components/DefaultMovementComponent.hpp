@@ -4,10 +4,10 @@
 #include "lib/interfaces/IComponent.hpp"
 #include "lib/interfaces/IMovementComponent.hpp"
 
-class PlayerMovementComponent : public IComponent, public IMovementComponent
+class DefaultMovementComponent : public IComponent, public IMovementComponent
 {
 public:
-    PlayerMovementComponent();
+    DefaultMovementComponent();
 
     virtual void update( GameObject& object, sf::Time dt );
 

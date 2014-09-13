@@ -4,10 +4,10 @@
 #include "lib/interfaces/IComponent.hpp"
 #include "lib/interfaces/IStateHandlerComponent.hpp"
 
-class PlayerStateHandlerComponent : public IComponent, public IStateHandlerComponent
+class DefaultStateHandlerComponent : public IComponent, public IStateHandlerComponent
 {
 public:
-    PlayerStateHandlerComponent();
+    DefaultStateHandlerComponent();
 
     virtual void update( GameObject& object, sf::Time dt );
 };

@@ -1,20 +1,20 @@
 #include <lib/GameObject.hpp>
 #include <lib/components/Box2DPhysicsComponent.hpp>
-#include "lib/components/PlayerMovementComponent.hpp"
-#include "lib/components/PlayerStateHandlerComponent.hpp"
+#include "lib/components/DefaultMovementComponent.hpp"
+#include "lib/components/DefaultStateHandlerComponent.hpp"
 #include "lib/interfaces/IPhysicsComponent.hpp"
 
-PlayerMovementComponent::PlayerMovementComponent() :
+DefaultMovementComponent::DefaultMovementComponent() :
         mMoveSpeed( 10.f )
         , mJumpHeight( -7.5f )
 {
 
 }
 
-void PlayerMovementComponent::update( GameObject& object, sf::Time dt )
+void DefaultMovementComponent::update( GameObject& object, sf::Time dt )
 {
     IComponent* comp = object.getComponent( "StateHandlerComponent" );
-    if ( PlayerStateHandlerComponent* stateComp = dynamic_cast<PlayerStateHandlerComponent*>(comp) )
+    if ( DefaultStateHandlerComponent* stateComp = dynamic_cast<DefaultStateHandlerComponent*>(comp) )
     {
         std::string state = stateComp->getActiveState()->getStateName();
         if ( state == "runLeft" || state == "fallLeft" )
@@ -34,7 +34,7 @@ void PlayerMovementComponent::update( GameObject& object, sf::Time dt )
     }
 }
 
-void PlayerMovementComponent::move( GameObject& object, Movement mov )
+void DefaultMovementComponent::move( GameObject& object, Movement mov )
 {
     // Tell the physics component to move the player
     ComponentCommand<IPhysicsComponent&> physicsCommand;
@@ -58,7 +58,7 @@ void PlayerMovementComponent::move( GameObject& object, Movement mov )
     object.broadcastComponentCommand( physicsCommand );
 }
 
-void PlayerMovementComponent::jump( GameObject& object )
+void DefaultMovementComponent::jump( GameObject& object )
 {
     // Tell the physics component to move the player
     ComponentCommand<IPhysicsComponent&> physicsCommand;
@@ -85,7 +85,7 @@ void PlayerMovementComponent::jump( GameObject& object )
     object.broadcastComponentCommand( stateCommand );
 }
 
-void PlayerMovementComponent::land( GameObject& object )
+void DefaultMovementComponent::land( GameObject& object )
 {
     IComponent* comp = object.getComponent( "PhysicsComponent" );
     if ( Box2DPhysicsComponent* boxComp = dynamic_cast<Box2DPhysicsComponent*>(comp) )
@@ -105,22 +105,22 @@ void PlayerMovementComponent::land( GameObject& object )
 
 }
 
-float PlayerMovementComponent::getMoveSpeed() const
+float DefaultMovementComponent::getMoveSpeed() const
 {
     return mMoveSpeed;
 }
 
-void PlayerMovementComponent::setMoveSpeed( float movespeed )
+void DefaultMovementComponent::setMoveSpeed( float movespeed )
 {
     mMoveSpeed = movespeed;
 }
 
-float PlayerMovementComponent::getJumpHeight() const
+float DefaultMovementComponent::getJumpHeight() const
 {
     return mJumpHeight;
 }
 
-void PlayerMovementComponent::setJumpHeight( float jumpheight )
+void DefaultMovementComponent::setJumpHeight( float jumpheight )
 {
     mJumpHeight = jumpheight;
 }
