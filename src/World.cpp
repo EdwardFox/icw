@@ -14,15 +14,19 @@ World::World() :
         , mPhysics( b2Vec2( 0.f, 9.8f ) )
         , mCamera()
         , mPlayer()
+        , mListener()
+        , mListenerTags( 1 )
 {
     // Initialize Resources
     initializeTextures();
+
+    mPhysics.SetContactListener( &mListener );
 
     for ( int i = 0; i < 3; ++i )
     {
         for ( int j = 0; j < 20; ++j )
         {
-            if( i != 2 && j != 2 )
+            if ( i != 2 && j != 2 )
                 continue;
 
             // Create entity and add to grid
@@ -36,7 +40,7 @@ World::World() :
             obj->setPosition( pos );
             obj->setSize( size );
 
-            Box2DPhysicsComponent* staticPhysics = new Box2DPhysicsComponent( mPhysics, *obj, b2_kinematicBody );
+            Box2DPhysicsComponent* staticPhysics = new Box2DPhysicsComponent( mPhysics, *obj, b2_kinematicBody, mListenerTags );
             obj->attachComponent( "PhysicsComponent", staticPhysics );
 
 //            if ( j % 2 == 0 )
@@ -92,11 +96,8 @@ void World::createPlayer()
     mPlayer.setPosition( pos );
     mPlayer.setSize( sf::Vector2f( 10.f, 11.f ) );
 
-    Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( mPhysics, mPlayer, b2_dynamicBody );
-    dynPhysics->createGroundSensor( mPhysics, mPlayer, 1 );
-    dynPhysics->createLeftSensor( mPhysics, mPlayer, 2 );
-//    dynPhysics->createRightSensor( mPhysics, mPlayer, 3 );
-//    dynPhysics->createCeilingSensor( mPhysics, mPlayer, 4 );
+    Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( mPhysics, mPlayer, b2_dynamicBody, mListenerTags );
+    dynPhysics->setListener( &mListener );
     dynPhysics->setFixedRotation( true );
     mPlayer.attachComponent( "PhysicsComponent", dynPhysics );
 

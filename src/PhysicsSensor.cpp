@@ -2,10 +2,9 @@
 #include <cstdint>
 
 PhysicsSensor::PhysicsSensor() :
-        mListener()
-        , mSensorShape()
+        mSensorShape()
         , mFixtureDef()
-        , mSensorFixture()
+        , mSensorFixture( nullptr )
 {
 
 }
@@ -21,17 +20,4 @@ void PhysicsSensor::createSensor( b2World& physics, b2Body* body, b2Vec2 size, b
     mSensorFixture = body->CreateFixture( &mFixtureDef );
     intptr_t tmp = tag;
     mSensorFixture->SetUserData( ( void* )tmp );
-
-    mListener.setTag( tag );
-    physics.SetContactListener( &mListener );
-}
-
-PhysicsContactListener* PhysicsSensor::getListener()
-{
-    return &mListener;
-}
-
-const PhysicsContactListener* PhysicsSensor::getListener()
-{
-    return &mListener;
 }

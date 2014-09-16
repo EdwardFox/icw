@@ -12,6 +12,8 @@ public:
 
     virtual void jump( GameObject& object ) = 0;
 
+    virtual void wallJump( GameObject& object ) = 0;
+
     virtual float getMoveSpeed() const = 0;
 
     virtual void setMoveSpeed( float movespeed ) = 0;

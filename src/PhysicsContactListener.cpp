@@ -1,72 +1,95 @@
 #include "lib/PhysicsContactListener.hpp"
-#include <iostream>
-#include <cstdint>
 
 PhysicsContactListener::PhysicsContactListener() :
-        mNumContacts( 0 )
-        , mTag( 0 )
+        mContacts()
 {
 
 }
 
 void PhysicsContactListener::BeginContact( b2Contact* contact )
 {
-    //check if fixture A was the foot sensor
     void* fixtureUserData = contact->GetFixtureA()->GetUserData();
     if ( fixtureUserData )
     {
-        if ( ( intptr_t )fixtureUserData == mTag )
+        intptr_t tag = ( intptr_t )fixtureUserData;
+        if ( this->tagExists( tag ) )
         {
-            ++mNumContacts;
-            std::cout << mTag << std::endl;
+            mContacts.at( tag )++;
+        }
+        else
+        {
+            mContacts.emplace( tag, 0 );
         }
     }
-    //check if fixture B was the foot sensor
+
     fixtureUserData = contact->GetFixtureB()->GetUserData();
     if ( fixtureUserData )
     {
-        if ( ( intptr_t )fixtureUserData == mTag )
+        intptr_t tag = ( intptr_t )fixtureUserData;
+        if ( this->tagExists( tag ) )
         {
-            ++mNumContacts;
-            std::cout << mTag << std::endl;
+            mContacts.at( tag )++;
+        }
+        else
+        {
+            mContacts.emplace( tag, 0 );
         }
     }
 }
 
 void PhysicsContactListener::EndContact( b2Contact* contact )
 {
-    //check if fixture A was the foot sensor
     void* fixtureUserData = contact->GetFixtureA()->GetUserData();
     if ( fixtureUserData )
     {
-        if ( ( intptr_t )fixtureUserData == mTag )
+        intptr_t tag = ( intptr_t )fixtureUserData;
+        if ( this->tagExists( tag ) )
         {
-            --mNumContacts;
+            mContacts.at( tag )--;
+        }
+        else
+        {
+            mContacts.emplace( tag, 0 );
         }
     }
-    //check if fixture B was the foot sensor
+
     fixtureUserData = contact->GetFixtureB()->GetUserData();
     if ( fixtureUserData )
     {
-        if ( ( intptr_t )fixtureUserData == mTag )
+        intptr_t tag = ( intptr_t )fixtureUserData;
+        if ( this->tagExists( tag ) )
         {
-            --mNumContacts;
+            mContacts.at( tag )--;
+        }
+        else
+        {
+            mContacts.emplace( tag, 0 );
         }
     }
 }
 
-int PhysicsContactListener::getNumContacts() const
+int PhysicsContactListener::getNumContacts( int tag ) const
 {
-    return mNumContacts;
+    try
+    {
+        return mContacts.at( tag );
+    }
+    catch ( std::out_of_range oor )
+    {
+        return 0;
+    }
 }
 
-int PhysicsContactListener::getTag() const
+bool PhysicsContactListener::tagExists( int tag ) const
 {
-    return mTag;
-}
+    try
+    {
+        mContacts.at( tag );
+        return true;
+    }
+    catch ( std::out_of_range oor )
+    {
+        return false;
+    }
 
-void PhysicsContactListener::setTag( int tag )
-{
-    mTag = tag;
 }
-

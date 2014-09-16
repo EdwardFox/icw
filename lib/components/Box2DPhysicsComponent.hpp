@@ -1,6 +1,7 @@
 #ifndef DEFAULT_PHYSICS_COMPONENT_HPP
 #define DEFAULT_PHYSICS_COMPONENT_HPP
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include "lib/interfaces/IComponent.hpp"
@@ -11,7 +12,7 @@
 class Box2DPhysicsComponent : public IComponent, public IPhysicsComponent
 {
 public:
-    Box2DPhysicsComponent( b2World& physics, GameObject& object, b2BodyType type );
+    Box2DPhysicsComponent( b2World& physics, GameObject& object, b2BodyType type, int& tag );
 
     virtual void update( GameObject& object, sf::Time dt );
 
@@ -27,17 +28,29 @@ public:
 
     virtual bool isInAir() const;
 
-    virtual void addSensor( std::string key, PhysicsSensor sensor );
+    virtual Collision hitWall() const;
 
-    virtual const PhysicsSensor& getSensor( std::string key ) const;
+    virtual void addSensor( std::string key, b2World& physics, b2Vec2 size, b2Vec2 position, int tag );
+
+    virtual const PhysicsSensor* getSensor( std::string key ) const;
+
+    virtual void setListener( PhysicsContactListener* listener );
 
 private:
-    std::unordered_map<std::string, PhysicsSensor> mSensors;
+    void createDefaultSensors( b2World& physics, GameObject& object, int& tag );
+
+    std::unordered_map<std::string, std::unique_ptr<PhysicsSensor>> mSensors;
 
     b2BodyDef mBodyDef;
     b2Body* mBody;
     b2PolygonShape mBodyShape;
     b2FixtureDef mFixtureDef;
+
+    PhysicsContactListener* mListener;
+    int mGroundTag;
+    int mCeilingTag;
+    int mLeftTag;
+    int mRightTag;
 };
 
 #endif

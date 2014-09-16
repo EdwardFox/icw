@@ -2,14 +2,25 @@
 #include "lib/components/Box2DPhysicsComponent.hpp"
 #include "lib/GameObject.hpp"
 
-Box2DPhysicsComponent::Box2DPhysicsComponent( b2World& physics, GameObject& object, b2BodyType type ) :
-        mPhysGroundContactListener()
-        , mPhysLeftContactListener()
-        , mPhysRightContactListener()
-        , mPhysCeilingContactListener()
+Box2DPhysicsComponent::Box2DPhysicsComponent( b2World& physics, GameObject& object, b2BodyType type, int& tag ) :
+        mSensors()
+        , mBodyDef()
+        , mBody( nullptr )
+        , mBodyShape()
+        , mFixtureDef()
+        , mListener( nullptr )
+        , mGroundTag( 0 )
+        , mCeilingTag( 0 )
+        , mLeftTag( 0 )
+        , mRightTag( 0 )
 {
     this->setType( "PhysicsComponent" );
     createCollisionBody( physics, object, type );
+
+    if ( type != b2_staticBody )
+    {
+        this->createDefaultSensors( physics, object, tag );
+    }
 }
 
 void Box2DPhysicsComponent::update( GameObject& object, sf::Time dt )
@@ -54,58 +65,6 @@ void Box2DPhysicsComponent::createCollisionBody( b2World& physics, GameObject& o
     }
 }
 
-//void Box2DPhysicsComponent::createGroundSensor( b2World& physics, GameObject& object, int tag )
-//{
-//    mBodyShape.SetAsBox( (object.getSize().x / 2.f - 0.2f) / SCALE, 1.f / SCALE, b2Vec2( 0, ((object.getSize().y / 2.f) / SCALE) ), 0 );
-//    mFixtureDef.isSensor = true;
-//    mGroundSensorFixture = mBody->CreateFixture( &mFixtureDef );
-//    intptr_t tmp = tag;
-//    mGroundSensorFixture->SetUserData( ( void* )tmp );
-//
-//    mPhysGroundContactListener.setTag( tag );
-//    physics.SetContactListener( &mPhysGroundContactListener );
-//    this->setPhysicsGroundContactListener( &mPhysGroundContactListener );
-//}
-
-void Box2DPhysicsComponent::createLeftSensor( b2World& physics, GameObject& object, int tag )
-{
-    mBodyShape.SetAsBox( 1.f / SCALE, (object.getSize().y / 2.f - 0.2f), b2Vec2( -(object.getSize().y / 2.f) / SCALE, 0 ), 0 );
-    mFixtureDef.isSensor = true;
-    mLeftSensorFixture = mBody->CreateFixture( &mFixtureDef );
-    intptr_t tmp = tag;
-    mLeftSensorFixture->SetUserData( ( void* )tmp );
-
-    mPhysLeftContactListener.setTag( tag );
-    physics.SetContactListener( &mPhysLeftContactListener );
-    this->setPhysicsLeftContactListener( &mPhysLeftContactListener );
-}
-
-void Box2DPhysicsComponent::createRightSensor( b2World& physics, GameObject& object, int tag )
-{
-    mBodyShape.SetAsBox( 1.f / SCALE, (object.getSize().y / 2.f - 0.2f), b2Vec2( (object.getSize().y / 2.f) / SCALE, 0 ), 0 );
-    mFixtureDef.isSensor = true;
-    mRightSensorFixture = mBody->CreateFixture( &mFixtureDef );
-    intptr_t tmp = tag;
-    mRightSensorFixture->SetUserData( ( void* )tmp );
-
-    mPhysRightContactListener.setTag( tag );
-    physics.SetContactListener( &mPhysRightContactListener );
-    this->setPhysicsRightContactListener( &mPhysRightContactListener );
-}
-
-void Box2DPhysicsComponent::createCeilingSensor( b2World& physics, GameObject& object, int tag )
-{
-    mBodyShape.SetAsBox( (object.getSize().x / 2.f - 0.2f) / SCALE, 1.f / SCALE, b2Vec2( 0, -((object.getSize().y / 2.f) / SCALE) ), 0 );
-    mFixtureDef.isSensor = true;
-    mCeilingSensorFixture = mBody->CreateFixture( &mFixtureDef );
-    intptr_t tmp = tag;
-    mCeilingSensorFixture->SetUserData( ( void* )tmp );
-
-    mPhysCeilingContactListener.setTag( tag );
-    physics.SetContactListener( &mPhysCeilingContactListener );
-    this->setPhysicsCeilingContactListener( &mPhysCeilingContactListener );
-}
-
 void Box2DPhysicsComponent::setFixedRotation( bool rotation )
 {
     mBody->SetFixedRotation( rotation );
@@ -128,18 +87,56 @@ void Box2DPhysicsComponent::setLinearVelocity( b2Vec2 vel )
 
 bool Box2DPhysicsComponent::isInAir() const
 {
-    if( this->getSensor("ground").getListener()->getNumContacts() > 0 )
+    if ( mListener->getNumContacts( mGroundTag ) > 0 )
         return false;
     else
         return true;
 }
 
-void Box2DPhysicsComponent::addSensor( std::string key, PhysicsSensor sensor )
+Collision Box2DPhysicsComponent::hitWall() const
 {
+    if ( mListener->getNumContacts( mLeftTag ) > 0 )
+        return Collision::Left;
+    else if ( mListener->getNumContacts( mRightTag ) > 0 )
+        return Collision::Right;
+    else
+        return Collision::None;
 
 }
 
-const PhysicsSensor& Box2DPhysicsComponent::getSensor( std::string key ) const
+void Box2DPhysicsComponent::addSensor( std::string key, b2World& physics, b2Vec2 size, b2Vec2 position, int tag )
 {
+    PhysicsSensor* sensor = new PhysicsSensor();
+    sensor->createSensor( physics, mBody, size, position, tag );
 
+    mSensors.emplace( key, std::unique_ptr<PhysicsSensor>( sensor ) );
+}
+
+const PhysicsSensor* Box2DPhysicsComponent::getSensor( std::string key ) const
+{
+    try
+    {
+        return mSensors.at( key ).get();
+    }
+    catch ( std::out_of_range oor )
+    {
+        return nullptr;
+    }
+}
+
+void Box2DPhysicsComponent::setListener( PhysicsContactListener* listener )
+{
+    mListener = listener;
+}
+
+void Box2DPhysicsComponent::createDefaultSensors( b2World& physics, GameObject& object, int& tag )
+{
+    mGroundTag = tag;
+    this->addSensor( "ground", physics, b2Vec2( (object.getSize().x / 2.f - 0.2f) / SCALE, 1.f / SCALE ), b2Vec2( 0, ((object.getSize().y / 2.f) / SCALE) ), tag++ );
+    mCeilingTag = tag;
+    this->addSensor( "ceiling", physics, b2Vec2( (object.getSize().x / 2.f - 0.2f) / SCALE, 1.f / SCALE ), b2Vec2( 0, -((object.getSize().y / 2.f) / SCALE) ), tag++ );
+    mLeftTag = tag;
+    this->addSensor( "left", physics, b2Vec2( 1.f / SCALE, (object.getSize().y / 2.f - 0.2f) / SCALE ), b2Vec2( -(object.getSize().y / 2.f) / SCALE, 0 ), tag++ );
+    mRightTag = tag;
+    this->addSensor( "right", physics, b2Vec2( 1.f / SCALE, (object.getSize().y / 2.f - 0.2f) / SCALE ), b2Vec2( (object.getSize().y / 2.f) / SCALE, 0 ), tag++ );
 }

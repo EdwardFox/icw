@@ -13,6 +13,8 @@ public:
 
     virtual void jump( GameObject& object );
 
+    virtual void wallJump( GameObject& object );
+
     virtual void update( GameObject& object, sf::Time dt );
 
     virtual float getMoveSpeed() const;
@@ -34,8 +36,11 @@ public:
 private:
     float mMoveSpeed;
     float mJumpHeight;
+    float mWallBounceStrength;
     int mDelayThresholdAfterJump;
     int mCurrentDelayAfterJump;
+    int mDelayThresholdAfterWallJump;
+    sf::Clock mCurrentDelayAfterWallJump;
 };
 
 #endif

@@ -14,4 +14,13 @@ enum class Movement
     Right,
 };
 
+enum class Collision
+{
+    Top,
+    Bottom,
+    Left,
+    Right,
+    None
+};
+
 #endif

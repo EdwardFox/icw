@@ -11,7 +11,7 @@ class IComponent
 public:
     virtual void update( GameObject& object, sf::Time dt ) = 0;
 
-    std::string getType()
+    std::string getType() const
     {
         return mType;
     }

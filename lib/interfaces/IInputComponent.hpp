@@ -3,7 +3,7 @@
 
 class IInputComponent
 {
-    // @TODO: Fill interface
+    // TODO: Fill interface
 };
 
 #endif

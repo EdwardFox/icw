@@ -2,6 +2,7 @@
 #define PHYSICS_GROUND_CONTACT_LISTENER_HPP
 
 #include <Box2D/Box2D.h>
+#include <unordered_map>
 
 class PhysicsContactListener : public b2ContactListener
 {
@@ -12,16 +13,12 @@ public:
 
     void EndContact( b2Contact* contact );
 
-    int getNumContacts() const;
+    int getNumContacts( int tag ) const;
 
-    int getTag() const;
-
-    void setTag( int tag );
-
+    bool tagExists( int tag ) const;
 
 private:
-    int mNumContacts;
-    int mTag;
+    std::unordered_map<int, int> mContacts;
 };
 
 #endif

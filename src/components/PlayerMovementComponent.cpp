@@ -4,10 +4,13 @@
 #include "lib/components/PlayerMovementComponent.hpp"
 
 PlayerMovementComponent::PlayerMovementComponent() :
-        mMoveSpeed( 5.f )
-        , mJumpHeight( -4.5f )
+        mMoveSpeed( 1.f )
+        , mJumpHeight( -5.f )
+        , mWallBounceStrength( 8.f )
         , mDelayThresholdAfterJump( 100 )
         , mCurrentDelayAfterJump( 100 )
+        , mDelayThresholdAfterWallJump( 2000 )
+        , mCurrentDelayAfterWallJump()
 {
     this->setType( "MovementComponent" );
 }
@@ -80,6 +83,27 @@ void PlayerMovementComponent::jump( GameObject& object )
                 vel.y = mJumpHeight;
 
                 physComp->setLinearVelocity( vel );
+            }
+        }
+    }
+}
+
+void PlayerMovementComponent::wallJump( GameObject& object )
+{
+    IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object.getComponent( "PhysicsComponent" ) );
+    if ( physComp )
+    {
+        if( mCurrentDelayAfterWallJump.getElapsedTime().asMilliseconds() > mDelayThresholdAfterWallJump )
+        {
+            Collision col = physComp->hitWall();
+            if ( col != Collision::None )
+            {
+                // TODO: Rework walking with impulses instead of setVelocity()
+                b2Vec2 vel = physComp->getLinearVelocity();
+                vel.x = (col == Collision::Left) ? mWallBounceStrength : -mWallBounceStrength;
+                vel.y = mJumpHeight;
+                physComp->setLinearVelocity( vel );
+                mCurrentDelayAfterWallJump.restart();
             }
         }
     }

@@ -5,6 +5,7 @@
 #include "lib/Grid.hpp"
 #include "lib/ResourceHolder.hpp"
 #include "lib/Camera.hpp"
+#include "lib/PhysicsContactListener.hpp"
 
 class World
 {
@@ -32,6 +33,10 @@ private:
     b2World mPhysics;
     Camera mCamera;
     GameObject mPlayer;
+
+    PhysicsContactListener mListener;
+    int mListenerTags;
+
 };
 
 #endif

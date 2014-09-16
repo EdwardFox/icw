@@ -2,7 +2,7 @@
 
 int main( int argc, char* argv[] )
 {
-    sf::Vector2i size( 1920, 1080 );
+    sf::Vector2i size( 1440, 720 );
     std::string title( "Platformer" );
 
     Game game( size, title );

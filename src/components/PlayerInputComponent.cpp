@@ -49,10 +49,13 @@ void PlayerInputComponent::update( GameObject& object, sf::Time dt )
         stateComp->changeState( object, "idle" );
     }
 
-    if ( sf::Keyboard::isKeyPressed( sf::Keyboard::W ) )
+    if ( sf::Keyboard::isKeyPressed( sf::Keyboard::W ) || sf::Keyboard::isKeyPressed( sf::Keyboard::Space ) )
     {
         if ( moveComp )
+        {
             moveComp->jump( object );
+            moveComp->wallJump( object );
+        }
 
         stateComp->changeState( object, "jump" );
     }
