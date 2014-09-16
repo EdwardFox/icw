@@ -12,15 +12,13 @@ TestAIComponent::TestAIComponent() :
 
 void TestAIComponent::update( GameObject& object, sf::Time dt )
 {
-    ComponentCommand<IPhysicsComponent&> command;
-    command.targetType = "PhysicsComponent";
-    command.execute = []( IPhysicsComponent& comp )
+    IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object.getComponent( "PhysicsComponent" ) );
+    if( physComp )
     {
-        if ( comp.getBodyType() != b2_staticBody )
+        if ( physComp->getBodyType() != b2_staticBody )
         {
-            comp.setLinearVelocity( b2Vec2( 0.f, -0.5f ) );
-        }
-    };
+            physComp->setLinearVelocity( b2Vec2( 0.f, -0.5f ) );
 
-    object.broadcastComponentCommand( command );
+        }
+    }
 }

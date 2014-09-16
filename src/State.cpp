@@ -1,27 +1,74 @@
 #include "lib/State.hpp"
 #include <stdexcept>
 
-State::State( std::string state ) :
-        mActions()
-        , mStateName( state )
+State::State() :
+        mName( "" )
+        , mAnimation( "" )
+        , mFollowUpState( "" )
+        , mFollowStates()
+        , mReturnToPreviousState( false )
 {
 
 }
 
-std::string State::onAction( std::string action, GameObject& object )
+std::string State::getName() const
 {
+    return mName;
+}
+
+void State::setName( std::string name )
+{
+    mName = name;
+}
+
+std::string State::getAnimation() const
+{
+    return mAnimation;
+}
+
+void State::setAnimation( std::string anim )
+{
+    mAnimation = anim;
+}
+
+bool State::hasState( std::string state ) const
+{
+    bool exists = false;
+
     try
     {
-        std::string nextState = mActions.at( action )( object );
-        return nextState;
+        mFollowStates.at( state );
+        exists = true;
     }
     catch ( std::out_of_range oor )
     {
-        return "";
+        // Does not exist
     }
+
+    return exists;
 }
 
-void State::addAction( std::string key, std::function<std::string( GameObject& object )> action )
+void State::addState( std::string state )
 {
-    mActions.emplace( key, action );
+    mFollowStates.emplace( state, state );
+}
+
+bool State::returnToPreviousState() const
+{
+    return mReturnToPreviousState;
+}
+
+void State::setReturnToPreviousState( bool ret )
+{
+    mReturnToPreviousState = ret;
+}
+
+std::string State::getFollowUpState() const
+{
+    return mFollowUpState;
+}
+
+void State::setFollowUpState( std::string follow )
+{
+    mFollowUpState = follow;
 }

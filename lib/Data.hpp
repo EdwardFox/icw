@@ -12,8 +12,6 @@ enum class Movement
     Idle,
     Left,
     Right,
-    Jump,
-    Fall
 };
 
 #endif

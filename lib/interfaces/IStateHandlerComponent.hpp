@@ -1,58 +1,29 @@
 #ifndef ISTATE_HANDLER_COMPONENT_HPP
 #define ISTATE_HANDLER_COMPONENT_HPP
 
-#include <unordered_map>
-#include <stdexcept>
 #include <string>
-#include "lib/State.hpp"
 
 class GameObject;
+
+class State;
 
 class IStateHandlerComponent
 {
 public:
-    void addState( std::string key, State state )
-    {
-        mStates.emplace( key, state );
-    };
+    virtual void changeState( GameObject& object, std::string state ) = 0;
 
-    void onAction( std::string action, GameObject& object )
-    {
-        std::string newState = mActiveState->onAction( action, object );
+    virtual void changeToPreviousState( GameObject& object ) = 0;
 
-        if( newState != "")
-        {
-            try
-            {
-                mActiveState = &mStates.at( newState );
-            }
-            catch ( std::out_of_range )
-            {
-                // New State does not exist
-            }
-        }
-    }
+    virtual std::string getCurrentState() const = 0;
 
-    void setStartState( std::string state )
-    {
-        try
-        {
-            mActiveState = &mStates.at( state );
-        }
-        catch ( std::out_of_range oor )
-        {
-            // Could not set start state
-        }
-    }
+    virtual std::string getPreviousState() const = 0;
 
-    const State* getActiveState() const
-    {
-        return mActiveState;
-    }
+    virtual void setStartState( std::string start ) = 0;
+
+    virtual void addState( std::string key, State state ) = 0;
 
 protected:
-    std::unordered_map<std::string, State> mStates;
-    State* mActiveState;
+    virtual void setState( GameObject& object, std::string state ) = 0;
 };
 
 #endif

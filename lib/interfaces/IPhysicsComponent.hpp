@@ -2,63 +2,31 @@
 #define IPHYSICS_COMPONENT_HPP
 
 #include <Box2D/Box2D.h>
-#include "lib/PhysicsGroundContactListener.hpp"
+#include <string>
 
 class GameObject;
 
-//class PhysicsGroundContactListener;
+class PhysicsSensor;
 
 class IPhysicsComponent
 {
 public:
     virtual void createCollisionBody( b2World& physics, GameObject& object, b2BodyType type ) = 0;
 
-    virtual void createGroundSensor( b2World& physics, GameObject& object, int tag ) = 0;
-
     virtual void setFixedRotation( bool rotation ) = 0;
 
-    b2BodyType getBodyType()
-    {
-        return mBody->GetType();
-    }
+    virtual b2BodyType getBodyType() = 0;
 
-    b2Vec2 getLinearVelocity()
-    {
-        return mBody->GetLinearVelocity();
-    }
+    virtual b2Vec2 getLinearVelocity() = 0;
 
-    void setLinearVelocity( b2Vec2 vel )
-    {
-        mBody->SetLinearVelocity( vel );
-    }
+    virtual void setLinearVelocity( b2Vec2 vel ) = 0;
 
-    void setPhysicsGroundContactListener( PhysicsGroundContactListener* physCL )
-    {
-        mPhysicsGroundContactListener = physCL;
-    }
+    virtual bool isInAir() const = 0;
 
-    PhysicsGroundContactListener* getPhysicsGroundContactListener() const
-    {
-        return mPhysicsGroundContactListener;
-    }
+    virtual void addSensor( std::string key, PhysicsSensor sensor ) = 0;
 
-    int getTag() const
-    {
-        return mPhysicsGroundContactListener->getTag();
-    }
+    virtual const PhysicsSensor& getSensor( std::string key ) const = 0;
 
-    void setTag( int tag )
-    {
-        mPhysicsGroundContactListener->setTag( tag );
-    }
-
-protected:
-    b2BodyDef mBodyDef;
-    b2Body* mBody;
-    b2PolygonShape mBodyShape;
-    b2FixtureDef mFixtureDef;
-    b2Fixture* mGroundSensorFixture;
-    PhysicsGroundContactListener* mPhysicsGroundContactListener;
 };
 
 #endif

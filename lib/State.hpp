@@ -1,29 +1,40 @@
 #ifndef STATE_HPP
 #define STATE_HPP
 
-#include <functional>
-#include <unordered_map>
 #include <string>
-
-class GameObject;
+#include <unordered_map>
 
 class State
 {
 public:
-    State( std::string state );
+    State();
 
-    std::string onAction( std::string action, GameObject& object );
+    std::string getName() const;
 
-    void addAction( std::string key, std::function<std::string( GameObject& object )> action );
+    void setName( std::string name );
 
-    std::string getStateName() const
-    {
-        return mStateName;
-    }
+    std::string getAnimation() const;
+
+    void setAnimation( std::string anim );
+
+    std::string getFollowUpState() const;
+
+    void setFollowUpState( std::string follow );
+
+    bool hasState( std::string state ) const;
+
+    void addState( std::string state );
+
+    bool returnToPreviousState() const;
+
+    void setReturnToPreviousState( bool ret );
 
 private:
-    std::unordered_map<std::string, std::function<std::string( GameObject& object )>> mActions;
-    std::string mStateName;
+    std::string mName;
+    std::string mAnimation;
+    std::string mFollowUpState;
+    std::unordered_map<std::string, std::string> mFollowStates;
+    bool mReturnToPreviousState;
 
 };
 

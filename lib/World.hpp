@@ -4,6 +4,7 @@
 #include <Box2D/Box2D.h>
 #include "lib/Grid.hpp"
 #include "lib/ResourceHolder.hpp"
+#include "lib/Camera.hpp"
 
 class World
 {
@@ -23,15 +24,13 @@ private:
 
     void createPlayerStates();
 
-    std::function<std::string( GameObject& object )> createStateAction(std::string animation, std::string action);
-
     // Resources
     ResourceHolder<sf::Texture, std::string> mTextures;
 
     // Game World
     Grid mGrid;
     b2World mPhysics;
-
+    Camera mCamera;
     GameObject mPlayer;
 };
 

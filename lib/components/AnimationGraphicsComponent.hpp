@@ -21,6 +21,14 @@ public:
 
     void setAnimation( std::string key );
 
+    sf::Vector2f getFlipped() const;
+
+    void setFlipped( sf::Vector2f flip );
+
+    void resetCurrentAnimation();
+
+    bool isAnimationFinished() const;
+
 private:
     sf::Texture* mTexture;
     sf::Sprite mSprite;

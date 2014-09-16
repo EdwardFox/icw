@@ -6,7 +6,6 @@
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
 #include "lib/Data.hpp"
-#include "lib/components/ComponentCommand.hpp"
 #include "lib/interfaces/IGraphicsComponent.hpp"
 
 
@@ -44,15 +43,6 @@ public:
     void setVelocity( sf::Vector2f velocity );
 
     void setRotation( float rotation );
-
-    template< typename T >
-    void broadcastComponentCommand( ComponentCommand<T&> command )
-    {
-        for ( std::unordered_map<std::string, std::unique_ptr<IComponent>>::iterator it = mComponents.begin(); it != mComponents.end(); ++it )
-        {
-            it->second->onCommand( command );
-        }
-    };
 
 private:
     std::unordered_map<std::string, std::unique_ptr<IComponent>> mComponents;

@@ -1,13 +1,83 @@
-#include "lib/interfaces/IPhysicsComponent.hpp"
+#include <lib/components/AnimationGraphicsComponent.hpp>
+#include <lib/GameObject.hpp>
 #include "lib/components/DefaultStateHandlerComponent.hpp"
-#include "lib/GameObject.hpp"
 
-DefaultStateHandlerComponent::DefaultStateHandlerComponent()
+DefaultStateHandlerComponent::DefaultStateHandlerComponent() :
+        mStates()
+        , mCurrent( nullptr )
+        , mPrevious( nullptr )
 {
-    this->setType( "StateHandlerComponent" );
+
 }
 
 void DefaultStateHandlerComponent::update( GameObject& object, sf::Time dt )
 {
+    AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(object.getGraphicComponent());
+    if ( mCurrent->returnToPreviousState() && animComp->isAnimationFinished() )
+    {
+        changeToPreviousState( object );
+    }
 
+    if ( mCurrent->getFollowUpState() != "" && animComp->isAnimationFinished() )
+    {
+        setState( object, mCurrent->getFollowUpState() );
+    }
+
+}
+
+void DefaultStateHandlerComponent::changeState( GameObject& object, std::string state )
+{
+    if ( mCurrent->hasState( state ) )
+    {
+        mPrevious = mCurrent;
+        mCurrent = &mStates.at( state );
+        changeAnimation( object, mCurrent->getAnimation() );
+    }
+}
+
+void DefaultStateHandlerComponent::changeToPreviousState( GameObject& object )
+{
+    if ( mPrevious )
+        mCurrent = mPrevious;
+
+    changeAnimation( object, mCurrent->getAnimation() );
+}
+
+std::string DefaultStateHandlerComponent::getCurrentState() const
+{
+    return mCurrent->getName();
+}
+
+std::string DefaultStateHandlerComponent::getPreviousState() const
+{
+    if ( mPrevious )
+        return mPrevious->getName();
+    else
+        return "";
+}
+
+void DefaultStateHandlerComponent::setStartState( std::string start )
+{
+    mCurrent = &mStates.at( start );
+}
+
+void DefaultStateHandlerComponent::addState( std::string key, State state )
+{
+    mStates.emplace( key, state );
+}
+
+void DefaultStateHandlerComponent::setState( GameObject& object, std::string state )
+{
+    mPrevious = mCurrent;
+    mCurrent = &mStates.at( state );
+    changeAnimation( object, mCurrent->getAnimation() );
+}
+
+void DefaultStateHandlerComponent::changeAnimation( GameObject& object, std::string animation )
+{
+    AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(object.getGraphicComponent());
+    if ( animComp )
+    {
+        animComp->setAnimation( animation );
+    }
 }

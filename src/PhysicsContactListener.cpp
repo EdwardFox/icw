@@ -1,15 +1,15 @@
-#include "lib/PhysicsGroundContactListener.hpp"
+#include "lib/PhysicsContactListener.hpp"
 #include <iostream>
 #include <cstdint>
 
-PhysicsGroundContactListener::PhysicsGroundContactListener() :
-        mNumGroundContacts( 0 )
+PhysicsContactListener::PhysicsContactListener() :
+        mNumContacts( 0 )
         , mTag( 0 )
 {
 
 }
 
-void PhysicsGroundContactListener::BeginContact( b2Contact* contact )
+void PhysicsContactListener::BeginContact( b2Contact* contact )
 {
     //check if fixture A was the foot sensor
     void* fixtureUserData = contact->GetFixtureA()->GetUserData();
@@ -17,7 +17,8 @@ void PhysicsGroundContactListener::BeginContact( b2Contact* contact )
     {
         if ( ( intptr_t )fixtureUserData == mTag )
         {
-            ++mNumGroundContacts;
+            ++mNumContacts;
+            std::cout << mTag << std::endl;
         }
     }
     //check if fixture B was the foot sensor
@@ -26,12 +27,13 @@ void PhysicsGroundContactListener::BeginContact( b2Contact* contact )
     {
         if ( ( intptr_t )fixtureUserData == mTag )
         {
-            ++mNumGroundContacts;
+            ++mNumContacts;
+            std::cout << mTag << std::endl;
         }
     }
 }
 
-void PhysicsGroundContactListener::EndContact( b2Contact* contact )
+void PhysicsContactListener::EndContact( b2Contact* contact )
 {
     //check if fixture A was the foot sensor
     void* fixtureUserData = contact->GetFixtureA()->GetUserData();
@@ -39,7 +41,7 @@ void PhysicsGroundContactListener::EndContact( b2Contact* contact )
     {
         if ( ( intptr_t )fixtureUserData == mTag )
         {
-            --mNumGroundContacts;
+            --mNumContacts;
         }
     }
     //check if fixture B was the foot sensor
@@ -48,12 +50,23 @@ void PhysicsGroundContactListener::EndContact( b2Contact* contact )
     {
         if ( ( intptr_t )fixtureUserData == mTag )
         {
-            --mNumGroundContacts;
+            --mNumContacts;
         }
     }
 }
 
-int PhysicsGroundContactListener::getNumGroundContacts() const
+int PhysicsContactListener::getNumContacts() const
 {
-    return mNumGroundContacts;
+    return mNumContacts;
 }
+
+int PhysicsContactListener::getTag() const
+{
+    return mTag;
+}
+
+void PhysicsContactListener::setTag( int tag )
+{
+    mTag = tag;
+}
+

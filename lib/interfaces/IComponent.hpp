@@ -2,7 +2,6 @@
 #define COMPONENT_HPP
 
 #include <SFML/Graphics.hpp>
-#include "lib/components/ComponentCommand.hpp"
 
 // Forward declaration
 class GameObject;
@@ -20,22 +19,6 @@ public:
     void setType( std::string type )
     {
         mType = type;
-    }
-
-    template< typename T >
-    void onCommand( ComponentCommand<T&> command )
-    {
-        if ( command.targetType == mType )
-        {
-            if ( T* temp = dynamic_cast<T*>(this) )
-            {
-                command.execute( *temp );
-            }
-            else
-            {
-                // Unsuccessful cast
-            }
-        }
     }
 
 private:

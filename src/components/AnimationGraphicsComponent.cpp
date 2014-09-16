@@ -50,23 +50,61 @@ void AnimationGraphicsComponent::addAnimation( std::string key, Animation anim )
 
 void AnimationGraphicsComponent::setAnimation( std::string key )
 {
-    if ( mCurrentAnimation != nullptr )
+    if ( mCurrentAnimation )
     {
-        mCurrentAnimation->resetAnimation();
-    }
+        // Only set a new animation if it is different from the current one
+        if ( key != mCurrentAnimation->getAnimationName() )
+        {
+            mCurrentAnimation->resetAnimation();
+            try
+            {
+                mCurrentAnimation = &mAnimations.at( key );
+                sf::IntRect frame = mCurrentAnimation->getCurrentFrame();
+                mSprite.setTextureRect( frame );
+//                mSprite.setOrigin( frame.width / 2.f, frame.height / 2.f );
 
-    try
+                mTimeToNextFrame = 0;
+            }
+            catch ( std::out_of_range oor )
+            {
+                // Animation not found
+            }
+        }
+    }
+    else    // Set initial animation
     {
-        mCurrentAnimation = &mAnimations.at( key );
-        sf::IntRect frame = mCurrentAnimation->getStartFrame();
-        mSprite.setTextureRect( frame );
-        mSprite.setOrigin( frame.width / 2.f, frame.height / 2.f );
+        try
+        {
+            mCurrentAnimation = &mAnimations.at( key );
+            sf::IntRect frame = mCurrentAnimation->getStartFrame();
+            mSprite.setTextureRect( frame );
+            mSprite.setOrigin( frame.width / 2.f, frame.height / 2.f );
 
-        mTimeToNextFrame = 0;
+            mTimeToNextFrame = 0;
+        }
+        catch ( std::out_of_range oor )
+        {
+            // Animation not found
+        }
     }
-    catch ( std::out_of_range oor )
-    {
-        // Animation not found
-    }
+}
 
+sf::Vector2f AnimationGraphicsComponent::getFlipped() const
+{
+    return mSprite.getScale();
+}
+
+void AnimationGraphicsComponent::setFlipped( sf::Vector2f flip )
+{
+    mSprite.setScale( flip.x, flip.y );
+}
+
+void AnimationGraphicsComponent::resetCurrentAnimation()
+{
+    mCurrentAnimation->resetAnimation();
+}
+
+bool AnimationGraphicsComponent::isAnimationFinished() const
+{
+    return mCurrentAnimation->getIsDone();
 }

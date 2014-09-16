@@ -15,7 +15,7 @@ add_definitions(-g -Wall -std=c++11)
 include_directories(${CMAKE_SOURCE_DIR})
 
 # Source files
-set(SOURCE_FILES src/Main.cpp src/Game.cpp src/GameObject.cpp src/Grid.cpp src/World.cpp src/components/SolidColorGraphicsComponent.cpp src/components/TextureGraphicsComponent.cpp src/components/AnimationGraphicsComponent.cpp src/components/Box2DPhysicsComponent.cpp src/components/TestAIComponent.cpp src/components/PlayerInputComponent.cpp src/Animation.cpp src/components/DefaultStateHandlerComponent.cpp src/State.cpp src/PhysicsGroundContactListener.cpp src/components/DefaultMovementComponent.cpp)
+set(SOURCE_FILES src/Main.cpp src/Game.cpp src/GameObject.cpp src/Grid.cpp src/World.cpp src/components/SolidColorGraphicsComponent.cpp src/components/TextureGraphicsComponent.cpp src/components/AnimationGraphicsComponent.cpp src/components/Box2DPhysicsComponent.cpp src/components/TestAIComponent.cpp src/components/PlayerInputComponent.cpp src/Animation.cpp src/PhysicsContactListener.cpp src/components/PlayerMovementComponent.cpp src/Camera.cpp src/State.cpp src/components/DefaultStateHandlerComponent.cpp src/PhysicsSensor.cpp)
 
 # Executable
 add_executable(ICW ${SOURCE_FILES})
@@ -23,6 +23,7 @@ add_executable(ICW ${SOURCE_FILES})
 # Copy resource files
 configure_file(media/textures/DefaultTile.png media/textures/DefaultTile.png COPYONLY)
 configure_file(media/textures/DefaultAnimation.png media/textures/DefaultAnimation.png COPYONLY)
+configure_file(media/textures/ror.png media/textures/ror.png COPYONLY)
 
 # Detect and add cmake modules
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})

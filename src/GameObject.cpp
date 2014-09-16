@@ -57,7 +57,9 @@ void GameObject::update( sf::Time dt )
 void GameObject::render( sf::RenderTarget& target, sf::Time dt ) const
 {
     if ( mGraphicComponent.get() != nullptr )
+    {
         mGraphicComponent->render( target, dt );
+    }
 }
 
 sf::Vector2f GameObject::getPosition() const

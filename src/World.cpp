@@ -5,13 +5,14 @@
 #include "lib/components/SolidColorGraphicsComponent.hpp"
 #include "lib/components/TextureGraphicsComponent.hpp"
 #include "lib/components/AnimationGraphicsComponent.hpp"
+#include "lib/components/PlayerMovementComponent.hpp"
 #include "lib/components/DefaultStateHandlerComponent.hpp"
-#include "lib/components/DefaultMovementComponent.hpp"
 
 World::World() :
         mTextures()
         , mGrid()
         , mPhysics( b2Vec2( 0.f, 9.8f ) )
+        , mCamera()
         , mPlayer()
 {
     // Initialize Resources
@@ -21,6 +22,9 @@ World::World() :
     {
         for ( int j = 0; j < 20; ++j )
         {
+            if( i != 2 && j != 2 )
+                continue;
+
             // Create entity and add to grid
             sf::Vector2f pos;
             pos = sf::Vector2f( j * mGrid.getTileSize(), i * mGrid.getTileSize() + 300 );
@@ -46,10 +50,15 @@ World::World() :
     }
 
     createPlayer();
+
+    mCamera.setOffset( sf::Vector2f( 0.f, 0.f ) );
+    mCamera.setZoom( 4.f );
+    mCamera.setFollowTarget( &mPlayer );
 }
 
 void World::render( sf::RenderTarget& target, sf::Time dt ) const
 {
+    mCamera.render( target, dt );
     mGrid.render( target, dt );
     mPlayer.render( target, dt );
 }
@@ -58,6 +67,7 @@ void World::update( sf::Time dt )
 {
     mPhysics.Step( dt.asSeconds(), 8, 3 );
 
+    mCamera.update( dt );
     mGrid.update( dt );
     mPlayer.update( dt );
 }
@@ -68,140 +78,118 @@ void World::initializeTextures()
     mTextures.get( "default" ).setSmooth( true );
     mTextures.load( "animation", "media/textures/DefaultAnimation.png" );
     mTextures.get( "animation" ).setSmooth( true );
+    mTextures.load( "ror", "media/textures/ror.png" );
 }
 
 void World::createPlayer()
 {
-    sf::Vector2f pos( 500.f, 50.f );
+    sf::Vector2f pos( 50.f, 200.f );
 
     createPlayerAnimations();
 
-    mPlayer.setPosition( pos );
-    mPlayer.setSize( sf::Vector2f( 32.f, 32.f ) );
-
     createPlayerStates();
+
+    mPlayer.setPosition( pos );
+    mPlayer.setSize( sf::Vector2f( 10.f, 11.f ) );
 
     Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( mPhysics, mPlayer, b2_dynamicBody );
     dynPhysics->createGroundSensor( mPhysics, mPlayer, 1 );
+    dynPhysics->createLeftSensor( mPhysics, mPlayer, 2 );
+//    dynPhysics->createRightSensor( mPhysics, mPlayer, 3 );
+//    dynPhysics->createCeilingSensor( mPhysics, mPlayer, 4 );
     dynPhysics->setFixedRotation( true );
-    dynPhysics->setTag( 1 );
     mPlayer.attachComponent( "PhysicsComponent", dynPhysics );
 
     PlayerInputComponent* tic = new PlayerInputComponent();
-    mPlayer.attachComponent( "PlayerInputComponent", tic );
+    mPlayer.attachComponent( "InputComponent", tic );
 
-    DefaultMovementComponent* pmc = new DefaultMovementComponent();
-    mPlayer.attachComponent( "DefaultMovementComponent", pmc );
+    PlayerMovementComponent* pmc = new PlayerMovementComponent();
+    mPlayer.attachComponent( "MovementComponent", pmc );
 }
 
 void World::createPlayerAnimations()
 {
-    sf::Texture& tex = mTextures.get( "animation" );
+    sf::Texture& tex = mTextures.get( "ror" );
+    AnimationGraphicsComponent* agc = new AnimationGraphicsComponent();
+    agc->setTexture( tex );
 
-    AnimationGraphicsComponent* dgc = new AnimationGraphicsComponent();
-    dgc->setTexture( tex );
+    Animation idle( "idle" );
+    idle.addFrame( sf::Vector2f( 0.f, 0.f ), sf::Vector2f( 6.f, 11.f ) );
+    idle.setTimePerFrame( 100000 );
+    agc->addAnimation( "idle", idle );
 
-    Animation idleAnim;
-    idleAnim.addFrame( sf::Vector2f( 96.f, 0.f ), sf::Vector2f( 32.f, 32.f ) );
-    idleAnim.setTimePerFrame( 250 );
-    dgc->addAnimation( "idle", idleAnim );
+    Animation run( "run" );
+    run.addFrame( sf::Vector2f( 0.f, 22.f ), sf::Vector2f( 7.f, 11.f ) );
+    run.addFrame( sf::Vector2f( 10.f, 22.f ), sf::Vector2f( 5.f, 11.f ) );
+    run.addFrame( sf::Vector2f( 19.f, 22.f ), sf::Vector2f( 4.f, 11.f ) );
+    run.addFrame( sf::Vector2f( 27.f, 22.f ), sf::Vector2f( 6.f, 11.f ) );
+    run.addFrame( sf::Vector2f( 35.f, 22.f ), sf::Vector2f( 8.f, 11.f ) );
+    run.addFrame( sf::Vector2f( 45.f, 22.f ), sf::Vector2f( 6.f, 11.f ) );
+    run.addFrame( sf::Vector2f( 55.f, 22.f ), sf::Vector2f( 5.f, 11.f ) );
+    run.addFrame( sf::Vector2f( 64.f, 22.f ), sf::Vector2f( 5.f, 11.f ) );
+    run.setTimePerFrame( 50 );
+    agc->addAnimation( "run", run );
 
-    Animation runLeftAnim;
-    runLeftAnim.addFrame( sf::Vector2f( 0.f, 0.f ), sf::Vector2f( 32.f, 32.f ) );
-    runLeftAnim.setTimePerFrame( 250 );
-    dgc->addAnimation( "runLeft", runLeftAnim );
+    Animation jump( "jump" );
+    jump.addFrame( sf::Vector2f( 0.f, 11.f ), sf::Vector2f( 9.f, 11.f ) );
+    jump.setTimePerFrame( 10000 );
+    agc->addAnimation( "jump", jump );
 
-    Animation runRightAnim;
-    runRightAnim.addFrame( sf::Vector2f( 32.f, 0.f ), sf::Vector2f( 32.f, 32.f ) );
-    runRightAnim.setTimePerFrame( 250 );
-    dgc->addAnimation( "runRight", runRightAnim );
+    Animation attack( "attack" );
+    attack.addFrame( sf::Vector2f( 0.f, 33.f ), sf::Vector2f( 56.f, 11.f ) );
+    attack.addFrame( sf::Vector2f( 65.f, 33.f ), sf::Vector2f( 61.f, 11.f ) );
+    attack.addFrame( sf::Vector2f( 129.f, 33.f ), sf::Vector2f( 62.f, 11.f ) );
+    attack.addFrame( sf::Vector2f( 194.f, 33.f ), sf::Vector2f( 57.f, 11.f ) );
+    attack.addFrame( sf::Vector2f( 258.f, 33.f ), sf::Vector2f( 14.f, 11.f ) );
+    attack.setRepeat( false );
+    attack.setTimePerFrame( 25 );
+    agc->addAnimation( "attack", attack );
+    agc->setAnimation( "idle" );
 
-    Animation jumpAnim;
-    jumpAnim.addFrame( sf::Vector2f( 64.f, 0.f ), sf::Vector2f( 32.f, 32.f ) );
-    jumpAnim.setTimePerFrame( 250 );
-    dgc->addAnimation( "jump", jumpAnim );
-
-    dgc->setAnimation( "idle" );
-
-    mPlayer.setGraphicComponent( dgc );
-
+    mPlayer.setGraphicComponent( agc );
 }
 
 void World::createPlayerStates()
 {
-    std::function<std::string( GameObject& object )> idleAction = createStateAction( "idle", "idle" );
-    std::function<std::string( GameObject& object )> runLeftAction = createStateAction( "runLeft", "runLeft" );
-    std::function<std::string( GameObject& object )> runRightAction = createStateAction( "runRight", "runRight" );
-    std::function<std::string( GameObject& object )> jumpAction = createStateAction( "jump", "jump" );
-    std::function<std::string( GameObject& object )> fallAction = createStateAction( "fall", "fall" );
-    std::function<std::string( GameObject& object )> hitGroundAction = createStateAction( "idle", "hitGround" );
-    std::function<std::string( GameObject& object )> fallLeftAction = createStateAction( "fallLeft", "fallLeft" );
-    std::function<std::string( GameObject& object )> fallRightAction = createStateAction( "fallRight", "fallRight" );
+    State idle;
+    idle.setName( "idle" );
+    idle.setAnimation( "idle" );
+    idle.addState( "run" );
+    idle.addState( "jump" );
+    idle.addState( "attack" );
 
-    State idle( "idle" );
-    idle.addAction( "runLeft", runLeftAction );
-    idle.addAction( "runRight", runRightAction );
-    idle.addAction( "jump", jumpAction );
+    State run;
+    run.setName( "run" );
+    run.setAnimation( "run" );
+    run.addState( "idle" );
+    run.addState( "jump" );
+    run.addState( "attack" );
 
-    State runRight( "runRight" );
-    runRight.addAction( "idle", idleAction );
-    runRight.addAction( "runLeft", runLeftAction );
-    runRight.addAction( "jump", jumpAction );
+    State jump;
+    jump.setName( "jump" );
+    jump.setAnimation( "jump" );
+    jump.addState( "land" );
+    jump.addState( "attack" );
 
-    State runLeft( "runLeft" );
-    runLeft.addAction( "idle", idleAction );
-    runLeft.addAction( "runRight", runRightAction );
-    runLeft.addAction( "jump", jumpAction );
+    State land;
+    land.setName( "land" );
+    land.setAnimation( "idle" );
+    land.addState( "idle" );
+    land.addState( "run" );
+    land.addState( "attack" );
 
-    State jump( "jump" );
-    jump.addAction( "fall", fallAction );
+    State attack;
+    attack.setName( "attack" );
+    attack.setAnimation( "attack" );
+    attack.setReturnToPreviousState( true );
 
-    State fall( "fall" );
-    fall.addAction( "hitGround", hitGroundAction );
-    fall.addAction( "fallLeft", fallLeftAction );
-    fall.addAction( "fallRight", fallRightAction );
+    DefaultStateHandlerComponent* dsc = new DefaultStateHandlerComponent();
+    dsc->addState( "idle", idle );
+    dsc->addState( "run", run );
+    dsc->addState( "jump", jump );
+    dsc->addState( "land", land );
+    dsc->addState( "attack", attack );
+    dsc->setStartState( "idle" );
 
-    State fallLeft( "fallLeft" );
-    fallLeft.addAction( "hitGround", hitGroundAction );
-    fallLeft.addAction( "fallRight", fallRightAction );
-    fallLeft.addAction( "fall", fallAction );
-
-    State fallRight( "fallRight" );
-    fallRight.addAction( "hitGround", hitGroundAction );
-    fallRight.addAction( "fallLeft", fallLeftAction );
-    fallRight.addAction( "fall", fallAction );
-
-    State hitGround( "hitGround" );
-    hitGround.addAction( "idle", idleAction );
-    hitGround.addAction( "runLeft", runLeftAction );
-    hitGround.addAction( "runRight", runRightAction );
-
-    DefaultStateHandlerComponent* pshc = new DefaultStateHandlerComponent();
-    pshc->addState( "idle", idle );
-    pshc->addState( "runLeft", runLeft );
-    pshc->addState( "runRight", runRight );
-    pshc->addState( "jump", jump );
-    pshc->addState( "fall", fall );
-    pshc->addState( "fallLeft", fallLeft );
-    pshc->addState( "fallRight", fallRight );
-    pshc->addState( "hitGround", hitGround );
-    pshc->setStartState( "idle" );
-    mPlayer.attachComponent( "StateHandlerComponent", pshc );
-}
-
-std::function<std::string( GameObject& object )> World::createStateAction(std::string animation, std::string action)
-{
-    return [animation, action]( GameObject& object ) -> std::string
-    {
-        // Play animation
-        IGraphicsComponent* graphics = object.getGraphicComponent();
-        if ( AnimationGraphicsComponent* agc = dynamic_cast<AnimationGraphicsComponent*>(graphics) )
-        {
-            agc->setAnimation( animation );
-        }
-
-        // Play sound
-
-        return action;
-    };
+    mPlayer.attachComponent( "StateHandlerComponent", dsc );
 }

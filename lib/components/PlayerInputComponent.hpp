@@ -13,7 +13,6 @@ public:
     virtual void update( GameObject& object, sf::Time dt );
 
 private:
-    void changeState( GameObject& object, std::string state ) const;
 };
 
 #endif
