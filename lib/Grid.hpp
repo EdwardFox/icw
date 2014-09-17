@@ -8,6 +8,8 @@
 #include "lib/Data.hpp"
 #include "lib/GameObject.hpp"
 
+class Camera;
+
 class Grid
 {
 public:
@@ -29,7 +31,7 @@ public:
 
     void setTileSize( unsigned tileSize );
 
-    void render( sf::RenderTarget& target, sf::Time dt ) const;
+    void render( sf::RenderTarget& target, sf::Time dt, sf::Vector2u windowSize, const Camera* camera ) const;
 
     void update( sf::Time dt );
 

@@ -2,24 +2,20 @@
 #include "lib/components/Box2DPhysicsComponent.hpp"
 #include "lib/GameObject.hpp"
 
-Box2DPhysicsComponent::Box2DPhysicsComponent( b2World& physics, GameObject& object, b2BodyType type, int& tag ) :
+Box2DPhysicsComponent::Box2DPhysicsComponent( b2World& physics, GameObject& object, b2BodyType type ) :
         mSensors()
         , mBodyDef()
         , mBody( nullptr )
-        , mBodyShape()
+        , mPolygonShape()
+        , mChainShape()
         , mFixtureDef()
-        , mListener( nullptr )
-        , mGroundTag( 0 )
-        , mCeilingTag( 0 )
-        , mLeftTag( 0 )
-        , mRightTag( 0 )
 {
     this->setType( "PhysicsComponent" );
     createCollisionBody( physics, object, type );
 
     if ( type != b2_staticBody )
     {
-        this->createDefaultSensors( physics, object, tag );
+        this->createDefaultSensors( physics, object );
     }
 }
 
@@ -36,7 +32,7 @@ void Box2DPhysicsComponent::createCollisionBody( b2World& physics, GameObject& o
 {
     // Create instances
     mBodyDef = b2BodyDef();
-    mBodyShape = b2PolygonShape();
+    mPolygonShape = b2PolygonShape();
     mFixtureDef = b2FixtureDef();
 
     // Set type
@@ -46,21 +42,62 @@ void Box2DPhysicsComponent::createCollisionBody( b2World& physics, GameObject& o
     mBodyDef.position.Set( object.getPosition().x / SCALE, object.getPosition().y / SCALE );
     mBody = physics.CreateBody( &mBodyDef );
 
-    // Box Shape
-    mBodyShape.SetAsBox( (object.getSize().x / 2.f) / SCALE, (object.getSize().y / 2.f) / SCALE );
-
-    // Static
-    if ( type == b2_staticBody )
+    /*
+    *   SHAPE
+    *
+    *   Dynamic bodies get a standard polygon box shape.
+    *
+    *   Static and kinematic bodies get a a rectangular shape made of
+    *   egde chains (one per side; so four total) to fix the ghost vertices
+    *   problem. This is done by defining previous and next vertices that
+    *   Box2D can use in its calculation.
+    *
+    *   More info:
+    *       http://www.box2d.org/manual.html#_Toc258082970
+    *       http://www.iforce2d.net/b2dtut/ghost-vertices
+    *
+    */
+    if ( type != b2_dynamicBody )
     {
-        mBody->CreateFixture( &mBodyShape, 0.f );
+        // Top
+        b2Vec2 vs[2];
+        vs[0].Set( (-object.getSize().x / 2.f) / SCALE, -object.getSize().y / 2.f / SCALE );
+        vs[1].Set( (object.getSize().x / 2.f) / SCALE, -object.getSize().y / 2.f / SCALE );
+        mChainShape[0].CreateChain( vs, 2 );
+        mChainShape[0].SetPrevVertex( b2Vec2( (-object.getSize().x - object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE ) );
+        mChainShape[0].SetNextVertex( b2Vec2( (object.getSize().x + object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE ) );
+        mBody->CreateFixture( &mChainShape[0], 0.f );
 
-        // Dynamic or Kinematic
+        // Bottom
+        vs[0].Set( (-object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE );
+        vs[1].Set( (object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE );
+        mChainShape[1].CreateChain( vs, 2 );
+        mChainShape[1].SetPrevVertex( b2Vec2( (-object.getSize().x - object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE ) );
+        mChainShape[1].SetNextVertex( b2Vec2( (object.getSize().x + object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE ) );
+        mBody->CreateFixture( &mChainShape[1], 0.f );
+
+        // Left
+        vs[0].Set( (-object.getSize().x / 2.f) / SCALE, -object.getSize().y / 2.f / SCALE );
+        vs[1].Set( (-object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE );
+        mChainShape[2].CreateChain( vs, 2 );
+        mChainShape[2].SetPrevVertex( b2Vec2( -object.getSize().x / 2.f / SCALE, (-object.getSize().y - object.getSize().y / 2.f) / SCALE ) );
+        mChainShape[2].SetNextVertex( b2Vec2( -object.getSize().x / 2.f / SCALE, (object.getSize().y + object.getSize().y / 2.f) / SCALE ) );
+        mBody->CreateFixture( &mChainShape[2], 0.f );
+
+        // Right
+        vs[0].Set( (object.getSize().x / 2.f) / SCALE, -object.getSize().y / 2.f / SCALE );
+        vs[1].Set( (object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE );
+        mChainShape[3].CreateChain( vs, 2 );
+        mChainShape[3].SetPrevVertex( b2Vec2( object.getSize().x / 2.f / SCALE, (-object.getSize().y - object.getSize().y / 2.f) / SCALE ) );
+        mChainShape[3].SetNextVertex( b2Vec2( object.getSize().x / 2.f / SCALE, (object.getSize().y + object.getSize().y / 2.f) / SCALE ) );
+        mBody->CreateFixture( &mChainShape[3], 0.f );
     }
     else
     {
-        mFixtureDef.shape = &mBodyShape;
+        mPolygonShape.SetAsBox( (object.getSize().x / 2.f) / SCALE, (object.getSize().y / 2.f) / SCALE );
+        mFixtureDef.shape = &mPolygonShape;
         mFixtureDef.density = 1.f;
-        mFixtureDef.friction = 0.0f;
+        mFixtureDef.friction = 1.0f;
         mBody->CreateFixture( &mFixtureDef );
     }
 }
@@ -85,9 +122,22 @@ void Box2DPhysicsComponent::setLinearVelocity( b2Vec2 vel )
     mBody->SetLinearVelocity( vel );
 }
 
+void Box2DPhysicsComponent::addLinearImpulse( b2Vec2 impulse )
+{
+    mBody->ApplyLinearImpulse( impulse, mBody->GetWorldCenter(), true );
+}
+
+void Box2DPhysicsComponent::setFriction( float friction )
+{
+    for ( b2Fixture* f = mBody->GetFixtureList(); f; f = f->GetNext() )
+    {
+        f->SetFriction( friction );
+    }
+}
+
 bool Box2DPhysicsComponent::isInAir() const
 {
-    if ( mListener->getNumContacts( mGroundTag ) > 0 )
+    if ( this->getSensor( "ground" )->getContacts() > 0 )
         return false;
     else
         return true;
@@ -95,19 +145,19 @@ bool Box2DPhysicsComponent::isInAir() const
 
 Collision Box2DPhysicsComponent::hitWall() const
 {
-    if ( mListener->getNumContacts( mLeftTag ) > 0 )
+    if ( this->getSensor( "left" )->getContacts() > 0 )
         return Collision::Left;
-    else if ( mListener->getNumContacts( mRightTag ) > 0 )
+    else if ( this->getSensor( "right" )->getContacts() > 0 )
         return Collision::Right;
     else
         return Collision::None;
 
 }
 
-void Box2DPhysicsComponent::addSensor( std::string key, b2World& physics, b2Vec2 size, b2Vec2 position, int tag )
+void Box2DPhysicsComponent::addSensor( std::string key, b2World& physics, b2Vec2 size, b2Vec2 position )
 {
     PhysicsSensor* sensor = new PhysicsSensor();
-    sensor->createSensor( physics, mBody, size, position, tag );
+    sensor->createSensor( physics, mBody, size, position );
 
     mSensors.emplace( key, std::unique_ptr<PhysicsSensor>( sensor ) );
 }
@@ -124,19 +174,10 @@ const PhysicsSensor* Box2DPhysicsComponent::getSensor( std::string key ) const
     }
 }
 
-void Box2DPhysicsComponent::setListener( PhysicsContactListener* listener )
+void Box2DPhysicsComponent::createDefaultSensors( b2World& physics, GameObject& object )
 {
-    mListener = listener;
-}
-
-void Box2DPhysicsComponent::createDefaultSensors( b2World& physics, GameObject& object, int& tag )
-{
-    mGroundTag = tag;
-    this->addSensor( "ground", physics, b2Vec2( (object.getSize().x / 2.f - 0.2f) / SCALE, 1.f / SCALE ), b2Vec2( 0, ((object.getSize().y / 2.f) / SCALE) ), tag++ );
-    mCeilingTag = tag;
-    this->addSensor( "ceiling", physics, b2Vec2( (object.getSize().x / 2.f - 0.2f) / SCALE, 1.f / SCALE ), b2Vec2( 0, -((object.getSize().y / 2.f) / SCALE) ), tag++ );
-    mLeftTag = tag;
-    this->addSensor( "left", physics, b2Vec2( 1.f / SCALE, (object.getSize().y / 2.f - 0.2f) / SCALE ), b2Vec2( -(object.getSize().y / 2.f) / SCALE, 0 ), tag++ );
-    mRightTag = tag;
-    this->addSensor( "right", physics, b2Vec2( 1.f / SCALE, (object.getSize().y / 2.f - 0.2f) / SCALE ), b2Vec2( (object.getSize().y / 2.f) / SCALE, 0 ), tag++ );
+    this->addSensor( "ground", physics, b2Vec2( (object.getSize().x / 2.f - 2.f) / SCALE, 1.f / SCALE ), b2Vec2( 0, ((object.getSize().y / 2.f) / SCALE) ) );
+    this->addSensor( "ceiling", physics, b2Vec2( (object.getSize().x / 2.f - 2.f) / SCALE, 1.f / SCALE ), b2Vec2( 0, -((object.getSize().y / 2.f) / SCALE) ) );
+    this->addSensor( "left", physics, b2Vec2( 1.f / SCALE, (object.getSize().y / 2.f - 2.f) / SCALE ), b2Vec2( -(object.getSize().y / 2.f) / SCALE, 0 ) );
+    this->addSensor( "right", physics, b2Vec2( 1.f / SCALE, (object.getSize().y / 2.f - 2.f) / SCALE ), b2Vec2( (object.getSize().y / 2.f) / SCALE, 0 ) );
 }

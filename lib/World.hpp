@@ -16,7 +16,7 @@ public:
 
     void update( sf::Time dt );
 
-    void render( sf::RenderTarget& target, sf::Time dt ) const;
+    void render( sf::RenderTarget& target, sf::Time dt, sf::Vector2u windowSize ) const;
 
 private:
     void createPlayer();
@@ -35,8 +35,6 @@ private:
     GameObject mPlayer;
 
     PhysicsContactListener mListener;
-    int mListenerTags;
-
 };
 
 #endif

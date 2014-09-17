@@ -54,7 +54,6 @@ void PlayerInputComponent::update( GameObject& object, sf::Time dt )
         if ( moveComp )
         {
             moveComp->jump( object );
-            moveComp->wallJump( object );
         }
 
         stateComp->changeState( object, "jump" );
@@ -64,7 +63,6 @@ void PlayerInputComponent::update( GameObject& object, sf::Time dt )
     {
         stateComp->changeState( object, "attack" );
     }
-
 
     if ( animComp )
         animComp->setFlipped( flipped );

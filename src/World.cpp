@@ -15,18 +15,17 @@ World::World() :
         , mCamera()
         , mPlayer()
         , mListener()
-        , mListenerTags( 1 )
 {
     // Initialize Resources
     initializeTextures();
 
     mPhysics.SetContactListener( &mListener );
 
-    for ( int i = 0; i < 3; ++i )
+    for ( int i = 0; i < 10; ++i )
     {
-        for ( int j = 0; j < 20; ++j )
+        for ( int j = 0; j < 400; ++j )
         {
-            if ( i != 2 && j != 2 )
+            if ( i <= 1 && (j != 2 && j!= 3) )
                 continue;
 
             // Create entity and add to grid
@@ -40,7 +39,7 @@ World::World() :
             obj->setPosition( pos );
             obj->setSize( size );
 
-            Box2DPhysicsComponent* staticPhysics = new Box2DPhysicsComponent( mPhysics, *obj, b2_kinematicBody, mListenerTags );
+            Box2DPhysicsComponent* staticPhysics = new Box2DPhysicsComponent( mPhysics, *obj, b2_kinematicBody );
             obj->attachComponent( "PhysicsComponent", staticPhysics );
 
 //            if ( j % 2 == 0 )
@@ -55,15 +54,15 @@ World::World() :
 
     createPlayer();
 
-    mCamera.setOffset( sf::Vector2f( 0.f, 0.f ) );
-    mCamera.setZoom( 4.f );
+    mCamera.setOffset( sf::Vector2f( 0.f, -25.f ) );
+    mCamera.setZoom( 2.f );
     mCamera.setFollowTarget( &mPlayer );
 }
 
-void World::render( sf::RenderTarget& target, sf::Time dt ) const
+void World::render( sf::RenderTarget& target, sf::Time dt, sf::Vector2u windowSize ) const
 {
     mCamera.render( target, dt );
-    mGrid.render( target, dt );
+    mGrid.render( target, dt, windowSize, &mCamera );
     mPlayer.render( target, dt );
 }
 
@@ -96,8 +95,7 @@ void World::createPlayer()
     mPlayer.setPosition( pos );
     mPlayer.setSize( sf::Vector2f( 10.f, 11.f ) );
 
-    Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( mPhysics, mPlayer, b2_dynamicBody, mListenerTags );
-    dynPhysics->setListener( &mListener );
+    Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( mPhysics, mPlayer, b2_dynamicBody );
     dynPhysics->setFixedRotation( true );
     mPlayer.attachComponent( "PhysicsComponent", dynPhysics );
 

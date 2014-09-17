@@ -14,30 +14,17 @@ public:
 
     void render( sf::RenderTarget& target, sf::Time dt ) const;
 
-    void setFollowTarget( GameObject* object )
-    {
-        mFollowTarget = object;
-    }
+    void setFollowTarget( GameObject* object );
 
-    sf::Vector2f getOffset() const
-    {
-        return mOffset;
-    }
+    sf::Vector2f getOffset() const;
 
-    void setOffset( sf::Vector2f offset )
-    {
-        mOffset = offset;
-    }
+    void setOffset( sf::Vector2f offset );
 
-    float getZoom() const
-    {
-        return mZoom;
-    }
+    float getZoom() const;
 
-    void setZoom( float zoom )
-    {
-        mZoom = 1.f / zoom;
-    }
+    void setZoom( float zoom );
+
+    sf::Vector2f getPosition() const;
 
 private:
     GameObject* mFollowTarget;

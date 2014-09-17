@@ -12,11 +12,17 @@ public:
 
     virtual void jump( GameObject& object ) = 0;
 
-    virtual void wallJump( GameObject& object ) = 0;
-
     virtual float getMoveSpeed() const = 0;
 
     virtual void setMoveSpeed( float movespeed ) = 0;
+
+    virtual float getAcceleration() const = 0;
+
+    virtual void setAcceleration( float accel ) = 0;
+
+    virtual float getFriction() const = 0;
+
+    virtual void setFriction( float friction ) = 0;
 
     virtual float getJumpHeight() const = 0;
 

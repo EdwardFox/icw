@@ -4,13 +4,13 @@
 #include "lib/components/PlayerMovementComponent.hpp"
 
 PlayerMovementComponent::PlayerMovementComponent() :
-        mMoveSpeed( 1.f )
-        , mJumpHeight( -5.f )
-        , mWallBounceStrength( 8.f )
+        mMoveSpeed( 5.f )
+        , mAcceleration( 0.1f )
+        , mFriction( 1.f )
+        , mJumpHeight( -1.0f )
+        , mWallBounceStrength( 1.25f )
         , mDelayThresholdAfterJump( 100 )
         , mCurrentDelayAfterJump( 100 )
-        , mDelayThresholdAfterWallJump( 2000 )
-        , mCurrentDelayAfterWallJump()
 {
     this->setType( "MovementComponent" );
 }
@@ -20,26 +20,31 @@ void PlayerMovementComponent::update( GameObject& object, sf::Time dt )
     IStateHandlerComponent* stateComp = dynamic_cast<IStateHandlerComponent*>(object.getComponent( "StateHandlerComponent" ) );
     IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object.getComponent( "PhysicsComponent" ));
 
-    if ( physComp->isInAir() )
+    if ( physComp )
     {
-        stateComp->changeState( object, "jump" );
+        if ( physComp->isInAir() )
+        {
+            if ( stateComp )
+            {
+                stateComp->changeState( object, "jump" );
+            }
+
+            physComp->setFriction( 0.f );
+        }
     }
 
-    if ( stateComp->getCurrentState() == "jump" )
+    if ( physComp )
     {
-        if ( mCurrentDelayAfterJump > mDelayThresholdAfterJump )
+        if ( !physComp->isInAir() )
         {
-            if ( physComp )
+            physComp->setFriction( mFriction );
+            if ( mCurrentDelayAfterJump > mDelayThresholdAfterJump )
             {
-                if ( !physComp->isInAir() )
-                {
-                    stateComp->changeState( object, "land" );
-                    mCurrentDelayAfterJump = 0;
-                }
+                stateComp->changeState( object, "land" );
+                mCurrentDelayAfterJump = 0;
             }
+            mCurrentDelayAfterJump += dt.asMilliseconds();
         }
-
-        mCurrentDelayAfterJump += dt.asMilliseconds();
     }
 }
 
@@ -51,21 +56,29 @@ void PlayerMovementComponent::move( GameObject& object, Movement mov )
     {
         if ( physComp->getBodyType() != b2_staticBody )
         {
-            b2Vec2 vel = physComp->getLinearVelocity();
 
             if ( (!physComp->isInAir() && stateComp->getCurrentState() == "attack") || mov == Movement::Idle )
             {
+                b2Vec2 vel = physComp->getLinearVelocity();
                 vel.x = 0.f;
+                physComp->setLinearVelocity( vel );
             }
             else
             {
                 if ( mov == Movement::Left )
-                    vel.x = -mMoveSpeed;
+                {
+                    physComp->addLinearImpulse( b2Vec2( -mAcceleration, 0.f ) );
+                    if ( physComp->getLinearVelocity().x < -mMoveSpeed )
+                        physComp->setLinearVelocity( b2Vec2( -mMoveSpeed, physComp->getLinearVelocity().y ) );
+                }
                 else if ( mov == Movement::Right )
-                    vel.x = mMoveSpeed;
+                {
+                    physComp->addLinearImpulse( b2Vec2( mAcceleration, 0.f ) );
+                    if ( physComp->getLinearVelocity().x > mMoveSpeed )
+                        physComp->setLinearVelocity( b2Vec2( mMoveSpeed, physComp->getLinearVelocity().y ) );
+                }
             }
 
-            physComp->setLinearVelocity( vel );
         }
     }
 }
@@ -80,30 +93,9 @@ void PlayerMovementComponent::jump( GameObject& object )
             if ( physComp->getBodyType() != b2_staticBody )
             {
                 b2Vec2 vel = physComp->getLinearVelocity();
-                vel.y = mJumpHeight;
-
-                physComp->setLinearVelocity( vel );
-            }
-        }
-    }
-}
-
-void PlayerMovementComponent::wallJump( GameObject& object )
-{
-    IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object.getComponent( "PhysicsComponent" ) );
-    if ( physComp )
-    {
-        if( mCurrentDelayAfterWallJump.getElapsedTime().asMilliseconds() > mDelayThresholdAfterWallJump )
-        {
-            Collision col = physComp->hitWall();
-            if ( col != Collision::None )
-            {
-                // TODO: Rework walking with impulses instead of setVelocity()
-                b2Vec2 vel = physComp->getLinearVelocity();
-                vel.x = (col == Collision::Left) ? mWallBounceStrength : -mWallBounceStrength;
-                vel.y = mJumpHeight;
-                physComp->setLinearVelocity( vel );
-                mCurrentDelayAfterWallJump.restart();
+                physComp->setLinearVelocity( b2Vec2( vel.x, 0.f ) );
+                physComp->addLinearImpulse( b2Vec2( 0.f, mJumpHeight ) );
+                physComp->setFriction( 0.f );
             }
         }
     }
@@ -117,6 +109,26 @@ float PlayerMovementComponent::getMoveSpeed() const
 void PlayerMovementComponent::setMoveSpeed( float movespeed )
 {
     mMoveSpeed = movespeed;
+}
+
+float PlayerMovementComponent::getAcceleration() const
+{
+    return mAcceleration;
+}
+
+void PlayerMovementComponent::setAcceleration( float accel )
+{
+    mAcceleration = accel;
+}
+
+float PlayerMovementComponent::getFriction() const
+{
+    return mFriction;
+}
+
+void PlayerMovementComponent::setFriction( float friction )
+{
+    mFriction = friction;
 }
 
 float PlayerMovementComponent::getJumpHeight() const

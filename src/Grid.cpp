@@ -1,8 +1,9 @@
 #include "lib/Grid.hpp"
+#include "lib/Camera.hpp"
 
 Grid::Grid() :
         mGrid()
-        , mTileSize( TILE_SIZE*4 )
+        , mTileSize( TILE_SIZE )
 {
 
 }
@@ -53,11 +54,27 @@ void Grid::setTileSize( unsigned tileSize )
     mTileSize = tileSize;
 }
 
-void Grid::render( sf::RenderTarget& target, sf::Time dt ) const
+void Grid::render( sf::RenderTarget& target, sf::Time dt, sf::Vector2u windowSize, const Camera* camera ) const
 {
+    // Get the visible screen space
+    sf::FloatRect screen(
+            camera->getPosition().x - windowSize.x / (2.f * camera->getZoom()) + camera->getOffset().x,
+            camera->getPosition().y - windowSize.y / (2.f * camera->getZoom()) + camera->getOffset().y,
+            windowSize.x / 2.f + 16.f, // +16.f to adjust for calculation deviances
+            windowSize.y / 2. + 16.f // + 16.f to adjust for calculation deviances
+    );
+
+    // Draw all objects in the grid
     for ( std::map<std::string, entPtr>::const_iterator it = mGrid.begin(); it != mGrid.end(); ++it )
     {
-        it->second->render( target, dt );
+        // Get the object space
+        sf::FloatRect object( it->second->getPosition(), it->second->getSize() );
+
+        // Render the object only if it lies within our screen space
+        if ( screen.intersects( object ) )
+        {
+            it->second->render( target, dt );
+        }
     }
 }
 

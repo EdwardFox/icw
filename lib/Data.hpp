@@ -23,4 +23,12 @@ enum class Collision
     None
 };
 
+enum class Contact
+{
+    PreSolve,
+    Begin,
+    End,
+    PostSolve
+};
+
 #endif

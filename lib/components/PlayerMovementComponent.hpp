@@ -13,13 +13,19 @@ public:
 
     virtual void jump( GameObject& object );
 
-    virtual void wallJump( GameObject& object );
-
     virtual void update( GameObject& object, sf::Time dt );
 
     virtual float getMoveSpeed() const;
 
     virtual void setMoveSpeed( float movespeed );
+
+    virtual float getAcceleration() const;
+
+    virtual void setAcceleration( float accel );
+
+    virtual float getFriction() const;
+
+    virtual void setFriction( float friction );
 
     virtual float getJumpHeight() const;
 
@@ -35,12 +41,12 @@ public:
 
 private:
     float mMoveSpeed;
+    float mAcceleration;
+    float mFriction;
     float mJumpHeight;
     float mWallBounceStrength;
     int mDelayThresholdAfterJump;
     int mCurrentDelayAfterJump;
-    int mDelayThresholdAfterWallJump;
-    sf::Clock mCurrentDelayAfterWallJump;
 };
 
 #endif
