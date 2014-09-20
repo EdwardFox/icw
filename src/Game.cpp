@@ -23,14 +23,14 @@ void Game::processEvents()
 
 void Game::render( sf::Time dt )
 {
-    mWindow.clear( sf::Color::Cyan );
+    mWindow.clear( sf::Color( 0, 100, 150) );
     mWorld.render( mWindow, dt, mWindow.getSize() );
     mWindow.display();
 }
 
 void Game::update( sf::Time dt )
 {
-    mWorld.update( dt );
+    mWorld.update( dt, mWindow.getSize() );
 }
 
 void Game::run()

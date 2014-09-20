@@ -15,7 +15,7 @@ class Grid
 public:
     typedef std::unique_ptr<GameObject> entPtr;
 
-    Grid();
+    Grid( std::string name );
 
     GameObject* const getTile( std::string key ) const;
 
@@ -35,8 +35,13 @@ public:
 
     void update( sf::Time dt );
 
+    std::string getName() const;
+
+    void setName( std::string name );
+
 private:
 
+    std::string mName;
     std::map<std::string, entPtr> mGrid;
     unsigned mTileSize;
 };

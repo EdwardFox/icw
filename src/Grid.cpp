@@ -1,8 +1,9 @@
 #include "lib/Grid.hpp"
 #include "lib/Camera.hpp"
 
-Grid::Grid() :
-        mGrid()
+Grid::Grid( std::string name ) :
+        mName( name )
+        , mGrid()
         , mTileSize( TILE_SIZE )
 {
 
@@ -60,8 +61,9 @@ void Grid::render( sf::RenderTarget& target, sf::Time dt, sf::Vector2u windowSiz
     sf::FloatRect screen(
             camera->getPosition().x - windowSize.x / (2.f * camera->getZoom()) + camera->getOffset().x,
             camera->getPosition().y - windowSize.y / (2.f * camera->getZoom()) + camera->getOffset().y,
-            windowSize.x / 2.f + 16.f, // +16.f to adjust for calculation deviances
-            windowSize.y / 2. + 16.f // + 16.f to adjust for calculation deviances
+            windowSize.x / camera->getZoom() + 16.f, // +16.f to adjust for window borders (probably)
+            windowSize.y / camera->getZoom() + 16.f //  +16.f to adjust for window borders (probably
+            // TODO: Verify why we need the 16.f
     );
 
     // Draw all objects in the grid
@@ -84,4 +86,14 @@ void Grid::update( sf::Time dt )
     {
         it->second->update( dt );
     }
+}
+
+std::string Grid::getName() const
+{
+    return mName;
+}
+
+void Grid::setName( std::string name )
+{
+    mName = name;
 }

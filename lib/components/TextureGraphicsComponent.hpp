@@ -14,7 +14,10 @@ public:
 
     virtual void render( sf::RenderTarget& target, sf::Time dt ) const;
 
+    virtual void setTexture( sf::Texture& texture, sf::IntRect rect );
+
 private:
+    sf::Texture* mTexture;
     sf::Sprite mSprite;
 };
 

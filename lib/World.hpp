@@ -6,6 +6,7 @@
 #include "lib/ResourceHolder.hpp"
 #include "lib/Camera.hpp"
 #include "lib/PhysicsContactListener.hpp"
+#include "lib/Map.hpp"
 
 class World
 {
@@ -14,9 +15,11 @@ public:
 
     void initializeTextures();
 
-    void update( sf::Time dt );
+    void update( sf::Time dt, sf::Vector2u windowSize );
 
     void render( sf::RenderTarget& target, sf::Time dt, sf::Vector2u windowSize ) const;
+
+    void loadMap( std::string path );
 
 private:
     void createPlayer();
@@ -29,10 +32,12 @@ private:
     ResourceHolder<sf::Texture, std::string> mTextures;
 
     // Game World
-    Grid mGrid;
+    std::vector<std::unique_ptr<Grid>> mGrids;
     b2World mPhysics;
     Camera mCamera;
     GameObject mPlayer;
+    std::unordered_map<std::string, Map> mMaps;
+    Map* mActiveMap;
 
     PhysicsContactListener mListener;
 };

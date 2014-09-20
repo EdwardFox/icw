@@ -1,8 +1,8 @@
 #include "lib/interfaces/IPhysicsComponent.hpp"
-#include "lib/components/TestAIComponent.hpp"
+#include "lib/components/TestAI2Component.hpp"
 #include "lib/GameObject.hpp"
 
-TestAIComponent::TestAIComponent() :
+TestAI2Component::TestAI2Component() :
         mThreshold( 50.f )
         , mCurrent( 0.f )
         , mIncreaser( 1.f )
@@ -10,7 +10,7 @@ TestAIComponent::TestAIComponent() :
     this->setType( "InputComponent" );
 }
 
-void TestAIComponent::update( GameObject& object, sf::Time dt )
+void TestAI2Component::update( GameObject& object, sf::Time dt )
 {
     IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object.getComponent( "PhysicsComponent" ) );
     if( physComp )

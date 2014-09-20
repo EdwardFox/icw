@@ -15,14 +15,67 @@ add_definitions(-g -Wall -std=c++11)
 include_directories(${CMAKE_SOURCE_DIR})
 
 # Source files
-set(SOURCE_FILES src/Main.cpp src/Game.cpp src/GameObject.cpp src/Grid.cpp src/World.cpp src/components/SolidColorGraphicsComponent.cpp src/components/TextureGraphicsComponent.cpp src/components/AnimationGraphicsComponent.cpp src/components/Box2DPhysicsComponent.cpp src/components/TestAIComponent.cpp src/components/PlayerInputComponent.cpp src/Animation.cpp src/PhysicsContactListener.cpp src/components/PlayerMovementComponent.cpp src/Camera.cpp src/State.cpp src/components/DefaultStateHandlerComponent.cpp src/PhysicsSensor.cpp)
+set(SOURCE_FILES
+
+    lib/Animation.hpp
+    lib/Camera.hpp
+    lib/Data.hpp
+    lib/Game.hpp
+    lib/GameObject.hpp
+    lib/Grid.hpp
+    lib/Map.hpp
+    lib/PhysicsContactListener.hpp
+    lib/PhysicsSensor.hpp
+    lib/ResourceHolder.hpp
+    lib/ResourceHolder.inl
+    lib/State.hpp
+    lib/World.hpp
+    lib/interfaces/IComponent.hpp
+    lib/interfaces/IContactable.hpp
+    lib/interfaces/IGraphicsComponent.hpp
+    lib/interfaces/IInputComponent.hpp
+    lib/interfaces/IMovementComponent.hpp
+    lib/interfaces/IPhysicsComponent.hpp
+    lib/interfaces/IStateHandlerComponent.hpp
+    lib/components/AnimationGraphicsComponent.hpp
+    lib/components/Box2DPhysicsComponent.hpp
+    lib/components/DefaultStateHandlerComponent.hpp
+    lib/components/PlayerInputComponent.hpp
+    lib/components/PlayerMovementComponent.hpp
+    lib/components/SolidColorGraphicsComponent.hpp
+    lib/components/TestAI2Component.hpp
+    lib/components/TextureGraphicsComponent.hpp
+
+    src/Animation.cpp
+    src/Camera.cpp
+    src/Game.cpp
+    src/GameObject.cpp
+    src/Grid.cpp
+    src/Main.cpp
+    src/Map.cpp
+    src/PhysicsContactListener.cpp
+    src/PhysicsSensor.cpp
+    src/State.cpp
+    src/World.cpp
+    src/components/AnimationGraphicsComponent.cpp
+    src/components/Box2DPhysicsComponent.cpp
+    src/components/DefaultStateHandlerComponent.cpp
+    src/components/PlayerInputComponent.cpp
+    src/components/PlayerMovementComponent.cpp
+    src/components/SolidColorGraphicsComponent.cpp
+    src/components/TestAI2Component.cpp
+    src/components/TextureGraphicsComponent.cpp
+)
 
 # Executable
 add_executable(ICW ${SOURCE_FILES})
 
 # Copy resource files
-configure_file(media/textures/DefaultTile.png media/textures/DefaultTile.png COPYONLY)
-configure_file(media/textures/DefaultAnimation.png media/textures/DefaultAnimation.png COPYONLY)
+## Maps
+configure_file(media/maps/Temple.tmx media/maps/Temple.tmx COPYONLY)
+
+## Textures
+configure_file(media/textures/temple.png media/textures/temple.png COPYONLY)
 configure_file(media/textures/ror.png media/textures/ror.png COPYONLY)
 
 # Detect and add cmake modules

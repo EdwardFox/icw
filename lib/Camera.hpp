@@ -10,7 +10,7 @@ class Camera
 public:
     Camera();
 
-    void update( sf::Time dt );
+    void update( sf::Time dt, sf::Vector2u windowSize );
 
     void render( sf::RenderTarget& target, sf::Time dt ) const;
 
@@ -26,11 +26,16 @@ public:
 
     sf::Vector2f getPosition() const;
 
+    sf::IntRect getBorders() const;
+
+    void setBorders( sf::IntRect borders );
+
 private:
     GameObject* mFollowTarget;
     sf::Vector2f mOffset;
     float mZoom;
     sf::Vector2f mLag;
+    sf::IntRect mBorders;
 };
 
 #endif

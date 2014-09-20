@@ -6,7 +6,7 @@
 PlayerMovementComponent::PlayerMovementComponent() :
         mMoveSpeed( 5.f )
         , mAcceleration( 0.1f )
-        , mFriction( 1.f )
+        , mFriction( 0.f )
         , mJumpHeight( -1.0f )
         , mWallBounceStrength( 1.25f )
         , mDelayThresholdAfterJump( 100 )

@@ -2,7 +2,8 @@
 #include "lib/GameObject.hpp"
 
 TextureGraphicsComponent::TextureGraphicsComponent() :
-        mSprite()
+        mTexture( nullptr )
+        , mSprite()
 {
     this->setType( "GraphicsComponent" );
 }
@@ -22,4 +23,12 @@ void TextureGraphicsComponent::update( GameObject& object, sf::Time dt )
 void TextureGraphicsComponent::render( sf::RenderTarget& target, sf::Time dt ) const
 {
     target.draw( mSprite );
+}
+
+void TextureGraphicsComponent::setTexture( sf::Texture& texture, sf::IntRect rect )
+{
+    mTexture = &texture;
+    mSprite.setTexture( *mTexture );
+    mSprite.setTextureRect( rect );
+    mSprite.setOrigin( rect.width / 2.f, rect.height / 2.f );
 }

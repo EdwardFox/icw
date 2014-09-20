@@ -4,10 +4,10 @@
 #include "lib/interfaces/IComponent.hpp"
 #include "lib/interfaces/IInputComponent.hpp"
 
-class TestAIComponent : public IComponent, public IInputComponent
+class TestAI2Component : public IComponent, public IInputComponent
 {
     public:
-        TestAIComponent();
+        TestAI2Component();
 
         virtual void update(GameObject& object, sf::Time dt);
     private:
