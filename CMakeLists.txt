@@ -76,6 +76,7 @@ configure_file(media/maps/Temple.tmx media/maps/Temple.tmx COPYONLY)
 
 ## Textures
 configure_file(media/textures/temple.png media/textures/temple.png COPYONLY)
+configure_file(media/textures/ruins.png media/textures/ruins.png COPYONLY)
 configure_file(media/textures/ror.png media/textures/ror.png COPYONLY)
 
 # Detect and add cmake modules
