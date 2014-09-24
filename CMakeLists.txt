@@ -30,6 +30,7 @@ set(SOURCE_FILES
     lib/ResourceHolder.inl
     lib/State.hpp
     lib/World.hpp
+    lib/interfaces/IActionComponent.hpp
     lib/interfaces/IComponent.hpp
     lib/interfaces/IContactable.hpp
     lib/interfaces/IGraphicsComponent.hpp
@@ -37,13 +38,14 @@ set(SOURCE_FILES
     lib/interfaces/IMovementComponent.hpp
     lib/interfaces/IPhysicsComponent.hpp
     lib/interfaces/IStateHandlerComponent.hpp
+    lib/components/ActionComponent.hpp
     lib/components/AnimationGraphicsComponent.hpp
     lib/components/Box2DPhysicsComponent.hpp
     lib/components/DefaultStateHandlerComponent.hpp
     lib/components/PlayerInputComponent.hpp
     lib/components/PlayerMovementComponent.hpp
     lib/components/SolidColorGraphicsComponent.hpp
-    lib/components/TestAI2Component.hpp
+    lib/components/ProjectileAIComponent.hpp
     lib/components/TextureGraphicsComponent.hpp
 
     src/Animation.cpp
@@ -57,13 +59,14 @@ set(SOURCE_FILES
     src/PhysicsSensor.cpp
     src/State.cpp
     src/World.cpp
+    src/components/ActionComponent.cpp
     src/components/AnimationGraphicsComponent.cpp
     src/components/Box2DPhysicsComponent.cpp
     src/components/DefaultStateHandlerComponent.cpp
     src/components/PlayerInputComponent.cpp
     src/components/PlayerMovementComponent.cpp
     src/components/SolidColorGraphicsComponent.cpp
-    src/components/TestAI2Component.cpp
+    src/components/ProjectileAIComponent.cpp
     src/components/TextureGraphicsComponent.cpp
 )
 

@@ -18,7 +18,7 @@ void PhysicsSensor::createSensor( b2World& physics, b2Body* body, b2Vec2 size, b
 
     mSensorShape.SetAsBox( size.x, size.y, position, 0 );
     mSensorFixture = body->CreateFixture( &mFixtureDef );
-    mSensorFixture->SetUserData( ( void* )this );
+    mSensorFixture->SetUserData( static_cast<void*>(dynamic_cast<IContactable*>(this)) );
 }
 
 void PhysicsSensor::setFriction( float friction )
@@ -28,10 +28,15 @@ void PhysicsSensor::setFriction( float friction )
 
 void PhysicsSensor::onContact( Contact contact )
 {
-    if( Contact::Begin == contact )
+    if ( Contact::Begin == contact )
         mContacts++;
-    else if( Contact::End == contact )
+    else if ( Contact::End == contact )
         mContacts--;
+}
+
+void PhysicsSensor::onContact( Contact contact, IContactable* other )
+{
+    this->onContact( contact );
 }
 
 int PhysicsSensor::getContacts() const

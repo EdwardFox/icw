@@ -21,7 +21,10 @@ public:
 
     void loadMap( std::string path );
 
+    GameObject* createGameObject( sf::Vector2f position, sf::Vector2f size );
+
 private:
+
     void createPlayer();
 
     void createPlayerAnimations();
@@ -33,11 +36,14 @@ private:
 
     // Game World
     std::vector<std::unique_ptr<Grid>> mGrids;
+    std::unordered_map<std::string, Map> mMaps;
+    std::vector<std::unique_ptr<GameObject>> mObjects;
+    std::vector<std::unique_ptr<GameObject>> mObjectsToCreate;
     b2World mPhysics;
     Camera mCamera;
-    GameObject mPlayer;
-    std::unordered_map<std::string, Map> mMaps;
+    GameObject* mPlayer;
     Map* mActiveMap;
+    Grid* mWorldGrid;
 
     PhysicsContactListener mListener;
 };

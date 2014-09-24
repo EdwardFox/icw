@@ -1,21 +1,25 @@
 #include "lib/World.hpp"
-#include "lib/components/TestAI2Component.hpp"
-#include "lib/components/PlayerInputComponent.hpp"
+#include "lib/components/ActionComponent.hpp"
+#include "lib/components/AnimationGraphicsComponent.hpp"
 #include "lib/components/Box2DPhysicsComponent.hpp"
+#include "lib/components/DefaultStateHandlerComponent.hpp"
+#include "lib/components/PlayerInputComponent.hpp"
+#include "lib/components/PlayerMovementComponent.hpp"
+#include "lib/components/ProjectileAIComponent.hpp"
 #include "lib/components/SolidColorGraphicsComponent.hpp"
 #include "lib/components/TextureGraphicsComponent.hpp"
-#include "lib/components/AnimationGraphicsComponent.hpp"
-#include "lib/components/PlayerMovementComponent.hpp"
-#include "lib/components/DefaultStateHandlerComponent.hpp"
 
 World::World() :
         mTextures()
         , mGrids()
+        , mMaps()
+        , mObjects()
+        , mObjectsToCreate()
         , mPhysics( b2Vec2( 0.f, 9.8f ) )
         , mCamera()
-        , mPlayer()
-        , mMaps()
+        , mPlayer( nullptr )
         , mActiveMap( nullptr )
+        , mWorldGrid( nullptr )
         , mListener()
 {
     // Initialize Resources
@@ -23,10 +27,11 @@ World::World() :
     mPhysics.SetContactListener( &mListener );
 
     this->loadMap( "media/maps/Temple.tmx" );
+    this->createPlayer();
 
     mCamera.setOffset( sf::Vector2f( 0.f, -50.f ) );
     mCamera.setZoom( 3.f );
-    mCamera.setFollowTarget( &mPlayer );
+    mCamera.setFollowTarget( mPlayer );
     sf::IntRect rect( 0, 0, mActiveMap->getMapSize().x * mActiveMap->getTileSize().x, mActiveMap->getMapSize().y * mActiveMap->getTileSize().x );
     mCamera.setBorders( rect );
 }
@@ -35,12 +40,15 @@ void World::render( sf::RenderTarget& target, sf::Time dt, sf::Vector2u windowSi
 {
     mCamera.render( target, dt );
 
-    for( auto& grid : mGrids )
+    for ( auto& grid : mGrids )
     {
         grid->render( target, dt, windowSize, &mCamera );
-        if( grid->getName() == "World" )
+        if ( grid->getName() == "World" )
         {
-            mPlayer.render( target, dt );
+            for ( auto& object : mObjects )
+            {
+                object->render( target, dt );
+            }
         }
     }
 }
@@ -51,25 +59,45 @@ void World::update( sf::Time dt, sf::Vector2u windowSize )
 
     mCamera.update( dt, windowSize );
 
-    for( auto& grid : mGrids )
+    for ( auto& grid : mGrids )
     {
         grid->update( dt );
     }
 
-    mPlayer.update( dt );
+    for ( auto& object : mObjects )
+    {
+        object->update( dt );
+    }
+
+    for ( auto& object : mObjectsToCreate )
+    {
+        mObjects.push_back( std::unique_ptr<GameObject>( std::move( object ) ) );
+    }
+    mObjectsToCreate.clear();
 }
 
 void World::loadMap( std::string path )
 {
-    Map map;
-    map.load( path, mTextures );
-    mMaps.emplace( path, map );
-    mActiveMap = &mMaps.at( path );
+    try
+    {
+        mActiveMap = &mMaps.at( path );
+    }
+    catch ( std::out_of_range oor )
+    {
+        Map map;
+        map.load( path, mTextures );
+        mMaps.emplace( path, map );
+        mActiveMap = &mMaps.at( path );
+    }
 
-    for( auto& layer : map.getLayers() )
+    for ( auto& layer : mActiveMap->getLayers() )
     {
         Grid* grid = new Grid( layer.name );
-        grid->setTileSize( map.getTileSize().x );
+
+        if ( layer.name == "World" )
+            mWorldGrid = grid;
+
+        grid->setTileSize( mActiveMap->getTileSize().x );
 
         for ( int i = 0; i < layer.rows; ++i )
         {
@@ -84,15 +112,15 @@ void World::loadMap( std::string path )
                 pos = sf::Vector2f( j * grid->getTileSize(), i * grid->getTileSize() );
                 sf::Vector2f size( grid->getTileSize(), grid->getTileSize() );
 
-                GameObject* obj = new GameObject();
-                sf::Texture& tex = mTextures.get( map.getTiles().at( gid - 1 ).key );
+                GameObject* obj = new GameObject( this );
+                sf::Texture& tex = mTextures.get( mActiveMap->getTiles().at( gid - 1 ).key );
                 TextureGraphicsComponent* tgc = new TextureGraphicsComponent();
-                tgc->setTexture( tex, map.getTiles().at( gid - 1 ).rect );
+                tgc->setTexture( tex, mActiveMap->getTiles().at( gid - 1 ).rect );
                 obj->setGraphicComponent( tgc );
                 obj->setPosition( pos );
                 obj->setSize( size );
 
-                if( layer.name == "World" )
+                if ( layer.name == "World" )
                 {
                     Box2DPhysicsComponent* staticPhysics = new Box2DPhysicsComponent( mPhysics, *obj, b2_staticBody );
                     obj->attachComponent( "PhysicsComponent", staticPhysics );
@@ -102,11 +130,8 @@ void World::loadMap( std::string path )
             }
         }
 
-        mGrids.push_back( std::unique_ptr<Grid>(grid) );
+        mGrids.push_back( std::unique_ptr<Grid>( grid ) );
     }
-
-    mPlayer.setPosition( sf::Vector2f( map.getObjectGroups().at( 0 ).objects.at( 0 ).left, map.getObjectGroups().at( 0 ).objects.at( 0 ).top ) );
-    createPlayer();
 }
 
 void World::initializeTextures()
@@ -116,20 +141,64 @@ void World::initializeTextures()
 
 void World::createPlayer()
 {
+    sf::Vector2f position = sf::Vector2f( mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).left, mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).top );
+    sf::Vector2f size = sf::Vector2f( 10.f, 11.f );
+    mPlayer = this->createGameObject( position, size );
+
     this->createPlayerAnimations();
     this->createPlayerStates();
 
-    mPlayer.setSize( sf::Vector2f( 10.f, 11.f ) );
-
-    Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( mPhysics, mPlayer, b2_dynamicBody );
+    Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( mPhysics, *mPlayer, b2_dynamicBody );
     dynPhysics->setFixedRotation( true );
-    mPlayer.attachComponent( "PhysicsComponent", dynPhysics );
+    dynPhysics->createDefaultSensors( mPhysics, *mPlayer );
+    mPlayer->attachComponent( "PhysicsComponent", dynPhysics );
 
     PlayerInputComponent* tic = new PlayerInputComponent();
-    mPlayer.attachComponent( "InputComponent", tic );
+    mPlayer->attachComponent( "InputComponent", tic );
 
     PlayerMovementComponent* pmc = new PlayerMovementComponent();
-    mPlayer.attachComponent( "MovementComponent", pmc );
+    mPlayer->attachComponent( "MovementComponent", pmc );
+
+    ActionComponent* ac = new ActionComponent();
+    ac->addAction(
+            "shoot", [this]( GameObject& object )
+        {
+            sf::Vector2f velocity( 10.f, 0.f );
+            sf::Vector2f size( 4.f, 4.f );
+            sf::Vector2f pos = object.getPosition();
+
+            float offsetX = 15.f;
+
+            AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(object.getGraphicComponent());
+            if ( animComp )
+            {
+                if ( animComp->getFlipped().x == -1.f )
+                {
+                    offsetX = -offsetX;
+                    velocity.x = -velocity.x;
+                }
+            }
+
+            pos.x += offsetX;
+
+            GameObject* projectile = object.mWorld->createGameObject( pos, size );
+            projectile->setPosition( pos );
+            projectile->setSize( size );
+
+            SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( projectile->getSize() );
+            projectile->setGraphicComponent( solid );
+
+            Box2DPhysicsComponent* box = new Box2DPhysicsComponent( mPhysics, *projectile, b2_dynamicBody );
+            box->setGravityScale( 0.f );
+            box->setContactable( true );
+            projectile->attachComponent( "PhysicsComponent", box );
+
+            ProjectileAIComponent* proj = new ProjectileAIComponent();
+            proj->setVelocity( velocity );
+            projectile->attachComponent( "InputComponent", proj );
+        }
+    );
+    mPlayer->attachComponent( "ActionComponent", ac );
 }
 
 void World::createPlayerAnimations()
@@ -171,7 +240,7 @@ void World::createPlayerAnimations()
     agc->addAnimation( "attack", attack );
     agc->setAnimation( "idle" );
 
-    mPlayer.setGraphicComponent( agc );
+    mPlayer->setGraphicComponent( agc );
 }
 
 void World::createPlayerStates()
@@ -216,5 +285,16 @@ void World::createPlayerStates()
     dsc->addState( "attack", attack );
     dsc->setStartState( "idle" );
 
-    mPlayer.attachComponent( "StateHandlerComponent", dsc );
+    mPlayer->attachComponent( "StateHandlerComponent", dsc );
+}
+
+GameObject* World::createGameObject( sf::Vector2f position, sf::Vector2f size )
+{
+    GameObject* obj = new GameObject( this );
+    obj->setPosition( position );
+    obj->setSize( size );
+
+    mObjectsToCreate.push_back( std::unique_ptr<GameObject>( obj ) );
+
+    return obj;
 }

@@ -55,7 +55,7 @@ void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textu
     this->mTileSize = sf::Vector2i( atoi( tilewidth->value() ), atoi( tileheight->value() ) );
 
     std::cout << "Map size is " << this->mMapSize.x << "x" << this->mMapSize.y << " tiles" << std::endl;
-    std::cout << "Tile size is " << this->mTileSize.x << "x" << this->mMapSize.y << " pixels" << std::endl << std::endl;
+    std::cout << "Tile size is " << this->mTileSize.x << "x" << this->mTileSize.y << " pixels" << std::endl << std::endl;
     std::cout << "--- --- --- --- ---" << std::endl;
 
 

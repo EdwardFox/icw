@@ -32,7 +32,7 @@ sf::Vector2i Grid::getGridPosition( sf::Vector2f position )
 std::string Grid::getTileKeyByPosition( sf::Vector2f position )
 {
     sf::Vector2i tilePos = this->getGridPosition( position );
-    return std::to_string( ( int )tilePos.x ) + "_" + std::to_string( ( int )tilePos.y );
+    return std::to_string( tilePos.x ) + "_" + std::to_string( tilePos.y );
 }
 
 unsigned Grid::getTileSize() const

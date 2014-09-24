@@ -9,6 +9,8 @@ class PlayerMovementComponent : public IComponent, public IMovementComponent
 public:
     PlayerMovementComponent();
 
+    virtual ~PlayerMovementComponent() {};
+
     virtual void move( GameObject& object, Movement mov );
 
     virtual void jump( GameObject& object );

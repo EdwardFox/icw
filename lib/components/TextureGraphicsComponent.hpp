@@ -10,6 +10,8 @@ public:
 
     TextureGraphicsComponent( sf::Texture& texture );
 
+    virtual ~TextureGraphicsComponent() {};
+
     virtual void update( GameObject& object, sf::Time dt );
 
     virtual void render( sf::RenderTarget& target, sf::Time dt ) const;

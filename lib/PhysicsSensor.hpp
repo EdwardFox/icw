@@ -15,6 +15,8 @@ public:
 
     virtual void onContact( Contact contact );
 
+    virtual void onContact( Contact contact, IContactable* other );
+
     int getContacts() const;
 
     void setContacts( int contact );

@@ -1,8 +1,9 @@
 #include "lib/GameObject.hpp"
 #include <stdexcept>
 
-GameObject::GameObject() :
-        mComponents()
+GameObject::GameObject( World* world ) :
+        mWorld( world )
+        , mComponents()
         , mGraphicComponent( nullptr )
         , mPosition( 0, 0 )
         , mSize( TILE_SIZE, TILE_SIZE )
@@ -14,7 +15,7 @@ GameObject::GameObject() :
 
 void GameObject::attachComponent( std::string key, IComponent* component )
 {
-    mComponents[key] = std::unique_ptr<IComponent>( component );
+    mComponents.emplace( key, std::unique_ptr<IComponent>( component ) );
 }
 
 void GameObject::detachComponent( std::string key )
@@ -46,7 +47,7 @@ IGraphicsComponent* const GameObject::getGraphicComponent() const
 
 void GameObject::update( sf::Time dt )
 {
-    for ( std::unordered_map<std::string, std::unique_ptr<IComponent>>::iterator it = mComponents.begin(); it != mComponents.end(); ++it )
+    for ( auto it = mComponents.begin(); it != mComponents.end(); ++it )
     {
         it->second->update( *(this), dt );
     }

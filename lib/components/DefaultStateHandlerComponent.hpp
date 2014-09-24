@@ -11,6 +11,8 @@ class DefaultStateHandlerComponent : public IComponent, public IStateHandlerComp
 public:
     DefaultStateHandlerComponent();
 
+    virtual ~DefaultStateHandlerComponent() {};
+
     virtual void update( GameObject& object, sf::Time dt );
 
     virtual void changeState( GameObject& object, std::string state );

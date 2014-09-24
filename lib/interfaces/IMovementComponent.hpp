@@ -8,6 +8,9 @@ class GameObject;
 class IMovementComponent
 {
 public:
+
+    virtual ~IMovementComponent() {};
+
     virtual void move( GameObject& object, Movement mov ) = 0;
 
     virtual void jump( GameObject& object ) = 0;

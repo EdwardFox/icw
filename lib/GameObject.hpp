@@ -8,11 +8,12 @@
 #include "lib/Data.hpp"
 #include "lib/interfaces/IGraphicsComponent.hpp"
 
+class World;
 
 class GameObject
 {
 public:
-    GameObject();
+    GameObject( World* world );
 
     void attachComponent( std::string key, IComponent* component );
 
@@ -44,13 +45,16 @@ public:
 
     void setRotation( float rotation );
 
+    World* mWorld;
+
 private:
     std::unordered_map<std::string, std::unique_ptr<IComponent>> mComponents;
-    std::unique_ptr<IGraphicsComponent> mGraphicComponent;
 
+    std::unique_ptr<IGraphicsComponent> mGraphicComponent;
     sf::Vector2f mPosition;
     sf::Vector2f mSize;
     sf::Vector2f mVelocity;
+
     float mRotation;
 };
 

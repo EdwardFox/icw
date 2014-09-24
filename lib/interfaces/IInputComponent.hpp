@@ -3,7 +3,8 @@
 
 class IInputComponent
 {
-    // TODO: Fill interface
+public:
+    ~IInputComponent() {};
 };
 
 #endif

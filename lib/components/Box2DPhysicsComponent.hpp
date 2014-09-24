@@ -9,10 +9,14 @@
 #include "lib/PhysicsContactListener.hpp"
 #include "lib/PhysicsSensor.hpp"
 
-class Box2DPhysicsComponent : public IComponent, public IPhysicsComponent
+//class Box2DPhysicsComponent : public IComponent, public IPhysicsComponent//public IContactable, public IComponent, public IPhysicsComponent
+//class Box2DPhysicsComponent : public IContactable, public IComponent, public IPhysicsComponent
+class Box2DPhysicsComponent : public IComponent, public IPhysicsComponent, public IContactable
 {
 public:
     Box2DPhysicsComponent( b2World& physics, GameObject& object, b2BodyType type );
+
+    virtual ~Box2DPhysicsComponent() {};
 
     virtual void update( GameObject& object, sf::Time dt );
 
@@ -38,8 +42,19 @@ public:
 
     virtual const PhysicsSensor* getSensor( std::string key ) const;
 
+    virtual float getGravityScale() const;
+
+    virtual void setGravityScale( float gravityScale );
+
+    virtual void createDefaultSensors( b2World& physics, GameObject& object );
+
+    virtual void onContact( Contact contact );
+
+    virtual void onContact( Contact contact, IContactable* other );
+
+    virtual void setContactable( bool contactable );
+
 private:
-    void createDefaultSensors( b2World& physics, GameObject& object );
 
     std::unordered_map<std::string, std::unique_ptr<PhysicsSensor>> mSensors;
 

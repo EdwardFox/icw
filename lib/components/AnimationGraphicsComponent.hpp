@@ -11,6 +11,8 @@ class AnimationGraphicsComponent : public IGraphicsComponent
 public:
     AnimationGraphicsComponent();
 
+    virtual ~AnimationGraphicsComponent() {};
+
     virtual void update( GameObject& object, sf::Time dt );
 
     virtual void render( sf::RenderTarget& target, sf::Time dt ) const;

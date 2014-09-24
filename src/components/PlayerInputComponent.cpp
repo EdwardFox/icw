@@ -1,6 +1,7 @@
-#include <lib/components/AnimationGraphicsComponent.hpp>
-#include "lib/components/PlayerMovementComponent.hpp"
-#include <lib/interfaces/IStateHandlerComponent.hpp>
+#include "lib/components/AnimationGraphicsComponent.hpp"
+#include "lib/interfaces/IActionComponent.hpp"
+#include "lib/interfaces/IMovementComponent.hpp"
+#include "lib/interfaces/IStateHandlerComponent.hpp"
 #include "lib/components/PlayerInputComponent.hpp"
 #include "lib/GameObject.hpp"
 
@@ -61,6 +62,12 @@ void PlayerInputComponent::update( GameObject& object, sf::Time dt )
 
     if ( sf::Keyboard::isKeyPressed( sf::Keyboard::E ) )
     {
+        IActionComponent* actionComp = dynamic_cast<IActionComponent*>(object.getComponent( "ActionComponent" ));
+        if ( actionComp && stateComp->getCurrentState() != "attack" )
+        {
+            actionComp->executeAction( "shoot", object );
+        }
+
         stateComp->changeState( object, "attack" );
     }
 

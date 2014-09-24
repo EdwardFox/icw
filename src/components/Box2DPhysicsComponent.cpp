@@ -12,11 +12,6 @@ Box2DPhysicsComponent::Box2DPhysicsComponent( b2World& physics, GameObject& obje
 {
     this->setType( "PhysicsComponent" );
     createCollisionBody( physics, object, type );
-
-    if ( type != b2_staticBody )
-    {
-        this->createDefaultSensors( physics, object );
-    }
 }
 
 void Box2DPhysicsComponent::update( GameObject& object, sf::Time dt )
@@ -180,4 +175,36 @@ void Box2DPhysicsComponent::createDefaultSensors( b2World& physics, GameObject& 
     this->addSensor( "ceiling", physics, b2Vec2( (object.getSize().x / 2.f - 2.f) / SCALE, 1.f / SCALE ), b2Vec2( 0, -((object.getSize().y / 2.f) / SCALE) ) );
     this->addSensor( "left", physics, b2Vec2( 1.f / SCALE, (object.getSize().y / 2.f - 2.f) / SCALE ), b2Vec2( -(object.getSize().y / 2.f) / SCALE, 0 ) );
     this->addSensor( "right", physics, b2Vec2( 1.f / SCALE, (object.getSize().y / 2.f - 2.f) / SCALE ), b2Vec2( (object.getSize().y / 2.f) / SCALE, 0 ) );
+}
+
+float Box2DPhysicsComponent::getGravityScale() const
+{
+    return mBody->GetGravityScale();
+}
+
+void Box2DPhysicsComponent::setGravityScale( float gravityScale )
+{
+    mBody->SetGravityScale( gravityScale );
+}
+
+void Box2DPhysicsComponent::onContact( Contact contact )
+{
+    std::cout << "contact" << std::endl;
+}
+
+void Box2DPhysicsComponent::onContact( Contact contact, IContactable* other )
+{
+    std::cout << "test" << std::endl;
+}
+
+void Box2DPhysicsComponent::setContactable( bool contactable )
+{
+    if ( contactable )
+    {
+        this->mBody->SetUserData( static_cast<void*>(dynamic_cast<IContactable*>(this)) );
+    }
+    else
+    {
+        this->mBody->SetUserData( nullptr );
+    }
 }

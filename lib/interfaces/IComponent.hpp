@@ -9,6 +9,9 @@ class GameObject;
 class IComponent
 {
 public:
+
+    virtual ~IComponent() {};
+
     virtual void update( GameObject& object, sf::Time dt ) = 0;
 
     std::string getType() const

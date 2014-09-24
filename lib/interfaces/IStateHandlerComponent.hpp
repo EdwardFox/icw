@@ -10,6 +10,9 @@ class State;
 class IStateHandlerComponent
 {
 public:
+
+    virtual ~IStateHandlerComponent() {};
+
     virtual void changeState( GameObject& object, std::string state ) = 0;
 
     virtual void changeToPreviousState( GameObject& object ) = 0;

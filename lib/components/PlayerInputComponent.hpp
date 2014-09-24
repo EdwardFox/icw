@@ -10,6 +10,8 @@ class PlayerInputComponent : public IComponent, public IInputComponent
 public:
     PlayerInputComponent();
 
+    virtual ~PlayerInputComponent() {};
+
     virtual void update( GameObject& object, sf::Time dt );
 
 private:
