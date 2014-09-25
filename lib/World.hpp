@@ -51,9 +51,9 @@ public:
 
     /**
     * Creates a new game object, handled by the world. New objects are first put
-    * into a separate vector to avoid increasing the object-vectors size and
-    * possibly triggering a reallocation of memory, invalidating all iterators
-    * during iteration.
+    * into a separate vector to avoid increasing the object-vectors size (during iteration)
+    * and possibly triggering a reallocation of memory, invalidating all iterators
+    * during the update loop.
     *
     * sf::Vector2f position - The game world position where the object will be placed
     * sf::Vector2f size     - The size of the game object in pixels
