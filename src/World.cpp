@@ -187,7 +187,7 @@ void World::loadMap( std::string path )
                 /**
                 * Create the game object and its components.
                 * We do not use createGameObject( ... ) at this point since the game objects
-                * belong to their respective grids and are not handled by the world itself.
+                * belong to their respective grids and are not handled by the world directly.
                 */
                 GameObject* obj = new GameObject( this );
                 TextureGraphicsComponent* tgc = new TextureGraphicsComponent( obj );
