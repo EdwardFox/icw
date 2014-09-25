@@ -1,7 +1,6 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <string.h>
 #include "lib/Map.hpp"
 #include "lib/rapidxml/rapidxml.hpp"
 
@@ -18,11 +17,11 @@ Map::Map() :
 void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textures )
 {
     /**
-    * TODO: Add more safety checks
-    * TODO: Make sure all properties from the XML are account for
+    * TODO: Make sure all properties from the XML are accounted for
+    * TODO: Split the load function into smaller sub-functions for better maintainability
     */
 
-    // Load document
+    /** Load document **/
     rapidxml::xml_document<> doc;
     std::ifstream file( map );
     std::stringstream buffer;
@@ -42,15 +41,18 @@ void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textu
 
 
 
-    // General map data
-    rapidxml::xml_node<>* rootMap = doc.first_node();
-    rapidxml::xml_attribute<>* version = rootMap->first_attribute();
-    rapidxml::xml_attribute<>* orientation = version->next_attribute();
-    rapidxml::xml_attribute<>* width = orientation->next_attribute();
-    rapidxml::xml_attribute<>* height = width->next_attribute();
-    rapidxml::xml_attribute<>* tilewidth = height->next_attribute();
-    rapidxml::xml_attribute<>* tileheight = tilewidth->next_attribute();
+    /** Get root node **/
+    rapidxml::xml_node<>* rootMap = doc.first_node( "map" );
 
+    /** Root attributes **/
+    rapidxml::xml_attribute<>* version = rootMap->first_attribute( "version" );
+    rapidxml::xml_attribute<>* orientation = rootMap->first_attribute( "orientation" );
+    rapidxml::xml_attribute<>* width = rootMap->first_attribute( "width" );
+    rapidxml::xml_attribute<>* height = rootMap->first_attribute( "height" );
+    rapidxml::xml_attribute<>* tilewidth = rootMap->first_attribute( "tilewidth" );
+    rapidxml::xml_attribute<>* tileheight = rootMap->first_attribute( "tileheight" );
+
+    /** Set map & tile size **/
     this->mMapSize = sf::Vector2i( atoi( width->value() ), atoi( height->value() ) );
     this->mTileSize = sf::Vector2i( atoi( tilewidth->value() ), atoi( tileheight->value() ) );
 
@@ -59,34 +61,37 @@ void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textu
     std::cout << "--- --- --- --- ---" << std::endl;
 
 
-    // Tiles (of tilesets)
+    /** Parse tiles (of tilesets) **/
     rapidxml::xml_node<>* node;
     for ( node = rootMap->first_node( "tileset" ); node; node = node->next_sibling( "tileset" ) )
     {
-        rapidxml::xml_attribute<>* name = node->first_attribute()->next_attribute();
+        /** Tileset name **/
+        rapidxml::xml_attribute<>* name = node->first_attribute( "name" );
         std::cout << "Parsing tileset " << name->value() << " ..." << std::endl;
 
-        // Image data
-        rapidxml::xml_node<>* image = node->first_node();
-        rapidxml::xml_attribute<>* path = image->first_attribute();
-        rapidxml::xml_attribute<>* imgWidth = path->next_attribute();
-        rapidxml::xml_attribute<>* imgHeight = imgWidth->next_attribute();
+        /** Image data **/
+        rapidxml::xml_node<>* image = node->first_node( "image" );
+        rapidxml::xml_attribute<>* path = image->first_attribute( "source" );
+        rapidxml::xml_attribute<>* imgWidth = image->first_attribute( "width" );
+        rapidxml::xml_attribute<>* imgHeight = image->first_attribute( "height" );
 
-        // Load image into resourceholder
+        /** Load image into resourceholder **/
         std::vector<std::string> parts = explode( path->value(), '/' );
         std::string texturePath = "media/textures/";
         texturePath.append( parts.back() );
         textures.load( parts.back(), texturePath );
-
         std::cout << "Added texture " << texturePath << " with key " << parts.back() << std::endl;
 
+        /** Calculate number of rows & columns **/
         int rows = atoi( imgHeight->value() ) / atoi( tileheight->value() );
         int columns = atoi( imgWidth->value() ) / atoi( tilewidth->value() );
 
+        /** Parse all tiles of the tileset and add it to the vector **/
         for ( int i = 0; i < rows; i++ )
         {
             for ( int j = 0; j < columns; j++ )
             {
+                /** Create and fill Tile with data **/
                 Tile tile;
                 tile.key = parts.back();
                 tile.rect = sf::IntRect(
@@ -105,12 +110,13 @@ void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textu
     std::cout << "--- --- --- --- ---" << std::endl;
 
 
-    // Layer
+    /** Parse Layers **/
     for ( node = rootMap->first_node( "layer" ); node; node = node->next_sibling( "layer" ) )
     {
-        rapidxml::xml_attribute<>* name = node->first_attribute();
-        rapidxml::xml_attribute<>* columns = name->next_attribute();
-        rapidxml::xml_attribute<>* rows = columns->next_attribute();
+        /** Layer attributes **/
+        rapidxml::xml_attribute<>* name = node->first_attribute( "name" );
+        rapidxml::xml_attribute<>* columns = node->first_attribute( "width" );
+        rapidxml::xml_attribute<>* rows = node->first_attribute( "height" );
 
         Layer layer;
         layer.name = name->value();
@@ -119,34 +125,37 @@ void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textu
 
         std::cout << "Parsing layer " << layer.name << std::endl;
 
+        /** Add all tile gids to the layer **/
         int gidCount = 0;
-        for ( rapidxml::xml_node<>* tile = node->first_node()->first_node(); tile; tile = tile->next_sibling() )
+        for ( rapidxml::xml_node<>* tile = node->first_node( "data" )->first_node( "tile" ); tile; tile = tile->next_sibling( "tile" ) )
         {
-            layer.gids.push_back( atoi( tile->first_attribute()->value() ) );
+            layer.gids.push_back( atoi( tile->first_attribute( "gid" )->value() ) );
             ++gidCount;
         }
         std::cout << "Added " << gidCount << "gids to layer " << layer.name << std::endl << std::endl;
 
+        /** Add layer to the layers vector **/
         mLayers.push_back( layer );
     }
     std::cout << "--- --- --- --- ---" << std::endl;
 
 
-    // ObjectGroups
+    /** ObjectGroups **/
     for ( node = rootMap->first_node( "objectgroup" ); node; node = node->next_sibling( "objectgroup" ) )
     {
+        /** Get ObjectGroup Name **/
         ObjectGroup objGroup;
-        objGroup.name = node->first_attribute()->value();
+        objGroup.name = node->first_attribute( "name" )->value();
         std::cout << "Parsing ObjectGroup " << objGroup.name << " ..." << std::endl;
 
-        rapidxml::xml_node<>* object;
-        for ( object = node->first_node(); object; object = object->next_sibling() )
+        /** Parse all objects in the objectgroup **/
+        for ( rapidxml::xml_node<>* object = node->first_node( "object" ); object; object = object->next_sibling( "object" ) )
         {
             sf::IntRect rect(
-                    atoi( object->first_attribute()->value() ),
-                    atoi( object->first_attribute()->next_attribute()->value() ),
-                    atoi( object->first_attribute()->next_attribute()->next_attribute()->value() ),
-                    atoi( object->first_attribute()->next_attribute()->next_attribute()->next_attribute()->value() )
+                    atoi( object->first_attribute( "x" )->value() ),
+                    atoi( object->first_attribute( "y" )->value() ),
+                    atoi( object->first_attribute( "width" )->value() ),
+                    atoi( object->first_attribute( "height" )->value() )
             );
 
             objGroup.objects.push_back( rect );
@@ -161,30 +170,6 @@ void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textu
 
 }
 
-std::vector<Map::Tile> Map::getTiles() const
-{
-    return mTiles;
-}
-
-std::vector<Map::Layer> Map::getLayers() const
-{
-    return mLayers;
-}
-
-std::vector<Map::ObjectGroup> Map::getObjectGroups() const
-{
-    return mGroups;
-}
-
-sf::Vector2i Map::getMapSize() const
-{
-    return mMapSize;
-}
-
-sf::Vector2i Map::getTileSize() const
-{
-    return mTileSize;
-}
 
 std::vector<std::string> Map::explode( const std::string& str, const char& ch ) const
 {

@@ -2,8 +2,9 @@
 #include "lib/components/ProjectileAIComponent.hpp"
 #include "lib/GameObject.hpp"
 
-ProjectileAIComponent::ProjectileAIComponent() :
+ProjectileAIComponent::ProjectileAIComponent( GameObject* gameObject ) :
         mVelocity( 0.f, 0.f )
+        , mGameObject( gameObject )
 {
     this->setType( "ProjectileAIComponent" );
 }
@@ -28,4 +29,9 @@ sf::Vector2f ProjectileAIComponent::getVelocity() const
 void ProjectileAIComponent::setVelocity( sf::Vector2f velocity )
 {
     mVelocity = velocity;
+}
+
+GameObject* ProjectileAIComponent::getGameObject() const
+{
+    return mGameObject;
 }

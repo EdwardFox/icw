@@ -22,27 +22,54 @@ World::World() :
         , mWorldGrid( nullptr )
         , mListener()
 {
-    // Initialize Resources
+    /** Initialize textures (as long as the objects do not do it for themselves **/
     initializeTextures();
+
+    /** We need to set out custom contact listener **/
     mPhysics.SetContactListener( &mListener );
 
+    /**
+    * Load a test map and create the player.
+    * TODO: Create proper user interface to allow choosing different maps
+    */
     this->loadMap( "media/maps/Temple.tmx" );
     this->createPlayer();
 
+    /**
+    * Set up the camera
+    * TODO: Move literals into proper variables
+    */
     mCamera.setOffset( sf::Vector2f( 0.f, -50.f ) );
     mCamera.setZoom( 3.f );
     mCamera.setFollowTarget( mPlayer );
     sf::IntRect rect( 0, 0, mActiveMap->getMapSize().x * mActiveMap->getTileSize().x, mActiveMap->getMapSize().y * mActiveMap->getTileSize().x );
     mCamera.setBorders( rect );
+
+    /** Creates a few physical boxes for testing purposes **/
+    for ( int i = 0; i < 6; ++i )
+    {
+        GameObject* box = this->createGameObject( sf::Vector2f( 600.f, 0.f ), sf::Vector2f( 16.f, 16.f ) );
+        SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );
+        box->setGraphicComponent( solid );
+
+        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( mPhysics, *box, b2_dynamicBody );
+        box->attachComponent( "PhysicsComponent", physBox );
+    }
 }
 
-void World::render( sf::RenderTarget& target, sf::Time dt, sf::Vector2u windowSize ) const
+void World::render( sf::RenderTarget& target, sf::Time dt ) const
 {
     mCamera.render( target, dt );
 
+    /**
+    * Render all layers (beginning with the backgrounds) until we have rendered
+    * the world (collision) layer. Next render all dynamic game objects, followed
+    * by the remaining layers (foreground). This guarantees proper ordering on the
+    * z-axis.
+    */
     for ( auto& grid : mGrids )
     {
-        grid->render( target, dt, windowSize, &mCamera );
+        grid->render( target, dt, &mCamera );
         if ( grid->getName() == "World" )
         {
             for ( auto& object : mObjects )
@@ -64,11 +91,36 @@ void World::update( sf::Time dt, sf::Vector2u windowSize )
         grid->update( dt );
     }
 
-    for ( auto& object : mObjects )
+    /**
+    * Custom loop to get the proper pointer after erasing an expired object.
+    * In addition we need to delete the physics body explicitly after the
+    * world step has happened. This means we have to do it right before
+    * deleting the object itself.
+    *
+    * Deleting the body in the objects destructor is an option, though
+    * upon terminating the game we run into a segfault which leads back
+    * to deleting the body in the destructor. Might be a bug with box2d.
+    * Needs further investigation.
+    */
+    auto i = mObjects.begin();
+    while( i != mObjects.end() )
     {
-        object->update( dt );
+        GameObject* obj = i->get();
+
+        obj->update( dt );
+        if( obj->isExpired() )
+        {
+            IPhysicsComponent* boxComp = dynamic_cast<IPhysicsComponent*>(obj->getComponent( "PhysicsComponent" ));
+            boxComp->destroyBody();
+            i = mObjects.erase( i );
+        }
+        else
+        {
+            ++i;
+        }
     }
 
+    /** Put all objects that were newly created into the objects vector and clear the creation-vector upon completion **/
     for ( auto& object : mObjectsToCreate )
     {
         mObjects.push_back( std::unique_ptr<GameObject>( std::move( object ) ) );
@@ -78,6 +130,10 @@ void World::update( sf::Time dt, sf::Vector2u windowSize )
 
 void World::loadMap( std::string path )
 {
+    /**
+    * Only load the map when it has not already been loaded.
+    * Make sure to clear old grids before creating new ones.
+    */
     try
     {
         mActiveMap = &mMaps.at( path );
@@ -89,43 +145,68 @@ void World::loadMap( std::string path )
         mMaps.emplace( path, map );
         mActiveMap = &mMaps.at( path );
     }
+    mGrids.clear();
 
+    /** Create a grid for each layer **/
     for ( auto& layer : mActiveMap->getLayers() )
     {
         Grid* grid = new Grid( layer.name );
 
+        /** Keep track of the world layer **/
         if ( layer.name == "World" )
             mWorldGrid = grid;
 
+        /** Set tile size **/
         grid->setTileSize( mActiveMap->getTileSize().x );
 
+        /** Add each tile and its proper texture **/
         for ( int i = 0; i < layer.rows; ++i )
         {
             for ( int j = 0; j < layer.columns; ++j )
             {
+                /**
+                * Calculate the current tile position and get the associated gid
+                *
+                *   current row * maximum number of columns + current column
+                */
                 int gid = layer.gids.at( i * layer.columns + j );
+
+                /** Proceed to the next tile if this one does not have a texture **/
                 if ( !gid )
                     continue;
 
-                // Create entity and add to grid
-                sf::Vector2f pos;
-                pos = sf::Vector2f( j * grid->getTileSize(), i * grid->getTileSize() );
-                sf::Vector2f size( grid->getTileSize(), grid->getTileSize() );
-
-                GameObject* obj = new GameObject( this );
+                /**
+                * In the Tiled map format gid indices begin at index 1, index 0
+                * is reserved for an empty tile.
+                * Since the tileset tile definitions are saved in a vector, their
+                * indices begin at 0. When retrieving the tile texture we
+                * have to subtract the calculated gid by 1.
+                */
                 sf::Texture& tex = mTextures.get( mActiveMap->getTiles().at( gid - 1 ).key );
-                TextureGraphicsComponent* tgc = new TextureGraphicsComponent();
+
+                /**
+                * Create the game object and its components.
+                * We do not use createGameObject( ... ) at this point since the game objects
+                * belong to their respective grids and are not handled by the world itself.
+                */
+                GameObject* obj = new GameObject( this );
+                TextureGraphicsComponent* tgc = new TextureGraphicsComponent( obj );
                 tgc->setTexture( tex, mActiveMap->getTiles().at( gid - 1 ).rect );
                 obj->setGraphicComponent( tgc );
+
+                sf::Vector2f pos = sf::Vector2f( j * grid->getTileSize(), i * grid->getTileSize() );
+                sf::Vector2f size( grid->getTileSize(), grid->getTileSize() );
                 obj->setPosition( pos );
                 obj->setSize( size );
 
+                /** Only add a physics component if the game object is from the layer world **/
                 if ( layer.name == "World" )
                 {
                     Box2DPhysicsComponent* staticPhysics = new Box2DPhysicsComponent( mPhysics, *obj, b2_staticBody );
                     obj->attachComponent( "PhysicsComponent", staticPhysics );
                 }
 
+                /** Add the game object to the grid **/
                 grid->addTile( grid->getTileKeyByPosition( pos ), obj );
             }
         }
@@ -141,51 +222,65 @@ void World::initializeTextures()
 
 void World::createPlayer()
 {
+    /** Create the player game object **/
     sf::Vector2f position = sf::Vector2f( mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).left, mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).top );
     sf::Vector2f size = sf::Vector2f( 10.f, 11.f );
     mPlayer = this->createGameObject( position, size );
 
+    /** Create its animations and states **/
     this->createPlayerAnimations();
     this->createPlayerStates();
 
+    /** Add a physics component with fixed rotations and default sensors **/
     Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( mPhysics, *mPlayer, b2_dynamicBody );
     dynPhysics->setFixedRotation( true );
     dynPhysics->createDefaultSensors( mPhysics, *mPlayer );
     mPlayer->attachComponent( "PhysicsComponent", dynPhysics );
 
-    PlayerInputComponent* tic = new PlayerInputComponent();
+    PlayerInputComponent* tic = new PlayerInputComponent( mPlayer );
     mPlayer->attachComponent( "InputComponent", tic );
 
-    PlayerMovementComponent* pmc = new PlayerMovementComponent();
+    PlayerMovementComponent* pmc = new PlayerMovementComponent( mPlayer );
     mPlayer->attachComponent( "MovementComponent", pmc );
 
-    ActionComponent* ac = new ActionComponent();
+    /** Test for action components which can define their own actions **/
+    ActionComponent* ac = new ActionComponent( mPlayer );
     ac->addAction(
             "shoot", [this]( GameObject& object )
+    {
+        sf::Vector2f velocity( 10.f, 0.f );
+        sf::Vector2f size( 4.f, 4.f );
+        sf::Vector2f pos = object.getPosition();
+
+        float offsetX = 15.f;
+
+        /**
+        * Figure out in which direction the player is looking
+        * and modify values accordingly
+        * TODO: Find a better place for this information than the animation component
+        */
+        AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(object.getGraphicComponent());
+        if ( animComp )
         {
-            sf::Vector2f velocity( 10.f, 0.f );
-            sf::Vector2f size( 4.f, 4.f );
-            sf::Vector2f pos = object.getPosition();
-
-            float offsetX = 15.f;
-
-            AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(object.getGraphicComponent());
-            if ( animComp )
+            if ( animComp->getFlipped().x == -1.f )
             {
-                if ( animComp->getFlipped().x == -1.f )
-                {
-                    offsetX = -offsetX;
-                    velocity.x = -velocity.x;
-                }
+                offsetX = -offsetX;
+                velocity.x = -velocity.x;
             }
+        }
 
-            pos.x += offsetX;
+        pos.x += offsetX;
 
-            GameObject* projectile = object.mWorld->createGameObject( pos, size );
-            projectile->setPosition( pos );
-            projectile->setSize( size );
+        /** Create a bunch of projectiles that fly in different directions **/
+        for ( float i = 3.f; i > -4.f; --i )
+        {
+            sf::Vector2f pos2 = pos;
+            pos2.y += i*5;
+            velocity.y = i;
 
-            SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( projectile->getSize() );
+            GameObject* projectile = object.mWorld->createGameObject( pos2, size );
+
+            SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( projectile, projectile->getSize() );
             projectile->setGraphicComponent( solid );
 
             Box2DPhysicsComponent* box = new Box2DPhysicsComponent( mPhysics, *projectile, b2_dynamicBody );
@@ -193,10 +288,11 @@ void World::createPlayer()
             box->setContactable( true );
             projectile->attachComponent( "PhysicsComponent", box );
 
-            ProjectileAIComponent* proj = new ProjectileAIComponent();
+            ProjectileAIComponent* proj = new ProjectileAIComponent( projectile );
             proj->setVelocity( velocity );
             projectile->attachComponent( "InputComponent", proj );
         }
+    }
     );
     mPlayer->attachComponent( "ActionComponent", ac );
 }
@@ -204,7 +300,7 @@ void World::createPlayer()
 void World::createPlayerAnimations()
 {
     sf::Texture& tex = mTextures.get( "ror" );
-    AnimationGraphicsComponent* agc = new AnimationGraphicsComponent();
+    AnimationGraphicsComponent* agc = new AnimationGraphicsComponent( mPlayer );
     agc->setTexture( tex );
 
     Animation idle( "idle" );
@@ -277,7 +373,7 @@ void World::createPlayerStates()
     attack.setAnimation( "attack" );
     attack.setReturnToPreviousState( true );
 
-    DefaultStateHandlerComponent* dsc = new DefaultStateHandlerComponent();
+    DefaultStateHandlerComponent* dsc = new DefaultStateHandlerComponent( mPlayer );
     dsc->addState( "idle", idle );
     dsc->addState( "run", run );
     dsc->addState( "jump", jump );

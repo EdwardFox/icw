@@ -31,7 +31,7 @@ public:
 
     void setTileSize( unsigned tileSize );
 
-    void render( sf::RenderTarget& target, sf::Time dt, sf::Vector2u windowSize, const Camera* camera ) const;
+    void render( sf::RenderTarget& target, sf::Time dt, const Camera* camera ) const;
 
     void update( sf::Time dt );
 

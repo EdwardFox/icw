@@ -8,13 +8,16 @@
 class PlayerInputComponent : public IComponent, public IInputComponent
 {
 public:
-    PlayerInputComponent();
+    PlayerInputComponent( GameObject* gameObject );
 
     virtual ~PlayerInputComponent() {};
 
-    virtual void update( GameObject& object, sf::Time dt );
+    virtual GameObject* getGameObject() const override;
+
+    virtual void update( GameObject& object, sf::Time dt ) override;
 
 private:
+    GameObject* mGameObject;
 };
 
 #endif

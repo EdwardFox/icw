@@ -8,18 +8,21 @@
 class ActionComponent : public IComponent, public IActionComponent
 {
 public:
-    ActionComponent();
+    ActionComponent( GameObject* gameObject );
 
     virtual ~ActionComponent() {};
 
-    virtual void update( GameObject& object, sf::Time dt );
+    virtual GameObject* getGameObject() const override;
 
-    virtual void addAction( std::string key, std::function<void( GameObject& object )> action );
+    virtual void update( GameObject& object, sf::Time dt ) override;
 
-    virtual void executeAction( std::string key, GameObject& object );
+    virtual void addAction( std::string key, std::function<void( GameObject& object )> action ) override;
+
+    virtual void executeAction( std::string key, GameObject& object ) override;
 
 private:
     std::unordered_map<std::string, std::function<void( GameObject& object )>> mActions;
+    GameObject* mGameObject;
 
 };
 

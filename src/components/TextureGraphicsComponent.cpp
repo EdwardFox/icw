@@ -1,14 +1,15 @@
 #include "lib/components/TextureGraphicsComponent.hpp"
 #include "lib/GameObject.hpp"
 
-TextureGraphicsComponent::TextureGraphicsComponent() :
+TextureGraphicsComponent::TextureGraphicsComponent( GameObject* gameObject ) :
         mTexture( nullptr )
+        , mGameObject( gameObject )
         , mSprite()
 {
     this->setType( "GraphicsComponent" );
 }
 
-TextureGraphicsComponent::TextureGraphicsComponent( sf::Texture& texture ) : TextureGraphicsComponent()
+TextureGraphicsComponent::TextureGraphicsComponent( GameObject* gameObject, sf::Texture& texture ) : TextureGraphicsComponent( gameObject )
 {
     mSprite.setTexture( texture );
     mSprite.setOrigin( texture.getSize().x / 2.f, texture.getSize().y / 2.f );
@@ -31,4 +32,9 @@ void TextureGraphicsComponent::setTexture( sf::Texture& texture, sf::IntRect rec
     mSprite.setTexture( *mTexture );
     mSprite.setTextureRect( rect );
     mSprite.setOrigin( rect.width / 2.f, rect.height / 2.f );
+}
+
+GameObject* TextureGraphicsComponent::getGameObject() const
+{
+    return mGameObject;
 }

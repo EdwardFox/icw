@@ -5,7 +5,8 @@
 #include "lib/components/PlayerInputComponent.hpp"
 #include "lib/GameObject.hpp"
 
-PlayerInputComponent::PlayerInputComponent()
+PlayerInputComponent::PlayerInputComponent( GameObject* gameObject ) :
+        mGameObject( gameObject )
 {
     this->setType( "InputComponent" );
 }
@@ -73,4 +74,9 @@ void PlayerInputComponent::update( GameObject& object, sf::Time dt )
 
     if ( animComp )
         animComp->setFlipped( flipped );
+}
+
+GameObject* PlayerInputComponent::getGameObject() const
+{
+    return mGameObject;
 }

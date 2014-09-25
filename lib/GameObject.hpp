@@ -47,6 +47,16 @@ public:
 
     World* mWorld;
 
+    bool isExpired() const
+    {
+        return mExpired;
+    }
+
+    void setExpired( bool expired )
+    {
+        mExpired = expired;
+    }
+
 private:
     std::unordered_map<std::string, std::unique_ptr<IComponent>> mComponents;
 
@@ -54,6 +64,7 @@ private:
     sf::Vector2f mPosition;
     sf::Vector2f mSize;
     sf::Vector2f mVelocity;
+    bool mExpired;
 
     float mRotation;
 };

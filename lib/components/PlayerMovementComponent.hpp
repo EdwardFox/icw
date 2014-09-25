@@ -7,42 +7,47 @@
 class PlayerMovementComponent : public IComponent, public IMovementComponent
 {
 public:
-    PlayerMovementComponent();
+    PlayerMovementComponent( GameObject* gameObject );
 
-    virtual ~PlayerMovementComponent() {};
+    virtual ~PlayerMovementComponent()
+    {
+    };
 
-    virtual void move( GameObject& object, Movement mov );
+    virtual GameObject* getGameObject() const override;
 
-    virtual void jump( GameObject& object );
+    virtual void move( GameObject& object, Movement mov ) override;
 
-    virtual void update( GameObject& object, sf::Time dt );
+    virtual void jump( GameObject& object ) override;
 
-    virtual float getMoveSpeed() const;
+    virtual void update( GameObject& object, sf::Time dt ) override;
 
-    virtual void setMoveSpeed( float movespeed );
+    virtual float getMoveSpeed() const override;
 
-    virtual float getAcceleration() const;
+    virtual void setMoveSpeed( float movespeed ) override;
 
-    virtual void setAcceleration( float accel );
+    virtual float getAcceleration() const override;
 
-    virtual float getFriction() const;
+    virtual void setAcceleration( float accel ) override;
 
-    virtual void setFriction( float friction );
+    virtual float getFriction() const override;
 
-    virtual float getJumpHeight() const;
+    virtual void setFriction( float friction ) override;
 
-    virtual void setJumpHeight( float jumpheight );
+    virtual float getJumpHeight() const override;
 
-    virtual int getDelayThresholdAfterJump() const;
+    virtual void setJumpHeight( float jumpheight ) override;
 
-    virtual void setDelayThresholdAfterJump( float delay );
+    virtual int getDelayThresholdAfterJump() const override;
 
-    virtual int getCurrentDelayAfterJump() const;
+    virtual void setDelayThresholdAfterJump( float delay ) override;
 
-    virtual void setCurrentDelayAfterJump( float delay );
+    virtual int getCurrentDelayAfterJump() const override;
+
+    virtual void setCurrentDelayAfterJump( float delay ) override;
 
 private:
     float mMoveSpeed;
+    GameObject* mGameObject;
     float mAcceleration;
     float mFriction;
     float mJumpHeight;

@@ -24,7 +24,7 @@ void Game::processEvents()
 void Game::render( sf::Time dt )
 {
     mWindow.clear( sf::Color( 0, 100, 150) );
-    mWorld.render( mWindow, dt, mWindow.getSize() );
+    mWorld.render( mWindow, dt );
     mWindow.display();
 }
 

@@ -22,11 +22,26 @@ void PhysicsContactListener::BeginContact( b2Contact* contact )
     }
 
     void* bodyUserDataA = contact->GetFixtureA()->GetBody()->GetUserData();
+
+    if( bodyUserDataA )
+    {
+        IContactable* conA = static_cast<IContactable*>(bodyUserDataA);
+        conA->onContact( Contact::Begin );
+    }
+
     void* bodyUserDataB = contact->GetFixtureB()->GetBody()->GetUserData();
+
+    if( bodyUserDataB )
+    {
+        IContactable* conB = static_cast<IContactable*>(bodyUserDataB);
+        conB->onContact( Contact::Begin );
+    }
+
     if ( bodyUserDataA && bodyUserDataB )
     {
         IContactable* conA = static_cast<IContactable*>(bodyUserDataA);
         IContactable* conB = static_cast<IContactable*>(bodyUserDataB);
+
         conA->onContact( Contact::Begin, conB );
         conB->onContact( Contact::Begin, conA );
     }
@@ -49,6 +64,7 @@ void PhysicsContactListener::EndContact( b2Contact* contact )
     }
 
     void* bodyUserDataA = contact->GetFixtureA()->GetBody()->GetUserData();
+
     void* bodyUserDataB = contact->GetFixtureB()->GetBody()->GetUserData();
     if ( bodyUserDataA && bodyUserDataB )
     {

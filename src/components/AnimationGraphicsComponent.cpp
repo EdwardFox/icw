@@ -2,8 +2,9 @@
 #include "lib/components/AnimationGraphicsComponent.hpp"
 #include "lib/GameObject.hpp"
 
-AnimationGraphicsComponent::AnimationGraphicsComponent() :
+AnimationGraphicsComponent::AnimationGraphicsComponent( GameObject* gameObject ) :
         mTexture()
+        , mGameObject( gameObject )
         , mSprite()
         , mAnimations()
         , mCurrentAnimation( nullptr )
@@ -107,4 +108,9 @@ void AnimationGraphicsComponent::resetCurrentAnimation()
 bool AnimationGraphicsComponent::isAnimationFinished() const
 {
     return mCurrentAnimation->getIsDone();
+}
+
+GameObject* AnimationGraphicsComponent::getGameObject() const
+{
+    return mGameObject;
 }

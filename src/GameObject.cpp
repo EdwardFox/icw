@@ -8,6 +8,7 @@ GameObject::GameObject( World* world ) :
         , mPosition( 0, 0 )
         , mSize( TILE_SIZE, TILE_SIZE )
         , mVelocity( 0, 0 )
+        , mExpired( false )
         , mRotation( 0 )
 {
 

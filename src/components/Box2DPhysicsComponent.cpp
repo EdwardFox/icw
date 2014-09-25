@@ -4,6 +4,7 @@
 
 Box2DPhysicsComponent::Box2DPhysicsComponent( b2World& physics, GameObject& object, b2BodyType type ) :
         mSensors()
+        , mGameObject( &object )
         , mBodyDef()
         , mBody( nullptr )
         , mPolygonShape()
@@ -12,6 +13,10 @@ Box2DPhysicsComponent::Box2DPhysicsComponent( b2World& physics, GameObject& obje
 {
     this->setType( "PhysicsComponent" );
     createCollisionBody( physics, object, type );
+}
+
+Box2DPhysicsComponent::~Box2DPhysicsComponent()
+{
 }
 
 void Box2DPhysicsComponent::update( GameObject& object, sf::Time dt )
@@ -189,12 +194,15 @@ void Box2DPhysicsComponent::setGravityScale( float gravityScale )
 
 void Box2DPhysicsComponent::onContact( Contact contact )
 {
-    std::cout << "contact" << std::endl;
+//    std::cout << "contact" << std::endl;
+    mGameObject->setExpired( true );
+    // TODO: Add proper implementation so each GameObject can choose its own onContact implementation
 }
 
 void Box2DPhysicsComponent::onContact( Contact contact, IContactable* other )
 {
-    std::cout << "test" << std::endl;
+//    std::cout << "test" << std::endl;
+    // TODO: Add proper implementation so each GameObject can choose its own onContact implementation
 }
 
 void Box2DPhysicsComponent::setContactable( bool contactable )
@@ -207,4 +215,14 @@ void Box2DPhysicsComponent::setContactable( bool contactable )
     {
         this->mBody->SetUserData( nullptr );
     }
+}
+
+GameObject* Box2DPhysicsComponent::getGameObject() const
+{
+    return mGameObject;
+}
+
+void Box2DPhysicsComponent::destroyBody()
+{
+    mBody->GetWorld()->DestroyBody( mBody );
 }

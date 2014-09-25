@@ -41,6 +41,8 @@ public:
 
     virtual void setGravityScale( float gravityScale ) = 0;
 
+    virtual void destroyBody() = 0;
+
 };
 
 #endif

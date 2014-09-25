@@ -2,8 +2,9 @@
 #include <lib/GameObject.hpp>
 #include "lib/components/DefaultStateHandlerComponent.hpp"
 
-DefaultStateHandlerComponent::DefaultStateHandlerComponent() :
+DefaultStateHandlerComponent::DefaultStateHandlerComponent( GameObject* gameObject ) :
         mStates()
+        , mGameObject( gameObject )
         , mCurrent( nullptr )
         , mPrevious( nullptr )
 {
@@ -80,4 +81,9 @@ void DefaultStateHandlerComponent::changeAnimation( GameObject& object, std::str
     {
         animComp->setAnimation( animation );
     }
+}
+
+GameObject* DefaultStateHandlerComponent::getGameObject() const
+{
+    return mGameObject;
 }

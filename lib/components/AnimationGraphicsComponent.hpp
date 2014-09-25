@@ -3,19 +3,22 @@
 
 #include <unordered_map>
 #include <string>
+#include <lib/GameObject.hpp>
 #include "lib/interfaces/IGraphicsComponent.hpp"
 #include "lib/Animation.hpp"
 
 class AnimationGraphicsComponent : public IGraphicsComponent
 {
 public:
-    AnimationGraphicsComponent();
+    AnimationGraphicsComponent( GameObject* object );
 
     virtual ~AnimationGraphicsComponent() {};
 
-    virtual void update( GameObject& object, sf::Time dt );
+    virtual GameObject* getGameObject() const override;
 
-    virtual void render( sf::RenderTarget& target, sf::Time dt ) const;
+    virtual void update( GameObject& object, sf::Time dt ) override;
+
+    virtual void render( sf::RenderTarget& target, sf::Time dt ) const override;
 
     void setTexture( sf::Texture& texture );
 
@@ -33,6 +36,7 @@ public:
 
 private:
     sf::Texture* mTexture;
+    GameObject* mGameObject;
     sf::Sprite mSprite;
     std::unordered_map<std::string, Animation> mAnimations;
     Animation* mCurrentAnimation;

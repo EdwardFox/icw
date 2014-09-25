@@ -3,8 +3,9 @@
 #include <lib/components/DefaultStateHandlerComponent.hpp>
 #include "lib/components/PlayerMovementComponent.hpp"
 
-PlayerMovementComponent::PlayerMovementComponent() :
+PlayerMovementComponent::PlayerMovementComponent( GameObject* gameObject ) :
         mMoveSpeed( 5.f )
+        , mGameObject( gameObject )
         , mAcceleration( 0.1f )
         , mFriction( 0.f )
         , mJumpHeight( -1.0f )
@@ -159,4 +160,9 @@ int PlayerMovementComponent::getCurrentDelayAfterJump() const
 void PlayerMovementComponent::setCurrentDelayAfterJump( float delay )
 {
     mCurrentDelayAfterJump = delay;
+}
+
+GameObject* PlayerMovementComponent::getGameObject() const
+{
+    return mGameObject;
 }

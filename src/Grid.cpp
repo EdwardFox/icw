@@ -1,5 +1,6 @@
 #include "lib/Grid.hpp"
 #include "lib/Camera.hpp"
+#include "lib/interfaces/IPhysicsComponent.hpp"
 
 Grid::Grid( std::string name ) :
         mName( name )
@@ -55,8 +56,10 @@ void Grid::setTileSize( unsigned tileSize )
     mTileSize = tileSize;
 }
 
-void Grid::render( sf::RenderTarget& target, sf::Time dt, sf::Vector2u windowSize, const Camera* camera ) const
+void Grid::render( sf::RenderTarget& target, sf::Time dt, const Camera* camera ) const
 {
+    sf::Vector2u windowSize = target.getSize();
+
     // Get the visible screen space
     sf::FloatRect screen(
             camera->getPosition().x - windowSize.x / (2.f * camera->getZoom()) + camera->getOffset().x,
@@ -82,9 +85,23 @@ void Grid::render( sf::RenderTarget& target, sf::Time dt, sf::Vector2u windowSiz
 
 void Grid::update( sf::Time dt )
 {
-    for ( std::map<std::string, entPtr>::const_iterator it = mGrid.begin(); it != mGrid.end(); ++it )
+    /** Custom loop to get the proper pointer after erasing an expired object */
+    auto i = mGrid.begin();
+    while( i != mGrid.end() )
     {
-        it->second->update( dt );
+        GameObject* obj = i->second.get();
+
+        obj->update( dt );
+        if( obj->isExpired() )
+        {
+            IPhysicsComponent* boxComp = dynamic_cast<IPhysicsComponent*>(obj->getComponent( "PhysicsComponent" ));
+            boxComp->destroyBody();
+            i = mGrid.erase( i );
+        }
+        else
+        {
+            ++i;
+        }
     }
 }
 

@@ -1,8 +1,9 @@
 #include "lib/components/SolidColorGraphicsComponent.hpp"
 #include "lib/GameObject.hpp"
 
-SolidColorGraphicsComponent::SolidColorGraphicsComponent() :
+SolidColorGraphicsComponent::SolidColorGraphicsComponent( GameObject* gameObject ) :
         mShape()
+        , mGameObject( gameObject )
 {
     this->setType( "GraphicsComponent" );
 
@@ -11,7 +12,7 @@ SolidColorGraphicsComponent::SolidColorGraphicsComponent() :
     mShape.setOutlineThickness( 1.f );
 }
 
-SolidColorGraphicsComponent::SolidColorGraphicsComponent( sf::Vector2f size ) : SolidColorGraphicsComponent()
+SolidColorGraphicsComponent::SolidColorGraphicsComponent( GameObject* gameObject, sf::Vector2f size ) : SolidColorGraphicsComponent( gameObject )
 {
     mShape.setSize( size );
     mShape.setOrigin( size.x / 2.f, size.y / 2.f );
@@ -27,4 +28,9 @@ void SolidColorGraphicsComponent::update( GameObject& object, sf::Time dt )
 void SolidColorGraphicsComponent::render( sf::RenderTarget& target, sf::Time dt ) const
 {
     target.draw( mShape );
+}
+
+GameObject* SolidColorGraphicsComponent::getGameObject() const
+{
+    return mGameObject;
 }
