@@ -15,7 +15,7 @@ public:
 
     virtual ~IPhysicsComponent(){};
 
-    virtual void createCollisionBody( b2World& physics, GameObject& object, b2BodyType type ) = 0;
+    virtual void createCollisionBody( b2World* physics, GameObject* object, b2BodyType type ) = 0;
 
     virtual void setFixedRotation( bool rotation ) = 0;
 
@@ -33,7 +33,7 @@ public:
 
     virtual Collision hitWall() const = 0;
 
-    virtual void addSensor( std::string key, b2World& physics, b2Vec2 size, b2Vec2 position ) = 0;
+    virtual void addSensor( std::string key, b2World* physics, b2Vec2 size, b2Vec2 position ) = 0;
 
     virtual const PhysicsSensor* getSensor( std::string key ) const = 0;
 

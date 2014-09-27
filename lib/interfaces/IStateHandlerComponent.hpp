@@ -13,9 +13,9 @@ public:
 
     virtual ~IStateHandlerComponent() {};
 
-    virtual void changeState( GameObject& object, std::string state ) = 0;
+    virtual void changeState( GameObject* object, std::string state ) = 0;
 
-    virtual void changeToPreviousState( GameObject& object ) = 0;
+    virtual void changeToPreviousState( GameObject* object ) = 0;
 
     virtual std::string getCurrentState() const = 0;
 
@@ -26,7 +26,7 @@ public:
     virtual void addState( std::string key, State state ) = 0;
 
 protected:
-    virtual void setState( GameObject& object, std::string state ) = 0;
+    virtual void setState( GameObject* object, std::string state ) = 0;
 };
 
 #endif

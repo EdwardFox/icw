@@ -61,6 +61,11 @@ public:
     */
     GameObject* createGameObject( sf::Vector2f position, sf::Vector2f size );
 
+    b2World* getPhysicsWorld()
+    {
+        return &mPhysics;
+    }
+
 private:
 
     /**

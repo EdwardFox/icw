@@ -9,9 +9,9 @@ ProjectileAIComponent::ProjectileAIComponent( GameObject* gameObject ) :
     this->setType( "ProjectileAIComponent" );
 }
 
-void ProjectileAIComponent::update( GameObject& object, sf::Time dt )
+void ProjectileAIComponent::update( GameObject* object, sf::Time dt )
 {
-    IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object.getComponent( "PhysicsComponent" ) );
+    IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object->getComponent( "PhysicsComponent" ) );
     if( physComp )
     {
         if ( physComp->getBodyType() != b2_staticBody )

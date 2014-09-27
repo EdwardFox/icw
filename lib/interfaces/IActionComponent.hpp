@@ -12,9 +12,9 @@ public:
 
     virtual ~IActionComponent() {};
 
-    virtual void addAction( std::string key, std::function<void( GameObject& object )> action ) = 0;
+    virtual void addAction( std::string key, std::function<void( GameObject* object )> action ) = 0;
 
-    virtual void executeAction( std::string key, GameObject& object ) = 0;
+    virtual void executeAction( std::string key, GameObject* object ) = 0;
 
 };
 

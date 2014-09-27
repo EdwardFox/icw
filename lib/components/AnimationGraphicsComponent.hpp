@@ -16,11 +16,11 @@ public:
 
     virtual GameObject* getGameObject() const override;
 
-    virtual void update( GameObject& object, sf::Time dt ) override;
+    virtual void update( GameObject* object, sf::Time dt ) override;
 
     virtual void render( sf::RenderTarget& target, sf::Time dt ) const override;
 
-    void setTexture( sf::Texture& texture );
+    void setTexture( sf::Texture* texture );
 
     void addAnimation( std::string key, Animation anim );
 

@@ -15,10 +15,10 @@ TextureGraphicsComponent::TextureGraphicsComponent( GameObject* gameObject, sf::
     mSprite.setOrigin( texture.getSize().x / 2.f, texture.getSize().y / 2.f );
 }
 
-void TextureGraphicsComponent::update( GameObject& object, sf::Time dt )
+void TextureGraphicsComponent::update( GameObject* object, sf::Time dt )
 {
-    mSprite.setPosition( object.getPosition() );
-    mSprite.setRotation( object.getRotation() );
+    mSprite.setPosition( object->getPosition() );
+    mSprite.setRotation( object->getRotation() );
 }
 
 void TextureGraphicsComponent::render( sf::RenderTarget& target, sf::Time dt ) const
@@ -26,9 +26,9 @@ void TextureGraphicsComponent::render( sf::RenderTarget& target, sf::Time dt ) c
     target.draw( mSprite );
 }
 
-void TextureGraphicsComponent::setTexture( sf::Texture& texture, sf::IntRect rect )
+void TextureGraphicsComponent::setTexture( sf::Texture* texture, sf::IntRect rect )
 {
-    mTexture = &texture;
+    mTexture = texture;
     mSprite.setTexture( *mTexture );
     mSprite.setTextureRect( rect );
     mSprite.setOrigin( rect.width / 2.f, rect.height / 2.f );

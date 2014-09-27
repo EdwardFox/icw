@@ -52,7 +52,7 @@ World::World() :
         SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );
         box->setGraphicComponent( solid );
 
-        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( mPhysics, *box, b2_dynamicBody );
+        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( &mPhysics, box, b2_dynamicBody );
         box->attachComponent( "PhysicsComponent", physBox );
     }
 }
@@ -103,12 +103,12 @@ void World::update( sf::Time dt, sf::Vector2u windowSize )
     * Needs further investigation.
     */
     auto i = mObjects.begin();
-    while( i != mObjects.end() )
+    while ( i != mObjects.end() )
     {
         GameObject* obj = i->get();
 
         obj->update( dt );
-        if( obj->isExpired() )
+        if ( obj->isExpired() )
         {
             IPhysicsComponent* boxComp = dynamic_cast<IPhysicsComponent*>(obj->getComponent( "PhysicsComponent" ));
             boxComp->destroyBody();
@@ -191,7 +191,7 @@ void World::loadMap( std::string path )
                 */
                 GameObject* obj = new GameObject( this );
                 TextureGraphicsComponent* tgc = new TextureGraphicsComponent( obj );
-                tgc->setTexture( tex, mActiveMap->getTiles().at( gid - 1 ).rect );
+                tgc->setTexture( &tex, mActiveMap->getTiles().at( gid - 1 ).rect );
                 obj->setGraphicComponent( tgc );
 
                 sf::Vector2f pos = sf::Vector2f( j * grid->getTileSize(), i * grid->getTileSize() );
@@ -202,7 +202,8 @@ void World::loadMap( std::string path )
                 /** Only add a physics component if the game object is from the layer world **/
                 if ( layer.name == "World" )
                 {
-                    Box2DPhysicsComponent* staticPhysics = new Box2DPhysicsComponent( mPhysics, *obj, b2_staticBody );
+                    Box2DPhysicsComponent* staticPhysics = new Box2DPhysicsComponent( &mPhysics, obj, b2_staticBody );
+//                    staticPhysics->setContactable( true );
                     obj->attachComponent( "PhysicsComponent", staticPhysics );
                 }
 
@@ -232,9 +233,9 @@ void World::createPlayer()
     this->createPlayerStates();
 
     /** Add a physics component with fixed rotations and default sensors **/
-    Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( mPhysics, *mPlayer, b2_dynamicBody );
+    Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( &mPhysics, mPlayer, b2_dynamicBody );
     dynPhysics->setFixedRotation( true );
-    dynPhysics->createDefaultSensors( mPhysics, *mPlayer );
+    dynPhysics->createDefaultSensors( &mPhysics, mPlayer );
     mPlayer->attachComponent( "PhysicsComponent", dynPhysics );
 
     PlayerInputComponent* tic = new PlayerInputComponent( mPlayer );
@@ -246,11 +247,11 @@ void World::createPlayer()
     /** Test for action components which can define their own actions **/
     ActionComponent* ac = new ActionComponent( mPlayer );
     ac->addAction(
-            "shoot", [this]( GameObject& object )
+            "shoot", []( GameObject* object )
     {
         sf::Vector2f velocity( 10.f, 0.f );
         sf::Vector2f size( 4.f, 4.f );
-        sf::Vector2f pos = object.getPosition();
+        sf::Vector2f pos = object->getPosition();
 
         float offsetX = 15.f;
 
@@ -259,7 +260,7 @@ void World::createPlayer()
         * and modify values accordingly
         * TODO: Find a better place for this information than the animation component
         */
-        AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(object.getGraphicComponent());
+        AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(object->getGraphicComponent());
         if ( animComp )
         {
             if ( animComp->getFlipped().x == -1.f )
@@ -275,17 +276,43 @@ void World::createPlayer()
         for ( float i = 3.f; i > -4.f; --i )
         {
             sf::Vector2f pos2 = pos;
-            pos2.y += i*5;
+            pos2.y += i * 5;
             velocity.y = i;
 
-            GameObject* projectile = object.mWorld->createGameObject( pos2, size );
+            GameObject* projectile = object->getWorld()->createGameObject( pos2, size );
 
             SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( projectile, projectile->getSize() );
             projectile->setGraphicComponent( solid );
 
-            Box2DPhysicsComponent* box = new Box2DPhysicsComponent( mPhysics, *projectile, b2_dynamicBody );
+        Box2DPhysicsComponent* box = new Box2DPhysicsComponent( object->getWorld()->getPhysicsWorld(), projectile, b2_dynamicBody );
             box->setGravityScale( 0.f );
             box->setContactable( true );
+
+            // Callback function to define what happens when this body comes into contact with another
+            std::function<void( Box2DPhysicsComponent* box, Contact contact, IContactable* other )> onContact =
+                    []( Box2DPhysicsComponent* box, Contact contact, IContactable* other ) -> void
+                    {
+                        // We begin touching another body
+                        if ( contact == Contact::Begin )
+                        {
+                            // Destroy our game object
+                            box->getGameObject()->setExpired( true );
+
+                            // If the other body is contactable
+                            if ( other )
+                            {
+                                // Check if it is a component
+                                IComponent* otherComp = dynamic_cast<IComponent*>(other);
+                                if( otherComp )
+                                {
+                                    // Destroy the other component
+                                    otherComp->getGameObject()->setExpired( true );
+                                }
+                            }
+                        }
+                    };
+
+            box->setOnContactFunction( onContact );
             projectile->attachComponent( "PhysicsComponent", box );
 
             ProjectileAIComponent* proj = new ProjectileAIComponent( projectile );
@@ -301,7 +328,7 @@ void World::createPlayerAnimations()
 {
     sf::Texture& tex = mTextures.get( "ror" );
     AnimationGraphicsComponent* agc = new AnimationGraphicsComponent( mPlayer );
-    agc->setTexture( tex );
+    agc->setTexture( &tex );
 
     Animation idle( "idle" );
     idle.addFrame( sf::Vector2f( 0.f, 0.f ), sf::Vector2f( 6.f, 11.f ) );

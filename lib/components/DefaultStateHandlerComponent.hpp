@@ -15,11 +15,11 @@ public:
 
     virtual GameObject* getGameObject() const override;
 
-    virtual void update( GameObject& object, sf::Time dt ) override;
+    virtual void update( GameObject* object, sf::Time dt ) override;
 
-    virtual void changeState( GameObject& object, std::string state ) override;
+    virtual void changeState( GameObject* object, std::string state ) override;
 
-    virtual void changeToPreviousState( GameObject& object ) override;
+    virtual void changeToPreviousState( GameObject* object ) override;
 
     virtual std::string getCurrentState() const override;
 
@@ -30,10 +30,10 @@ public:
     virtual void addState( std::string key, State state ) override;
 
 protected:
-    virtual void setState( GameObject& object, std::string state ) override;
+    virtual void setState( GameObject* object, std::string state ) override;
 
 private:
-    void changeAnimation( GameObject& object, std::string animation );
+    void changeAnimation( GameObject* object, std::string animation );
 
     std::unordered_map<std::string, State> mStates;
     GameObject* mGameObject;

@@ -14,7 +14,7 @@ public:
 
     virtual GameObject* getGameObject() const = 0;
 
-    virtual void update( GameObject& object, sf::Time dt ) = 0;
+    virtual void update( GameObject* object, sf::Time dt ) = 0;
 
     std::string getType() const
     {

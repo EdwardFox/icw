@@ -50,10 +50,10 @@ void GameObject::update( sf::Time dt )
 {
     for ( auto it = mComponents.begin(); it != mComponents.end(); ++it )
     {
-        it->second->update( *(this), dt );
+        it->second->update( this, dt );
     }
 
-    mGraphicComponent->update( *(this), dt );
+    mGraphicComponent->update( this, dt );
 }
 
 void GameObject::render( sf::RenderTarget& target, sf::Time dt ) const

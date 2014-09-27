@@ -15,11 +15,11 @@ public:
 
     virtual GameObject* getGameObject() const override;
 
-    virtual void move( GameObject& object, Movement mov ) override;
+    virtual void move( GameObject* object, Movement mov ) override;
 
-    virtual void jump( GameObject& object ) override;
+    virtual void jump( GameObject* object ) override;
 
-    virtual void update( GameObject& object, sf::Time dt ) override;
+    virtual void update( GameObject* object, sf::Time dt ) override;
 
     virtual float getMoveSpeed() const override;
 

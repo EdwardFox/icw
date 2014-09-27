@@ -11,9 +11,9 @@ public:
 
     virtual ~IMovementComponent() {};
 
-    virtual void move( GameObject& object, Movement mov ) = 0;
+    virtual void move( GameObject* object, Movement mov ) = 0;
 
-    virtual void jump( GameObject& object ) = 0;
+    virtual void jump( GameObject* object ) = 0;
 
     virtual float getMoveSpeed() const = 0;
 

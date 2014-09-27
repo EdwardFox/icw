@@ -45,8 +45,6 @@ public:
 
     void setRotation( float rotation );
 
-    World* mWorld;
-
     bool isExpired() const
     {
         return mExpired;
@@ -57,7 +55,15 @@ public:
         mExpired = expired;
     }
 
+    World* getWorld()
+    {
+        return mWorld;
+    }
+
 private:
+
+    World* mWorld;
+
     std::unordered_map<std::string, std::unique_ptr<IComponent>> mComponents;
 
     std::unique_ptr<IGraphicsComponent> mGraphicComponent;

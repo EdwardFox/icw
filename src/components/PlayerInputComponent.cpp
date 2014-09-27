@@ -11,15 +11,15 @@ PlayerInputComponent::PlayerInputComponent( GameObject* gameObject ) :
     this->setType( "InputComponent" );
 }
 
-void PlayerInputComponent::update( GameObject& object, sf::Time dt )
+void PlayerInputComponent::update( GameObject* object, sf::Time dt )
 {
-    IComponent* comp = object.getGraphicComponent();
+    IComponent* comp = object->getGraphicComponent();
     AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(comp);
 
-    IComponent* comp2 = object.getComponent( "MovementComponent" );
+    IComponent* comp2 = object->getComponent( "MovementComponent" );
     IMovementComponent* moveComp = dynamic_cast<IMovementComponent*>(comp2);
 
-    IStateHandlerComponent* stateComp = dynamic_cast<IStateHandlerComponent*>(object.getComponent( "StateHandlerComponent" ) );
+    IStateHandlerComponent* stateComp = dynamic_cast<IStateHandlerComponent*>(object->getComponent( "StateHandlerComponent" ) );
 
     sf::Vector2f flipped( 1.f, 1.f );
     if ( animComp )
@@ -63,7 +63,7 @@ void PlayerInputComponent::update( GameObject& object, sf::Time dt )
 
     if ( sf::Keyboard::isKeyPressed( sf::Keyboard::E ) )
     {
-        IActionComponent* actionComp = dynamic_cast<IActionComponent*>(object.getComponent( "ActionComponent" ));
+        IActionComponent* actionComp = dynamic_cast<IActionComponent*>(object->getComponent( "ActionComponent" ));
         if ( actionComp && stateComp->getCurrentState() != "attack" )
         {
             actionComp->executeAction( "shoot", object );

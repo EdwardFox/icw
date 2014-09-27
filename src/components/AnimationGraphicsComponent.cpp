@@ -13,10 +13,10 @@ AnimationGraphicsComponent::AnimationGraphicsComponent( GameObject* gameObject )
     this->setType( "GraphicsComponent" );
 }
 
-void AnimationGraphicsComponent::update( GameObject& object, sf::Time dt )
+void AnimationGraphicsComponent::update( GameObject* object, sf::Time dt )
 {
-    mSprite.setPosition( object.getPosition() );
-    mSprite.setRotation( object.getRotation() );
+    mSprite.setPosition( object->getPosition() );
+    mSprite.setRotation( object->getRotation() );
 
     if ( mCurrentAnimation != nullptr )
     {
@@ -38,9 +38,9 @@ void AnimationGraphicsComponent::render( sf::RenderTarget& target, sf::Time dt )
         target.draw( mSprite );
 }
 
-void AnimationGraphicsComponent::setTexture( sf::Texture& texture )
+void AnimationGraphicsComponent::setTexture( sf::Texture* texture )
 {
-    mTexture = &texture;
+    mTexture = texture;
     mSprite.setTexture( *(mTexture) );
 }
 

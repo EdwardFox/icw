@@ -14,14 +14,14 @@ public:
 
     virtual GameObject* getGameObject() const override;
 
-    virtual void update( GameObject& object, sf::Time dt ) override;
+    virtual void update( GameObject* object, sf::Time dt ) override;
 
-    virtual void addAction( std::string key, std::function<void( GameObject& object )> action ) override;
+    virtual void addAction( std::string key, std::function<void( GameObject* object )> action ) override;
 
-    virtual void executeAction( std::string key, GameObject& object ) override;
+    virtual void executeAction( std::string key, GameObject* object ) override;
 
 private:
-    std::unordered_map<std::string, std::function<void( GameObject& object )>> mActions;
+    std::unordered_map<std::string, std::function<void( GameObject* object )>> mActions;
     GameObject* mGameObject;
 
 };

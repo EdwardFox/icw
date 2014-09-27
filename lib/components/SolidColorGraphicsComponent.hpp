@@ -13,7 +13,7 @@ public:
 
     virtual ~SolidColorGraphicsComponent() {};
 
-    virtual void update( GameObject& object, sf::Time dt ) override;
+    virtual void update( GameObject* object, sf::Time dt ) override;
 
     virtual void render( sf::RenderTarget& target, sf::Time dt ) const override;
 

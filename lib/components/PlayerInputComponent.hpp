@@ -14,7 +14,7 @@ public:
 
     virtual GameObject* getGameObject() const override;
 
-    virtual void update( GameObject& object, sf::Time dt ) override;
+    virtual void update( GameObject* object, sf::Time dt ) override;
 
 private:
     GameObject* mGameObject;

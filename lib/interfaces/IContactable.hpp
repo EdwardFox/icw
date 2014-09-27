@@ -9,8 +9,6 @@ public:
 
     virtual ~IContactable() {};
 
-    virtual void onContact( Contact contact ) = 0;
-
     virtual void onContact( Contact contact, IContactable* other ) = 0;
 };
 

@@ -16,10 +16,10 @@ PlayerMovementComponent::PlayerMovementComponent( GameObject* gameObject ) :
     this->setType( "MovementComponent" );
 }
 
-void PlayerMovementComponent::update( GameObject& object, sf::Time dt )
+void PlayerMovementComponent::update( GameObject* object, sf::Time dt )
 {
-    IStateHandlerComponent* stateComp = dynamic_cast<IStateHandlerComponent*>(object.getComponent( "StateHandlerComponent" ) );
-    IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object.getComponent( "PhysicsComponent" ));
+    IStateHandlerComponent* stateComp = dynamic_cast<IStateHandlerComponent*>(object->getComponent( "StateHandlerComponent" ) );
+    IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object->getComponent( "PhysicsComponent" ));
 
     if ( physComp )
     {
@@ -49,10 +49,10 @@ void PlayerMovementComponent::update( GameObject& object, sf::Time dt )
     }
 }
 
-void PlayerMovementComponent::move( GameObject& object, Movement mov )
+void PlayerMovementComponent::move( GameObject* object, Movement mov )
 {
-    IStateHandlerComponent* stateComp = dynamic_cast<IStateHandlerComponent*>(object.getComponent( "StateHandlerComponent" ) );
-    IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object.getComponent( "PhysicsComponent" ) );
+    IStateHandlerComponent* stateComp = dynamic_cast<IStateHandlerComponent*>(object->getComponent( "StateHandlerComponent" ) );
+    IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object->getComponent( "PhysicsComponent" ) );
     if ( physComp )
     {
         if ( physComp->getBodyType() != b2_staticBody )
@@ -84,9 +84,9 @@ void PlayerMovementComponent::move( GameObject& object, Movement mov )
     }
 }
 
-void PlayerMovementComponent::jump( GameObject& object )
+void PlayerMovementComponent::jump( GameObject* object )
 {
-    IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object.getComponent( "PhysicsComponent" ) );
+    IPhysicsComponent* physComp = dynamic_cast<IPhysicsComponent*>(object->getComponent( "PhysicsComponent" ) );
     if ( physComp )
     {
         if ( !physComp->isInAir() )

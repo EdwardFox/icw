@@ -11,9 +11,9 @@ DefaultStateHandlerComponent::DefaultStateHandlerComponent( GameObject* gameObje
 
 }
 
-void DefaultStateHandlerComponent::update( GameObject& object, sf::Time dt )
+void DefaultStateHandlerComponent::update( GameObject* object, sf::Time dt )
 {
-    AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(object.getGraphicComponent());
+    AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(object->getGraphicComponent());
     if ( mCurrent->returnToPreviousState() && animComp->isAnimationFinished() )
     {
         changeToPreviousState( object );
@@ -26,7 +26,7 @@ void DefaultStateHandlerComponent::update( GameObject& object, sf::Time dt )
 
 }
 
-void DefaultStateHandlerComponent::changeState( GameObject& object, std::string state )
+void DefaultStateHandlerComponent::changeState( GameObject* object, std::string state )
 {
     if ( mCurrent->hasState( state ) )
     {
@@ -36,7 +36,7 @@ void DefaultStateHandlerComponent::changeState( GameObject& object, std::string 
     }
 }
 
-void DefaultStateHandlerComponent::changeToPreviousState( GameObject& object )
+void DefaultStateHandlerComponent::changeToPreviousState( GameObject* object )
 {
     if ( mPrevious )
         mCurrent = mPrevious;
@@ -67,16 +67,16 @@ void DefaultStateHandlerComponent::addState( std::string key, State state )
     mStates.emplace( key, state );
 }
 
-void DefaultStateHandlerComponent::setState( GameObject& object, std::string state )
+void DefaultStateHandlerComponent::setState( GameObject* object, std::string state )
 {
     mPrevious = mCurrent;
     mCurrent = &mStates.at( state );
     changeAnimation( object, mCurrent->getAnimation() );
 }
 
-void DefaultStateHandlerComponent::changeAnimation( GameObject& object, std::string animation )
+void DefaultStateHandlerComponent::changeAnimation( GameObject* object, std::string animation )
 {
-    AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(object.getGraphicComponent());
+    AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(object->getGraphicComponent());
     if ( animComp )
     {
         animComp->setAnimation( animation );

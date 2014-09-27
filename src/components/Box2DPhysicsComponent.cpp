@@ -1,15 +1,15 @@
 #include <cstdint>
 #include "lib/components/Box2DPhysicsComponent.hpp"
-#include "lib/GameObject.hpp"
 
-Box2DPhysicsComponent::Box2DPhysicsComponent( b2World& physics, GameObject& object, b2BodyType type ) :
+Box2DPhysicsComponent::Box2DPhysicsComponent( b2World* physics, GameObject* object, b2BodyType type ) :
         mSensors()
-        , mGameObject( &object )
+        , mGameObject( object )
         , mBodyDef()
         , mBody( nullptr )
         , mPolygonShape()
         , mChainShape()
         , mFixtureDef()
+        , mOnContact()
 {
     this->setType( "PhysicsComponent" );
     createCollisionBody( physics, object, type );
@@ -19,16 +19,16 @@ Box2DPhysicsComponent::~Box2DPhysicsComponent()
 {
 }
 
-void Box2DPhysicsComponent::update( GameObject& object, sf::Time dt )
+void Box2DPhysicsComponent::update( GameObject* object, sf::Time dt )
 {
     if ( mBody->GetType() != b2_staticBody )
     {
-        object.setPosition( sf::Vector2f( mBody->GetPosition().x * SCALE, mBody->GetPosition().y * SCALE ) );
-        object.setRotation( mBody->GetAngle() * 180.f / 3.14f );
+        object->setPosition( sf::Vector2f( mBody->GetPosition().x * SCALE, mBody->GetPosition().y * SCALE ) );
+        object->setRotation( mBody->GetAngle() * 180.f / 3.14f );
     }
 }
 
-void Box2DPhysicsComponent::createCollisionBody( b2World& physics, GameObject& object, b2BodyType type )
+void Box2DPhysicsComponent::createCollisionBody( b2World* physics, GameObject* object, b2BodyType type )
 {
     // Create instances
     mBodyDef = b2BodyDef();
@@ -39,8 +39,8 @@ void Box2DPhysicsComponent::createCollisionBody( b2World& physics, GameObject& o
     mBodyDef.type = type;
 
     // Set position and create the body
-    mBodyDef.position.Set( object.getPosition().x / SCALE, object.getPosition().y / SCALE );
-    mBody = physics.CreateBody( &mBodyDef );
+    mBodyDef.position.Set( object->getPosition().x / SCALE, object->getPosition().y / SCALE );
+    mBody = physics->CreateBody( &mBodyDef );
 
     /*
     *   SHAPE
@@ -61,77 +61,44 @@ void Box2DPhysicsComponent::createCollisionBody( b2World& physics, GameObject& o
     {
         // Top
         b2Vec2 vs[2];
-        vs[0].Set( (-object.getSize().x / 2.f) / SCALE, -object.getSize().y / 2.f / SCALE );
-        vs[1].Set( (object.getSize().x / 2.f) / SCALE, -object.getSize().y / 2.f / SCALE );
+        vs[0].Set( (-object->getSize().x / 2.f) / SCALE, -object->getSize().y / 2.f / SCALE );
+        vs[1].Set( (object->getSize().x / 2.f) / SCALE, -object->getSize().y / 2.f / SCALE );
         mChainShape[0].CreateChain( vs, 2 );
-        mChainShape[0].SetPrevVertex( b2Vec2( (-object.getSize().x - object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE ) );
-        mChainShape[0].SetNextVertex( b2Vec2( (object.getSize().x + object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE ) );
+        mChainShape[0].SetPrevVertex( b2Vec2( (-object->getSize().x - object->getSize().x / 2.f) / SCALE, object->getSize().y / 2.f / SCALE ) );
+        mChainShape[0].SetNextVertex( b2Vec2( (object->getSize().x + object->getSize().x / 2.f) / SCALE, object->getSize().y / 2.f / SCALE ) );
         mBody->CreateFixture( &mChainShape[0], 0.f );
 
         // Bottom
-        vs[0].Set( (-object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE );
-        vs[1].Set( (object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE );
+        vs[0].Set( (-object->getSize().x / 2.f) / SCALE, object->getSize().y / 2.f / SCALE );
+        vs[1].Set( (object->getSize().x / 2.f) / SCALE, object->getSize().y / 2.f / SCALE );
         mChainShape[1].CreateChain( vs, 2 );
-        mChainShape[1].SetPrevVertex( b2Vec2( (-object.getSize().x - object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE ) );
-        mChainShape[1].SetNextVertex( b2Vec2( (object.getSize().x + object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE ) );
+        mChainShape[1].SetPrevVertex( b2Vec2( (-object->getSize().x - object->getSize().x / 2.f) / SCALE, object->getSize().y / 2.f / SCALE ) );
+        mChainShape[1].SetNextVertex( b2Vec2( (object->getSize().x + object->getSize().x / 2.f) / SCALE, object->getSize().y / 2.f / SCALE ) );
         mBody->CreateFixture( &mChainShape[1], 0.f );
 
         // Left
-        vs[0].Set( (-object.getSize().x / 2.f) / SCALE, -object.getSize().y / 2.f / SCALE );
-        vs[1].Set( (-object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE );
+        vs[0].Set( (-object->getSize().x / 2.f) / SCALE, -object->getSize().y / 2.f / SCALE );
+        vs[1].Set( (-object->getSize().x / 2.f) / SCALE, object->getSize().y / 2.f / SCALE );
         mChainShape[2].CreateChain( vs, 2 );
-        mChainShape[2].SetPrevVertex( b2Vec2( -object.getSize().x / 2.f / SCALE, (-object.getSize().y - object.getSize().y / 2.f) / SCALE ) );
-        mChainShape[2].SetNextVertex( b2Vec2( -object.getSize().x / 2.f / SCALE, (object.getSize().y + object.getSize().y / 2.f) / SCALE ) );
+        mChainShape[2].SetPrevVertex( b2Vec2( -object->getSize().x / 2.f / SCALE, (-object->getSize().y - object->getSize().y / 2.f) / SCALE ) );
+        mChainShape[2].SetNextVertex( b2Vec2( -object->getSize().x / 2.f / SCALE, (object->getSize().y + object->getSize().y / 2.f) / SCALE ) );
         mBody->CreateFixture( &mChainShape[2], 0.f );
 
         // Right
-        vs[0].Set( (object.getSize().x / 2.f) / SCALE, -object.getSize().y / 2.f / SCALE );
-        vs[1].Set( (object.getSize().x / 2.f) / SCALE, object.getSize().y / 2.f / SCALE );
+        vs[0].Set( (object->getSize().x / 2.f) / SCALE, -object->getSize().y / 2.f / SCALE );
+        vs[1].Set( (object->getSize().x / 2.f) / SCALE, object->getSize().y / 2.f / SCALE );
         mChainShape[3].CreateChain( vs, 2 );
-        mChainShape[3].SetPrevVertex( b2Vec2( object.getSize().x / 2.f / SCALE, (-object.getSize().y - object.getSize().y / 2.f) / SCALE ) );
-        mChainShape[3].SetNextVertex( b2Vec2( object.getSize().x / 2.f / SCALE, (object.getSize().y + object.getSize().y / 2.f) / SCALE ) );
+        mChainShape[3].SetPrevVertex( b2Vec2( object->getSize().x / 2.f / SCALE, (-object->getSize().y - object->getSize().y / 2.f) / SCALE ) );
+        mChainShape[3].SetNextVertex( b2Vec2( object->getSize().x / 2.f / SCALE, (object->getSize().y + object->getSize().y / 2.f) / SCALE ) );
         mBody->CreateFixture( &mChainShape[3], 0.f );
     }
     else
     {
-        mPolygonShape.SetAsBox( (object.getSize().x / 2.f) / SCALE, (object.getSize().y / 2.f) / SCALE );
+        mPolygonShape.SetAsBox( (object->getSize().x / 2.f) / SCALE, (object->getSize().y / 2.f) / SCALE );
         mFixtureDef.shape = &mPolygonShape;
         mFixtureDef.density = 1.f;
         mFixtureDef.friction = 1.0f;
         mBody->CreateFixture( &mFixtureDef );
-    }
-}
-
-void Box2DPhysicsComponent::setFixedRotation( bool rotation )
-{
-    mBody->SetFixedRotation( rotation );
-}
-
-b2BodyType Box2DPhysicsComponent::getBodyType()
-{
-    return mBody->GetType();
-}
-
-b2Vec2 Box2DPhysicsComponent::getLinearVelocity()
-{
-    return mBody->GetLinearVelocity();
-}
-
-void Box2DPhysicsComponent::setLinearVelocity( b2Vec2 vel )
-{
-    mBody->SetLinearVelocity( vel );
-}
-
-void Box2DPhysicsComponent::addLinearImpulse( b2Vec2 impulse )
-{
-    mBody->ApplyLinearImpulse( impulse, mBody->GetWorldCenter(), true );
-}
-
-void Box2DPhysicsComponent::setFriction( float friction )
-{
-    for ( b2Fixture* f = mBody->GetFixtureList(); f; f = f->GetNext() )
-    {
-        f->SetFriction( friction );
     }
 }
 
@@ -154,7 +121,7 @@ Collision Box2DPhysicsComponent::hitWall() const
 
 }
 
-void Box2DPhysicsComponent::addSensor( std::string key, b2World& physics, b2Vec2 size, b2Vec2 position )
+void Box2DPhysicsComponent::addSensor( std::string key, b2World* physics, b2Vec2 size, b2Vec2 position )
 {
     PhysicsSensor* sensor = new PhysicsSensor();
     sensor->createSensor( physics, mBody, size, position );
@@ -174,35 +141,18 @@ const PhysicsSensor* Box2DPhysicsComponent::getSensor( std::string key ) const
     }
 }
 
-void Box2DPhysicsComponent::createDefaultSensors( b2World& physics, GameObject& object )
+void Box2DPhysicsComponent::createDefaultSensors( b2World* physics, GameObject* object )
 {
-    this->addSensor( "ground", physics, b2Vec2( (object.getSize().x / 2.f - 2.f) / SCALE, 1.f / SCALE ), b2Vec2( 0, ((object.getSize().y / 2.f) / SCALE) ) );
-    this->addSensor( "ceiling", physics, b2Vec2( (object.getSize().x / 2.f - 2.f) / SCALE, 1.f / SCALE ), b2Vec2( 0, -((object.getSize().y / 2.f) / SCALE) ) );
-    this->addSensor( "left", physics, b2Vec2( 1.f / SCALE, (object.getSize().y / 2.f - 2.f) / SCALE ), b2Vec2( -(object.getSize().y / 2.f) / SCALE, 0 ) );
-    this->addSensor( "right", physics, b2Vec2( 1.f / SCALE, (object.getSize().y / 2.f - 2.f) / SCALE ), b2Vec2( (object.getSize().y / 2.f) / SCALE, 0 ) );
-}
-
-float Box2DPhysicsComponent::getGravityScale() const
-{
-    return mBody->GetGravityScale();
-}
-
-void Box2DPhysicsComponent::setGravityScale( float gravityScale )
-{
-    mBody->SetGravityScale( gravityScale );
-}
-
-void Box2DPhysicsComponent::onContact( Contact contact )
-{
-//    std::cout << "contact" << std::endl;
-    mGameObject->setExpired( true );
-    // TODO: Add proper implementation so each GameObject can choose its own onContact implementation
+    this->addSensor( "ground", physics, b2Vec2( (object->getSize().x / 2.f - 2.f) / SCALE, 1.f / SCALE ), b2Vec2( 0, ((object->getSize().y / 2.f) / SCALE) ) );
+    this->addSensor( "ceiling", physics, b2Vec2( (object->getSize().x / 2.f - 2.f) / SCALE, 1.f / SCALE ), b2Vec2( 0, -((object->getSize().y / 2.f) / SCALE) ) );
+    this->addSensor( "left", physics, b2Vec2( 1.f / SCALE, (object->getSize().y / 2.f - 2.f) / SCALE ), b2Vec2( -(object->getSize().y / 2.f) / SCALE, 0 ) );
+    this->addSensor( "right", physics, b2Vec2( 1.f / SCALE, (object->getSize().y / 2.f - 2.f) / SCALE ), b2Vec2( (object->getSize().y / 2.f) / SCALE, 0 ) );
 }
 
 void Box2DPhysicsComponent::onContact( Contact contact, IContactable* other )
 {
-//    std::cout << "test" << std::endl;
-    // TODO: Add proper implementation so each GameObject can choose its own onContact implementation
+    if ( mOnContact )
+        mOnContact( this, contact, other );
 }
 
 void Box2DPhysicsComponent::setContactable( bool contactable )
@@ -215,11 +165,6 @@ void Box2DPhysicsComponent::setContactable( bool contactable )
     {
         this->mBody->SetUserData( nullptr );
     }
-}
-
-GameObject* Box2DPhysicsComponent::getGameObject() const
-{
-    return mGameObject;
 }
 
 void Box2DPhysicsComponent::destroyBody()

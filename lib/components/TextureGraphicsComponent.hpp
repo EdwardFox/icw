@@ -13,11 +13,11 @@ public:
 
     virtual ~TextureGraphicsComponent() {};
 
-    virtual void update( GameObject& object, sf::Time dt ) override;
+    virtual void update( GameObject* object, sf::Time dt ) override;
 
     virtual void render( sf::RenderTarget& target, sf::Time dt ) const override;
 
-    virtual void setTexture( sf::Texture& texture, sf::IntRect rect );
+    virtual void setTexture( sf::Texture* texture, sf::IntRect rect );
 
     virtual GameObject* getGameObject() const override;
 
