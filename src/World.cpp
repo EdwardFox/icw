@@ -237,6 +237,7 @@ void World::createPlayer()
     Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( &mPhysics, mPlayer, b2_dynamicBody );
     dynPhysics->setFixedRotation( true );
     dynPhysics->createDefaultSensors( &mPhysics, mPlayer );
+    dynPhysics->setContactable( true );
     mPlayer->attachComponent( "PhysicsComponent", dynPhysics );
 
     PlayerInputComponent* tic = new PlayerInputComponent( mPlayer );
