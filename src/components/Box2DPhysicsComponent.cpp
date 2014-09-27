@@ -9,7 +9,6 @@ Box2DPhysicsComponent::Box2DPhysicsComponent( b2World* physics, GameObject* obje
         , mPolygonShape()
         , mChainShape()
         , mFixtureDef()
-        , mOnContact()
 {
     this->setType( "PhysicsComponent" );
     createCollisionBody( physics, object, type );
@@ -151,8 +150,15 @@ void Box2DPhysicsComponent::createDefaultSensors( b2World* physics, GameObject* 
 
 void Box2DPhysicsComponent::onContact( Contact contact, IContactable* other )
 {
-    if ( mOnContact )
-        mOnContact( this, contact, other );
+    if ( other )
+    {
+        IComponent* hitByComp = dynamic_cast<IComponent*>(other);
+        if ( hitByComp )
+        {
+            GameObject* hitByObject = hitByComp->getGameObject();
+            this->getGameObject()->onHit( hitByObject, contact );
+        }
+    }
 }
 
 void Box2DPhysicsComponent::setContactable( bool contactable )

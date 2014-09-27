@@ -10,69 +10,97 @@
 
 class World;
 
+class IContactable;
+
 class GameObject
 {
 public:
-    GameObject( World* world );
+    GameObject( World* world, std::string name );
 
-    void attachComponent( std::string key, IComponent* component );
+    virtual ~GameObject() {};
 
-    void detachComponent( std::string key );
+    virtual void attachComponent( std::string key, IComponent* component );
 
-    IComponent* const getComponent( std::string key ) const;
+    virtual void detachComponent( std::string key );
 
-    void setGraphicComponent( IGraphicsComponent* component );
+    virtual IComponent* const getComponent( std::string key ) const;
 
-    IGraphicsComponent* const getGraphicComponent() const;
+    virtual void setGraphicComponent( IGraphicsComponent* component );
 
-    void update( sf::Time dt );
+    virtual IGraphicsComponent* const getGraphicComponent() const;
 
-    void render( sf::RenderTarget& target, sf::Time dt ) const;
+    virtual void update( sf::Time dt );
 
-    sf::Vector2f getPosition() const;
+    virtual void render( sf::RenderTarget& target, sf::Time dt ) const;
 
-    sf::Vector2f getSize() const;
+    virtual void onHit( GameObject* hitBy, Contact contact );
 
-    sf::Vector2f getVelocity() const;
+    virtual sf::Vector2f getPosition() const
+    {
+        return mPosition;
+    }
 
-    float getRotation() const;
+    virtual void setPosition( sf::Vector2f position )
+    {
+        mPosition = position;
+    }
 
-    void setPosition( sf::Vector2f position );
+    virtual sf::Vector2f getSize() const
+    {
+        return mSize;
+    }
 
-    void setSize( sf::Vector2f size );
+    virtual void setSize( sf::Vector2f size )
+    {
+        mSize = size;
+    }
 
-    void setVelocity( sf::Vector2f velocity );
+    virtual float getRotation() const
+    {
+        return mRotation;
+    }
 
-    void setRotation( float rotation );
+    virtual void setRotation( float rotation )
+    {
+        mRotation = rotation;
+    }
 
-    bool isExpired() const
+    virtual bool isExpired() const
     {
         return mExpired;
     }
 
-    void setExpired( bool expired )
+    virtual void setExpired( bool expired )
     {
         mExpired = expired;
     }
 
-    World* getWorld()
+    virtual World* getWorld()
     {
         return mWorld;
+    }
+
+    std::string getName() const
+    {
+        return mName;
+    }
+
+    void setMName( std::string name )
+    {
+        GameObject::mName = name;
     }
 
 private:
 
     World* mWorld;
-
     std::unordered_map<std::string, std::unique_ptr<IComponent>> mComponents;
-
     std::unique_ptr<IGraphicsComponent> mGraphicComponent;
     sf::Vector2f mPosition;
     sf::Vector2f mSize;
     sf::Vector2f mVelocity;
     bool mExpired;
-
     float mRotation;
+    std::string mName;
 };
 
 #endif

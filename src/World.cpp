@@ -48,11 +48,12 @@ World::World() :
     /** Creates a few physical boxes for testing purposes **/
     for ( int i = 0; i < 6; ++i )
     {
-        GameObject* box = this->createGameObject( sf::Vector2f( 600.f, 0.f ), sf::Vector2f( 16.f, 16.f ) );
+        GameObject* box = this->createGameObject( "Dynamic Box", sf::Vector2f( 600.f, 0.f ), sf::Vector2f( 16.f, 16.f ) );
         SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );
         box->setGraphicComponent( solid );
 
         Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( &mPhysics, box, b2_dynamicBody );
+        physBox->setContactable( true );
         box->attachComponent( "PhysicsComponent", physBox );
     }
 }
@@ -189,7 +190,7 @@ void World::loadMap( std::string path )
                 * We do not use createGameObject( ... ) at this point since the game objects
                 * belong to their respective grids and are not handled by the world directly.
                 */
-                GameObject* obj = new GameObject( this );
+                GameObject* obj = new GameObject( this, "Static Box" );
                 TextureGraphicsComponent* tgc = new TextureGraphicsComponent( obj );
                 tgc->setTexture( &tex, mActiveMap->getTiles().at( gid - 1 ).rect );
                 obj->setGraphicComponent( tgc );
@@ -226,7 +227,7 @@ void World::createPlayer()
     /** Create the player game object **/
     sf::Vector2f position = sf::Vector2f( mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).left, mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).top );
     sf::Vector2f size = sf::Vector2f( 10.f, 11.f );
-    mPlayer = this->createGameObject( position, size );
+    mPlayer = this->createGameObject( "Player", position, size );
 
     /** Create its animations and states **/
     this->createPlayerAnimations();
@@ -279,7 +280,7 @@ void World::createPlayer()
             pos2.y += i * 5;
             velocity.y = i;
 
-            GameObject* projectile = object->getWorld()->createGameObject( pos2, size );
+            GameObject* projectile = object->getWorld()->createGameObject( "Projectile", pos2, size );
 
             SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( projectile, projectile->getSize() );
             projectile->setGraphicComponent( solid );
@@ -287,32 +288,6 @@ void World::createPlayer()
         Box2DPhysicsComponent* box = new Box2DPhysicsComponent( object->getWorld()->getPhysicsWorld(), projectile, b2_dynamicBody );
             box->setGravityScale( 0.f );
             box->setContactable( true );
-
-            // Callback function to define what happens when this body comes into contact with another
-            std::function<void( Box2DPhysicsComponent* box, Contact contact, IContactable* other )> onContact =
-                    []( Box2DPhysicsComponent* box, Contact contact, IContactable* other ) -> void
-                    {
-                        // We begin touching another body
-                        if ( contact == Contact::Begin )
-                        {
-                            // Destroy our game object
-                            box->getGameObject()->setExpired( true );
-
-                            // If the other body is contactable
-                            if ( other )
-                            {
-                                // Check if it is a component
-                                IComponent* otherComp = dynamic_cast<IComponent*>(other);
-                                if( otherComp )
-                                {
-                                    // Destroy the other component
-                                    otherComp->getGameObject()->setExpired( true );
-                                }
-                            }
-                        }
-                    };
-
-            box->setOnContactFunction( onContact );
             projectile->attachComponent( "PhysicsComponent", box );
 
             ProjectileAIComponent* proj = new ProjectileAIComponent( projectile );
@@ -359,7 +334,7 @@ void World::createPlayerAnimations()
     attack.addFrame( sf::Vector2f( 194.f, 33.f ), sf::Vector2f( 57.f, 11.f ) );
     attack.addFrame( sf::Vector2f( 258.f, 33.f ), sf::Vector2f( 14.f, 11.f ) );
     attack.setRepeat( false );
-    attack.setTimePerFrame( 25 );
+    attack.setTimePerFrame( 5 );
     agc->addAnimation( "attack", attack );
     agc->setAnimation( "idle" );
 
@@ -411,9 +386,9 @@ void World::createPlayerStates()
     mPlayer->attachComponent( "StateHandlerComponent", dsc );
 }
 
-GameObject* World::createGameObject( sf::Vector2f position, sf::Vector2f size )
+GameObject* World::createGameObject( std::string name, sf::Vector2f position, sf::Vector2f size )
 {
-    GameObject* obj = new GameObject( this );
+    GameObject* obj = new GameObject( this, name );
     obj->setPosition( position );
     obj->setSize( size );
 

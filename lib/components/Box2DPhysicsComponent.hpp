@@ -176,19 +176,6 @@ public:
     */
     virtual void destroyBody() override;
 
-    /**
-    * Sets the callback function when having contact with any object.
-    * Make sure to check for other for nullptrs, as not all contacted objects
-    * will implement the IContactable interface.
-    *
-    * std::function<void( Box2DPhysicsComponent* box, Contact contact, IContactable* other )> func
-    *       - The callback function
-    */
-    virtual void setOnContactFunction( std::function<void( Box2DPhysicsComponent* box, Contact contact, IContactable* other )> func )
-    {
-        mOnContact = func;
-    }
-
 private:
 
     /**
@@ -226,10 +213,6 @@ private:
     */
     b2FixtureDef mFixtureDef;
 
-    /**
-    * Holds the callback function for contacting with a contactable
-    */
-    std::function<void( Box2DPhysicsComponent* box, Contact contact, IContactable* other )> mOnContact;
 };
 
 #endif

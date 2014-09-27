@@ -59,8 +59,11 @@ public:
     * sf::Vector2f size     - The size of the game object in pixels
     * return                - Pointer to the created game object
     */
-    GameObject* createGameObject( sf::Vector2f position, sf::Vector2f size );
+    GameObject* createGameObject( std::string name, sf::Vector2f position, sf::Vector2f size );
 
+    /**
+    * Returns a pointer to the physics world
+    */
     b2World* getPhysicsWorld()
     {
         return &mPhysics;

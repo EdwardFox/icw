@@ -1,7 +1,8 @@
 #include "lib/GameObject.hpp"
 #include <stdexcept>
+#include <lib/interfaces/IContactable.hpp>
 
-GameObject::GameObject( World* world ) :
+GameObject::GameObject( World* world, std::string name ) :
         mWorld( world )
         , mComponents()
         , mGraphicComponent( nullptr )
@@ -10,6 +11,7 @@ GameObject::GameObject( World* world ) :
         , mVelocity( 0, 0 )
         , mExpired( false )
         , mRotation( 0 )
+        , mName( name )
 {
 
 }
@@ -64,42 +66,8 @@ void GameObject::render( sf::RenderTarget& target, sf::Time dt ) const
     }
 }
 
-sf::Vector2f GameObject::getPosition() const
+void GameObject::onHit( GameObject* hitBy, Contact contact )
 {
-    return mPosition;
-}
-
-sf::Vector2f GameObject::getSize() const
-{
-    return mSize;
-}
-
-sf::Vector2f GameObject::getVelocity() const
-{
-    return mVelocity;
-}
-
-float GameObject::getRotation() const
-{
-    return mRotation;
-}
-
-void GameObject::setPosition( sf::Vector2f position )
-{
-    mPosition = position;
-}
-
-void GameObject::setSize( sf::Vector2f size )
-{
-    mSize = size;
-}
-
-void GameObject::setVelocity( sf::Vector2f velocity )
-{
-    mVelocity = velocity;
-}
-
-void GameObject::setRotation( float rotation )
-{
-    mRotation = rotation;
+    std::cout << "Object " << this->getName() << " was hit by " << hitBy->getName() << std::endl;
+    // map.at(this->getName())( ... );
 }
