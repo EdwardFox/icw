@@ -12,13 +12,12 @@
 World::World() :
         mTextures()
         , mGrids()
-        , mMaps()
         , mObjects()
         , mObjectsToCreate()
         , mPhysics( b2Vec2( 0.f, 9.8f ) )
         , mCamera()
         , mPlayer( nullptr )
-        , mActiveMap( nullptr )
+        , mMap()
         , mWorldGrid( nullptr )
         , mListener()
 {
@@ -34,6 +33,7 @@ World::World() :
     */
     this->loadMap( "media/maps/Temple.tmx" );
     this->createPlayer();
+    this->createEnemies();
 
     /**
     * Set up the camera
@@ -42,7 +42,7 @@ World::World() :
     mCamera.setOffset( sf::Vector2f( 0.f, -50.f ) );
     mCamera.setZoom( 3.f );
     mCamera.setFollowTarget( mPlayer );
-    sf::IntRect rect( 0, 0, mActiveMap->getMapSize().x * mActiveMap->getTileSize().x, mActiveMap->getMapSize().y * mActiveMap->getTileSize().x );
+    sf::IntRect rect( 0, 0, mMap.getMapSize().x * mMap.getTileSize().x, mMap.getMapSize().y * mMap.getTileSize().x );
     mCamera.setBorders( rect );
 
     /** Creates a few physical boxes for testing purposes **/
@@ -131,25 +131,10 @@ void World::update( sf::Time dt, sf::Vector2u windowSize )
 
 void World::loadMap( std::string path )
 {
-    /**
-    * Only load the map when it has not already been loaded.
-    * Make sure to clear old grids before creating new ones.
-    */
-    try
-    {
-        mActiveMap = &mMaps.at( path );
-    }
-    catch ( std::out_of_range oor )
-    {
-        Map map;
-        map.load( path, mTextures );
-        mMaps.emplace( path, map );
-        mActiveMap = &mMaps.at( path );
-    }
-    mGrids.clear();
+    mMap.load( path, mTextures );
 
     /** Create a grid for each layer **/
-    for ( auto& layer : mActiveMap->getLayers() )
+    for ( auto& layer : mMap.getLayers() )
     {
         Grid* grid = new Grid( layer.name );
 
@@ -158,7 +143,7 @@ void World::loadMap( std::string path )
             mWorldGrid = grid;
 
         /** Set tile size **/
-        grid->setTileSize( mActiveMap->getTileSize().x );
+        grid->setTileSize( mMap.getTileSize().x );
 
         /** Add each tile and its proper texture **/
         for ( int i = 0; i < layer.rows; ++i )
@@ -183,7 +168,7 @@ void World::loadMap( std::string path )
                 * indices begin at 0. When retrieving the tile texture we
                 * have to subtract the calculated gid by 1.
                 */
-                sf::Texture& tex = mTextures.get( mActiveMap->getTiles().at( gid - 1 ).key );
+                sf::Texture& tex = mTextures.get( mMap.getTiles().at( gid - 1 ).key );
 
                 /**
                 * Create the game object and its components.
@@ -192,7 +177,7 @@ void World::loadMap( std::string path )
                 */
                 GameObject* obj = new GameObject( this, "Static Box" );
                 TextureGraphicsComponent* tgc = new TextureGraphicsComponent( obj );
-                tgc->setTexture( &tex, mActiveMap->getTiles().at( gid - 1 ).rect );
+                tgc->setTexture( &tex, mMap.getTiles().at( gid - 1 ).rect );
                 obj->setGraphicComponent( tgc );
 
                 sf::Vector2f pos = sf::Vector2f( j * grid->getTileSize(), i * grid->getTileSize() );
@@ -225,7 +210,7 @@ void World::initializeTextures()
 void World::createPlayer()
 {
     /** Create the player game object **/
-    sf::Vector2f position = sf::Vector2f( mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).left, mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).top );
+    sf::Vector2f position = sf::Vector2f( mMap.getObjectGroups().at( 0 ).objects.at( 0 ).position.left, mMap.getObjectGroups().at( 0 ).objects.at( 0 ).position.top );
     sf::Vector2f size = sf::Vector2f( 10.f, 11.f );
     mPlayer = this->createGameObject( "Player", position, size );
 
@@ -286,7 +271,7 @@ void World::createPlayer()
             SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( projectile, projectile->getSize() );
             projectile->setGraphicComponent( solid );
 
-        Box2DPhysicsComponent* box = new Box2DPhysicsComponent( object->getWorld()->getPhysicsWorld(), projectile, b2_dynamicBody );
+            Box2DPhysicsComponent* box = new Box2DPhysicsComponent( object->getWorld()->getPhysicsWorld(), projectile, b2_dynamicBody );
             box->setGravityScale( 0.f );
             box->setContactable( true );
             projectile->attachComponent( "PhysicsComponent", box );
@@ -396,4 +381,20 @@ GameObject* World::createGameObject( std::string name, sf::Vector2f position, sf
     mObjectsToCreate.push_back( std::unique_ptr<GameObject>( obj ) );
 
     return obj;
+}
+
+void World::createEnemies()
+{
+    for( unsigned i = 0; i < mMap.getObjectGroups().at( 1 ).objects.size(); ++i )
+    {
+        Map::MapObject obj = mMap.getObjectGroups().at( 1 ).objects.at( i );
+
+        GameObject* box = this->createGameObject( obj.name, sf::Vector2f( obj.position.left, obj.position.top ), sf::Vector2f( 16.f, 16.f ) );
+        SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );
+        box->setGraphicComponent( solid );
+
+        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( &mPhysics, box, b2_dynamicBody );
+        physBox->setContactable( true );
+        box->attachComponent( "PhysicsComponent", physBox );
+    }
 }

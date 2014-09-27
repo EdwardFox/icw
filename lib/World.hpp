@@ -100,12 +100,6 @@ private:
     std::vector<std::unique_ptr<Grid>> mGrids;
 
     /**
-    * Holds all the loaded maps
-    * TODO: Figure out if we really need to cache maps
-    */
-    std::unordered_map<std::string, Map> mMaps;
-
-    /**
     * Holds all the dynamic (non-grid) game objects
     */
     std::vector<std::unique_ptr<GameObject>> mObjects;
@@ -134,7 +128,7 @@ private:
     * Holds a pointer to the currently active map
     * Only needed as long as more than one map is cached
     */
-    Map* mActiveMap;
+    Map mMap;
 
     /**
     * Holds a pointer to the world grid, which is the only one with actual collision
@@ -145,6 +139,8 @@ private:
     * Customized contact listener to accomodate for the IContactable interface
     */
     PhysicsContactListener mListener;
+
+    void createEnemies();
 };
 
 #endif

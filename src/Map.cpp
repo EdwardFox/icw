@@ -154,11 +154,35 @@ void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textu
             sf::IntRect rect(
                     atoi( object->first_attribute( "x" )->value() ),
                     atoi( object->first_attribute( "y" )->value() ),
-                    atoi( object->first_attribute( "width" )->value() ),
-                    atoi( object->first_attribute( "height" )->value() )
+                    (object->first_attribute( "width" )) ? atoi( object->first_attribute( "width" )->value() ) : 0,
+                    (object->first_attribute( "height" )) ? atoi( object->first_attribute( "height" )->value() ) : 0
             );
 
-            objGroup.objects.push_back( rect );
+            MapObject mapObject;
+            std::cout << "Name: " << object->first_attribute( "name" )->value() << std::endl;
+            if ( object->first_attribute( "name" ) )
+            {
+                mapObject.name = object->first_attribute( "name" )->value();
+            }
+
+            mapObject.position = rect;
+
+            if ( object->first_attribute( "type" ) )
+            {
+                mapObject.type = object->first_attribute( "type" )->value();
+            }
+
+            rapidxml::xml_node<>* properties = object->first_node( "properties" );
+            if ( properties )
+            {
+                for ( rapidxml::xml_node<>* property = properties->first_node( "property" ); property; property = property->next_sibling( "property" ) )
+                {
+                    std::tuple<std::string, std::string> propertyTupel( property->first_attribute( "name" )->value(), property->first_attribute( "value" )->value() );
+                    mapObject.properties.push_back( propertyTupel );
+                }
+            }
+
+            objGroup.objects.push_back( mapObject );
             std::cout << "Added object with x: " << rect.left << ", y: " << rect.top << ", width: " << rect.width
                     << ", height: " << rect.height << std::endl;
         }

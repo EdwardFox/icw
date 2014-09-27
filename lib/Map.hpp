@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "lib/ResourceHolder.hpp"
+#include <tuple>
 
 /**
 * Parses Tiled map objects in the XML format and saves relevant data
@@ -57,6 +58,32 @@ public:
     };
 
     /**
+    * Holds single map objects
+    */
+    struct MapObject
+    {
+        /**
+        * The objects name
+        */
+        std::string name;
+
+        /**
+        * The objects type
+        */
+        std::string type;
+
+        /**
+        * Position and dimensions
+        */
+        sf::IntRect position;
+
+        /**
+        * Each object is saved as an MapObject struct
+        */
+        std::vector<std::tuple<std::string,std::string>> properties;
+    };
+
+    /**
     * Holds all relevant data for ObjectGroups
     */
     struct ObjectGroup
@@ -69,7 +96,7 @@ public:
         /**
         * Each object is saved as an IntRect, containing its position and size in the world
         */
-        std::vector<sf::IntRect> objects;
+        std::vector<MapObject> objects;
     };
 
     /**
