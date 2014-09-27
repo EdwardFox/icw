@@ -68,6 +68,6 @@ void GameObject::render( sf::RenderTarget& target, sf::Time dt ) const
 
 void GameObject::onHit( GameObject* hitBy, Contact contact )
 {
-    std::cout << "Object " << this->getName() << " was hit by " << hitBy->getName() << std::endl;
-    // map.at(this->getName())( ... );
+//    std::cout << "Object " << this->getName() << " was hit by " << hitBy->getName() << std::endl;
+//    map.at(this->getName())( ... );
 }

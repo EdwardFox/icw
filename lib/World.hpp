@@ -145,6 +145,8 @@ private:
     * Customized contact listener to accomodate for the IContactable interface
     */
     PhysicsContactListener mListener;
+
+    void createEnemies();
 };
 
 #endif

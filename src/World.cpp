@@ -34,6 +34,7 @@ World::World() :
     */
     this->loadMap( "media/maps/Temple.tmx" );
     this->createPlayer();
+    this->createEnemies();
 
     /**
     * Set up the camera
@@ -225,7 +226,7 @@ void World::initializeTextures()
 void World::createPlayer()
 {
     /** Create the player game object **/
-    sf::Vector2f position = sf::Vector2f( mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).left, mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).top );
+    sf::Vector2f position = sf::Vector2f( mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).position.left, mActiveMap->getObjectGroups().at( 0 ).objects.at( 0 ).position.top );
     sf::Vector2f size = sf::Vector2f( 10.f, 11.f );
     mPlayer = this->createGameObject( "Player", position, size );
 
@@ -395,4 +396,21 @@ GameObject* World::createGameObject( std::string name, sf::Vector2f position, sf
     mObjectsToCreate.push_back( std::unique_ptr<GameObject>( obj ) );
 
     return obj;
+}
+
+void World::createEnemies()
+{
+    for(auto& kv : mActiveMap->getObjectGroups().at( 1 ).objects)
+    {
+
+        std::cout << "Name: " << kv.name << std::endl;
+        GameObject* box = this->createGameObject( "Test", sf::Vector2f( kv.position.left, kv.position.top ), sf::Vector2f( 16.f, 16.f ) );
+        SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );
+        box->setGraphicComponent( solid );
+
+        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( &mPhysics, box, b2_dynamicBody );
+        physBox->setContactable( true );
+        box->attachComponent( "PhysicsComponent", physBox );
+
+    }
 }
