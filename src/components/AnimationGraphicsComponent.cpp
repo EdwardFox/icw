@@ -107,7 +107,7 @@ void AnimationGraphicsComponent::resetCurrentAnimation()
 
 bool AnimationGraphicsComponent::isAnimationFinished() const
 {
-    return mCurrentAnimation->getIsDone();
+    return mCurrentAnimation->isFinished();
 }
 
 GameObject* AnimationGraphicsComponent::getGameObject() const

@@ -41,7 +41,8 @@ World::World() :
     */
     mCamera.setOffset( sf::Vector2f( 0.f, -50.f ) );
     mCamera.setZoom( 3.f );
-    mCamera.setFollowTarget( mPlayer );
+    mCamera.setFollowTarget( mPlayer, true );
+    mCamera.setLagBehindAmount( 0.2f );
     sf::IntRect rect( 0, 0, mMap.getMapSize().x * mMap.getTileSize().x, mMap.getMapSize().y * mMap.getTileSize().x );
     mCamera.setBorders( rect );
 
@@ -134,7 +135,7 @@ void World::loadMap( std::string path )
     mMap.load( path, mTextures );
 
     /** Create a grid for each layer **/
-    for ( auto& layer : mMap.getLayers() )
+    for ( auto layer : mMap.getLayers() )
     {
         Grid* grid = new Grid( layer.name );
 
@@ -210,7 +211,7 @@ void World::initializeTextures()
 void World::createPlayer()
 {
     /** Create the player game object **/
-    sf::Vector2f position = sf::Vector2f( mMap.getObjectGroups().at( 0 ).objects.at( 0 ).position.left, mMap.getObjectGroups().at( 0 ).objects.at( 0 ).position.top );
+    sf::Vector2f position = sf::Vector2f( mMap.getObjectGroups()->at( 0 ).objects.at( 0 ).position.left, mMap.getObjectGroups()->at( 0 ).objects.at( 0 ).position.top );
     sf::Vector2f size = sf::Vector2f( 10.f, 11.f );
     mPlayer = this->createGameObject( "Player", position, size );
 
@@ -319,8 +320,8 @@ void World::createPlayerAnimations()
     attack.addFrame( sf::Vector2f( 129.f, 33.f ), sf::Vector2f( 62.f, 11.f ) );
     attack.addFrame( sf::Vector2f( 194.f, 33.f ), sf::Vector2f( 57.f, 11.f ) );
     attack.addFrame( sf::Vector2f( 258.f, 33.f ), sf::Vector2f( 14.f, 11.f ) );
-    attack.setRepeat( false );
-    attack.setTimePerFrame( 5 );
+    attack.setRepeatable( false );
+    attack.setTimePerFrame( 1 );
     agc->addAnimation( "attack", attack );
     agc->setAnimation( "idle" );
 
@@ -385,9 +386,14 @@ GameObject* World::createGameObject( std::string name, sf::Vector2f position, sf
 
 void World::createEnemies()
 {
-    for( unsigned i = 0; i < mMap.getObjectGroups().at( 1 ).objects.size(); ++i )
+    for(auto kv : mMap.getObjectGroups()->at(1).objects)
     {
-        Map::MapObject obj = mMap.getObjectGroups().at( 1 ).objects.at( i );
+        std::cout << kv.name << std::endl;
+    }
+
+    for( unsigned i = 0; i < mMap.getObjectGroups()->at( 1 ).objects.size(); ++i )
+    {
+        Map::MapObject obj = mMap.getObjectGroups()->at( 1 ).objects.at( i );
 
         GameObject* box = this->createGameObject( obj.name, sf::Vector2f( obj.position.left, obj.position.top ), sf::Vector2f( 16.f, 16.f ) );
         SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );

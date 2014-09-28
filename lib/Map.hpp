@@ -131,9 +131,10 @@ public:
     /**
     * Returns the vector that holds the different objectgroups
     */
-    std::vector<Map::ObjectGroup> getObjectGroups() const
+    std::vector<Map::ObjectGroup>* getObjectGroups()
     {
-        return mGroups;
+        // TODO: Return pointers and not copies, as copies invalidate iterators when using loops
+        return &mGroups;
     }
 
     /**
