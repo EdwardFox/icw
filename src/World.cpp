@@ -135,7 +135,7 @@ void World::loadMap( std::string path )
     mMap.load( path, mTextures );
 
     /** Create a grid for each layer **/
-    for ( auto layer : mMap.getLayers() )
+    for ( const auto layer : *mMap.getLayers() )
     {
         Grid* grid = new Grid( layer.name );
 
@@ -169,7 +169,7 @@ void World::loadMap( std::string path )
                 * indices begin at 0. When retrieving the tile texture we
                 * have to subtract the calculated gid by 1.
                 */
-                sf::Texture& tex = mTextures.get( mMap.getTiles().at( gid - 1 ).key );
+                sf::Texture& tex = mTextures.get( mMap.getTiles()->at( gid - 1 ).key );
 
                 /**
                 * Create the game object and its components.
@@ -178,7 +178,7 @@ void World::loadMap( std::string path )
                 */
                 GameObject* obj = new GameObject( this, "Static Box" );
                 TextureGraphicsComponent* tgc = new TextureGraphicsComponent( obj );
-                tgc->setTexture( &tex, mMap.getTiles().at( gid - 1 ).rect );
+                tgc->setTexture( &tex, mMap.getTiles()->at( gid - 1 ).rect );
                 obj->setGraphicComponent( tgc );
 
                 sf::Vector2f pos = sf::Vector2f( j * grid->getTileSize(), i * grid->getTileSize() );

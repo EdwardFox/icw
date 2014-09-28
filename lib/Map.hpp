@@ -115,23 +115,23 @@ public:
     /**
     * Returns the vector that holds the different tile data for each tileset
     */
-    std::vector<Map::Tile> getTiles() const
+    const std::vector<Map::Tile>* getTiles() const
     {
-        return mTiles;
+        return &mTiles;
     }
 
     /**
     * Returns the vector that holds the different layers
     */
-    std::vector<Map::Layer> getLayers() const
+    const std::vector<Map::Layer>* getLayers()
     {
-        return mLayers;
+        return &mLayers;
     }
 
     /**
     * Returns the vector that holds the different objectgroups
     */
-    std::vector<Map::ObjectGroup>* getObjectGroups()
+    const std::vector<Map::ObjectGroup>* getObjectGroups() const
     {
         // TODO: Return pointers and not copies, as copies invalidate iterators when using loops
         return &mGroups;
