@@ -1,7 +1,7 @@
 #ifndef FIREBALL_HPP
 #define FIREBALL_HPP
 
-#include "lib/GameObject.hpp"
+#include "lib/gameobjects/GameObject.hpp"
 
 class Fireball : public GameObject
 {

@@ -2,7 +2,7 @@
 #define PROJECTILE_MOVEMENT_COMPONENT
 
 #include <lib/interfaces/IProjectileMovementComponent.hpp>
-#include <lib/GameObject.hpp>
+#include <lib/gameobjects/GameObject.hpp>
 
 class ProjectileMovementComponent : public IComponent, public IProjectileMovementComponent
 {

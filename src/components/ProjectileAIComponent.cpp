@@ -1,7 +1,7 @@
 #include <lib/interfaces/IProjectileMovementComponent.hpp>
 #include "lib/interfaces/IPhysicsComponent.hpp"
 #include "lib/components/ProjectileAIComponent.hpp"
-#include "lib/GameObject.hpp"
+#include "lib/gameobjects/GameObject.hpp"
 
 ProjectileAIComponent::ProjectileAIComponent( GameObject* gameObject ) :
         mGameObject( gameObject )

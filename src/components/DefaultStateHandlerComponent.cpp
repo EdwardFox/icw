@@ -1,5 +1,5 @@
 #include <lib/components/AnimationGraphicsComponent.hpp>
-#include <lib/GameObject.hpp>
+#include <lib/gameobjects/GameObject.hpp>
 #include "lib/components/DefaultStateHandlerComponent.hpp"
 
 DefaultStateHandlerComponent::DefaultStateHandlerComponent( GameObject* gameObject ) :

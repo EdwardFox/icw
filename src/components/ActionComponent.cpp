@@ -1,4 +1,4 @@
-#include <lib/GameObject.hpp>
+#include <lib/gameobjects/GameObject.hpp>
 #include "lib/components/ActionComponent.hpp"
 
 ActionComponent::ActionComponent( GameObject* gameObject ) :

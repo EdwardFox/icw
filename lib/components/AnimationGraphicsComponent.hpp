@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 #include <string>
-#include <lib/GameObject.hpp>
+#include <lib/gameobjects/GameObject.hpp>
 #include "lib/interfaces/IGraphicsComponent.hpp"
 #include "lib/Animation.hpp"
 

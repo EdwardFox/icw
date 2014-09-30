@@ -1,7 +1,7 @@
 #ifndef SOLID_COLOR_GRAPHICS_COMPONENT_HPP
 #define SOLID_COLOR_GRAPHICS_COMPONENT_HPP
 
-#include <lib/GameObject.hpp>
+#include <lib/gameobjects/GameObject.hpp>
 #include "lib/interfaces/IGraphicsComponent.hpp"
 
 class SolidColorGraphicsComponent : public IGraphicsComponent

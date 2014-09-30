@@ -1,5 +1,5 @@
 #include "lib/components/TextureGraphicsComponent.hpp"
-#include "lib/GameObject.hpp"
+#include "lib/gameobjects/GameObject.hpp"
 
 TextureGraphicsComponent::TextureGraphicsComponent( GameObject* gameObject ) :
         mTexture( nullptr )

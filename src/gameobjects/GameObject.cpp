@@ -1,4 +1,4 @@
-#include "lib/GameObject.hpp"
+#include "lib/gameobjects/GameObject.hpp"
 #include <stdexcept>
 #include <lib/interfaces/IContactable.hpp>
 

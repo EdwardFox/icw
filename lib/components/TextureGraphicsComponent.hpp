@@ -1,7 +1,7 @@
 #ifndef TEXTURE_GRAPHICS_COMPONENT_HPP
 #define TEXTURE_GRAPHICS_COMPONENT_HPP
 
-#include <lib/GameObject.hpp>
+#include <lib/gameobjects/GameObject.hpp>
 #include "lib/interfaces/IGraphicsComponent.hpp"
 
 class TextureGraphicsComponent : public IGraphicsComponent

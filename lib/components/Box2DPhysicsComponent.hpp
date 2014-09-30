@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <lib/GameObject.hpp>
+#include <lib/gameobjects/GameObject.hpp>
 #include "lib/interfaces/IComponent.hpp"
 #include "lib/interfaces/IPhysicsComponent.hpp"
 #include "lib/PhysicsContactListener.hpp"

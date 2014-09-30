@@ -1,5 +1,5 @@
 #include "lib/components/SolidColorGraphicsComponent.hpp"
-#include "lib/GameObject.hpp"
+#include "lib/gameobjects/GameObject.hpp"
 
 SolidColorGraphicsComponent::SolidColorGraphicsComponent( GameObject* gameObject ) :
         mShape()

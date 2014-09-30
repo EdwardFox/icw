@@ -1,4 +1,4 @@
-#include <lib/GameObject.hpp>
+#include <lib/gameobjects/GameObject.hpp>
 #include <lib/components/Box2DPhysicsComponent.hpp>
 #include <lib/components/DefaultStateHandlerComponent.hpp>
 #include "lib/components/PlayerMovementComponent.hpp"

@@ -1,7 +1,7 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include <lib/GameObject.hpp>
+#include <lib/gameobjects/GameObject.hpp>
 
 class Player : public GameObject
 {

@@ -1,6 +1,6 @@
 #include <stdexcept>
 #include "lib/components/AnimationGraphicsComponent.hpp"
-#include "lib/GameObject.hpp"
+#include "lib/gameobjects/GameObject.hpp"
 
 AnimationGraphicsComponent::AnimationGraphicsComponent( GameObject* gameObject ) :
         mTexture()

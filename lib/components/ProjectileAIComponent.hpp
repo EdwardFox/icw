@@ -1,7 +1,7 @@
 #ifndef TEST_AI_COMPONENT_HPP
 #define TEST_AI_COMPONENT_HPP
 
-#include <lib/GameObject.hpp>
+#include <lib/gameobjects/GameObject.hpp>
 #include "lib/interfaces/IComponent.hpp"
 #include "lib/interfaces/IInputComponent.hpp"
 

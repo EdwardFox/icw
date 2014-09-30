@@ -211,15 +211,8 @@ GameObject* World::createGameObject( std::string name, sf::Vector2f position, sf
 
 void World::createEnemies()
 {
-    for ( auto kv : mMap.getObjectGroups()->at( 1 ).objects )
+    for ( auto obj : mMap.getObjectGroups()->at( 1 ).objects )
     {
-        std::cout << kv.name << std::endl;
-    }
-
-    for ( unsigned i = 0; i < mMap.getObjectGroups()->at( 1 ).objects.size(); ++i )
-    {
-        Map::MapObject obj = mMap.getObjectGroups()->at( 1 ).objects.at( i );
-
         sf::Vector2f position( sf::Vector2f( obj.position.left, obj.position.top ) );
         sf::Vector2f size( 16.f, 16.f );
         GameObject* box = this->createGameObject( obj.name, position, size );

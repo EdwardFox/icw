@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include "lib/Data.hpp"
-#include "lib/GameObject.hpp"
+#include "lib/gameobjects/GameObject.hpp"
 
 class Camera;
 

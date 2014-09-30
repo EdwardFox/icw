@@ -3,7 +3,7 @@
 #include "lib/interfaces/ICharacterMovementComponent.hpp"
 #include "lib/interfaces/IStateHandlerComponent.hpp"
 #include "lib/components/PlayerInputComponent.hpp"
-#include "lib/GameObject.hpp"
+#include "lib/gameobjects/GameObject.hpp"
 
 PlayerInputComponent::PlayerInputComponent( GameObject* gameObject ) :
         mGameObject( gameObject )

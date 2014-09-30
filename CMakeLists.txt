@@ -21,7 +21,6 @@ set(SOURCE_FILES
     lib/Camera.hpp
     lib/Data.hpp
     lib/Game.hpp
-    lib/GameObject.hpp
     lib/Grid.hpp
     lib/Map.hpp
     lib/PhysicsContactListener.hpp
@@ -50,13 +49,13 @@ set(SOURCE_FILES
     lib/components/ProjectileMovementComponent.hpp
     lib/components/TextureGraphicsComponent.hpp
     lib/gameobjects/Fireball.hpp
+    lib/gameobjects/GameObject.hpp
     lib/gameobjects/GameObjectFactory.hpp
     lib/gameobjects/Player.hpp
 
     src/Animation.cpp
     src/Camera.cpp
     src/Game.cpp
-    src/GameObject.cpp
     src/Grid.cpp
     src/Main.cpp
     src/Map.cpp
@@ -75,6 +74,7 @@ set(SOURCE_FILES
     src/components/ProjectileMovementComponent.cpp
     src/components/TextureGraphicsComponent.cpp
     src/gameobjects/Fireball.cpp
+    src/gameobjects/GameObject.cpp
     src/gameobjects/GameObjectFactory.cpp
     src/gameobjects/Player.cpp
 )
