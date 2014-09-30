@@ -156,7 +156,9 @@ public:
     /**
     * Implements the onContact method declared by the IContactable interface.
     * This method is called when colliding with a body that implements the
-    * IContactable interface
+    * IContactable interface.
+    * It other exists, it will call the gameobjects onHit function with a pointer
+    * to the other gameobject. If not, it will pass a nullptr.
     *
     * Contact contact       - The type of the contact, e.g. Begin / End
     * IContactable* other   - The other contactable we collided with. This will

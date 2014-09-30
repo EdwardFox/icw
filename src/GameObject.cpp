@@ -2,13 +2,12 @@
 #include <stdexcept>
 #include <lib/interfaces/IContactable.hpp>
 
-GameObject::GameObject( World* world, std::string name ) :
+GameObject::GameObject( World* world, std::string name, sf::Vector2f position, sf::Vector2f size ) :
         mWorld( world )
         , mComponents()
         , mGraphicComponent( nullptr )
-        , mPosition( 0, 0 )
-        , mSize( TILE_SIZE, TILE_SIZE )
-        , mVelocity( 0, 0 )
+        , mPosition( position )
+        , mSize( size )
         , mExpired( false )
         , mRotation( 0 )
         , mName( name )
@@ -68,6 +67,12 @@ void GameObject::render( sf::RenderTarget& target, sf::Time dt ) const
 
 void GameObject::onHit( GameObject* hitBy, Contact contact )
 {
-//    std::cout << "Object " << this->getName() << " was hit by " << hitBy->getName() << std::endl;
-//    map.at(this->getName())( ... );
+    if ( hitBy )
+    {
+        std::cout << "Object '" << this->getName() << "' collided with object '" << hitBy->getName() << "'" << std::endl;
+    }
+    else
+    {
+//        std::cout << "Object '" << this->getName() << "' collided with object a wall" << std::endl;
+    }
 }

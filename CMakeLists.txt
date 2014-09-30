@@ -31,12 +31,13 @@ set(SOURCE_FILES
     lib/State.hpp
     lib/World.hpp
     lib/interfaces/IActionComponent.hpp
+    lib/interfaces/ICharacterMovementComponent.hpp
     lib/interfaces/IComponent.hpp
     lib/interfaces/IContactable.hpp
     lib/interfaces/IGraphicsComponent.hpp
     lib/interfaces/IInputComponent.hpp
-    lib/interfaces/IMovementComponent.hpp
     lib/interfaces/IPhysicsComponent.hpp
+    lib/interfaces/IProjectileMovementComponent.hpp
     lib/interfaces/IStateHandlerComponent.hpp
     lib/components/ActionComponent.hpp
     lib/components/AnimationGraphicsComponent.hpp
@@ -46,7 +47,11 @@ set(SOURCE_FILES
     lib/components/PlayerMovementComponent.hpp
     lib/components/SolidColorGraphicsComponent.hpp
     lib/components/ProjectileAIComponent.hpp
+    lib/components/ProjectileMovementComponent.hpp
     lib/components/TextureGraphicsComponent.hpp
+    lib/gameobjects/Fireball.hpp
+    lib/gameobjects/GameObjectFactory.hpp
+    lib/gameobjects/Player.hpp
 
     src/Animation.cpp
     src/Camera.cpp
@@ -67,7 +72,11 @@ set(SOURCE_FILES
     src/components/PlayerMovementComponent.cpp
     src/components/SolidColorGraphicsComponent.cpp
     src/components/ProjectileAIComponent.cpp
+    src/components/ProjectileMovementComponent.cpp
     src/components/TextureGraphicsComponent.cpp
+    src/gameobjects/Fireball.cpp
+    src/gameobjects/GameObjectFactory.cpp
+    src/gameobjects/Player.cpp
 )
 
 # Executable

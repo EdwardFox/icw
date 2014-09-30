@@ -1,15 +1,15 @@
-#ifndef IMOVEMENT_COMPONENT_HPP
-#define IMOVEMENT_COMPONENT_HPP
+#ifndef ICHARACTER_MOVEMENT_COMPONENT_HPP
+#define ICHARACTER_MOVEMENT_COMPONENT_HPP
 
 #include "lib/Data.hpp"
 
 class GameObject;
 
-class IMovementComponent
+class ICharacterMovementComponent
 {
 public:
 
-    virtual ~IMovementComponent() {};
+    virtual ~ICharacterMovementComponent() {};
 
     virtual void move( GameObject* object, Movement mov ) = 0;
 

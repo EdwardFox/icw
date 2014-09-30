@@ -1,6 +1,6 @@
 #include "lib/components/AnimationGraphicsComponent.hpp"
 #include "lib/interfaces/IActionComponent.hpp"
-#include "lib/interfaces/IMovementComponent.hpp"
+#include "lib/interfaces/ICharacterMovementComponent.hpp"
 #include "lib/interfaces/IStateHandlerComponent.hpp"
 #include "lib/components/PlayerInputComponent.hpp"
 #include "lib/GameObject.hpp"
@@ -17,7 +17,7 @@ void PlayerInputComponent::update( GameObject* object, sf::Time dt )
     AnimationGraphicsComponent* animComp = dynamic_cast<AnimationGraphicsComponent*>(comp);
 
     IComponent* comp2 = object->getComponent( "MovementComponent" );
-    IMovementComponent* moveComp = dynamic_cast<IMovementComponent*>(comp2);
+    ICharacterMovementComponent* moveComp = dynamic_cast<ICharacterMovementComponent*>(comp2);
 
     IStateHandlerComponent* stateComp = dynamic_cast<IStateHandlerComponent*>(object->getComponent( "StateHandlerComponent" ) );
 

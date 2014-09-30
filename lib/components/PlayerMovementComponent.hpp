@@ -2,9 +2,9 @@
 #define PLAYER_MOVEMENT_COMPONENT_HPP
 
 #include "lib/interfaces/IComponent.hpp"
-#include "lib/interfaces/IMovementComponent.hpp"
+#include "lib/interfaces/ICharacterMovementComponent.hpp"
 
-class PlayerMovementComponent : public IComponent, public IMovementComponent
+class PlayerMovementComponent : public IComponent, public ICharacterMovementComponent
 {
 public:
     PlayerMovementComponent( GameObject* gameObject );

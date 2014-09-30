@@ -159,6 +159,10 @@ void Box2DPhysicsComponent::onContact( Contact contact, IContactable* other )
             this->getGameObject()->onHit( hitByObject, contact );
         }
     }
+    else
+    {
+        this->getGameObject()->onHit( nullptr, contact );
+    }
 }
 
 void Box2DPhysicsComponent::setContactable( bool contactable )

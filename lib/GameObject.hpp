@@ -15,7 +15,8 @@ class IContactable;
 class GameObject
 {
 public:
-    GameObject( World* world, std::string name );
+
+    GameObject( World* world, std::string name, sf::Vector2f position, sf::Vector2f size = sf::Vector2f( TILE_SIZE, TILE_SIZE ) );
 
     virtual ~GameObject() {};
 
@@ -85,7 +86,7 @@ public:
         return mName;
     }
 
-    void setMName( std::string name )
+    void setName( std::string name )
     {
         GameObject::mName = name;
     }
@@ -97,7 +98,6 @@ private:
     std::unique_ptr<IGraphicsComponent> mGraphicComponent;
     sf::Vector2f mPosition;
     sf::Vector2f mSize;
-    sf::Vector2f mVelocity;
     bool mExpired;
     float mRotation;
     std::string mName;

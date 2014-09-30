@@ -12,15 +12,14 @@ public:
 
     virtual ~ProjectileAIComponent() {};
 
-    virtual GameObject* getGameObject() const override;
-
     virtual void update( GameObject* object, sf::Time dt ) override;
 
-    virtual sf::Vector2f getVelocity() const;
+    virtual GameObject* getGameObject() const override
+    {
+        return mGameObject;
+    }
 
-    virtual void setVelocity( sf::Vector2f velocity );
 private:
-    sf::Vector2f mVelocity;
     GameObject* mGameObject;
 };
 

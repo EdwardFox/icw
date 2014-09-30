@@ -7,6 +7,7 @@
 #include "lib/Camera.hpp"
 #include "lib/PhysicsContactListener.hpp"
 #include "lib/Map.hpp"
+#include "lib/gameobjects/GameObjectFactory.hpp"
 
 /**
 * Class that contains and manages all objects that make up the game world
@@ -69,25 +70,20 @@ public:
         return &mPhysics;
     }
 
+    const Map* getMap() const
+    {
+        return &mMap;
+    }
+
+    ResourceHolder<sf::Texture, std::string>* getTextureHolder()
+    {
+        return &mTextures;
+    }
+
+
 private:
 
-    /**
-    * Helper function to create the player
-    * TODO: Move the player creation into its own class (attributes are probably gonna be handled by the map, still needs work)
-    */
-    void createPlayer();
-
-    /**
-    * Helper function to create player animations
-    * TODO: See createPlayer()
-    */
-    void createPlayerAnimations();
-
-    /**
-    * Helper function to create player states
-    * TODO: See createPlayer()
-    */
-    void createPlayerStates();
+    void createEnemies();
 
     /**
     * ResourceHolder for textures
@@ -140,7 +136,7 @@ private:
     */
     PhysicsContactListener mListener;
 
-    void createEnemies();
+    GameObjectFactory mGameObjectFactory;
 };
 
 #endif
