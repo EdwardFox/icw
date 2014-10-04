@@ -181,7 +181,8 @@ void World::loadMap( std::string path )
                 /** Only add a physics component if the game object is from the layer world **/
                 if ( layer.name == "World" )
                 {
-                    Box2DPhysicsComponent* staticPhysics = new Box2DPhysicsComponent( &mPhysics, obj, b2_staticBody );
+                    Box2DPhysicsComponent* staticPhysics = new Box2DPhysicsComponent( obj );
+                    staticPhysics->createCollisionBody( &mPhysics, obj, b2_staticBody, false );
 //                    staticPhysics->setContactable( true );
                     obj->attachComponent( "PhysicsComponent", staticPhysics );
                 }
@@ -220,7 +221,8 @@ void World::createEnemies()
         SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );
         box->setGraphicComponent( solid );
 
-        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( &mPhysics, box, b2_dynamicBody );
+        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( box );
+        physBox->createCollisionBody( &mPhysics, box, b2_dynamicBody, false );
         physBox->setContactable( true );
         box->attachComponent( "PhysicsComponent", physBox );
     }

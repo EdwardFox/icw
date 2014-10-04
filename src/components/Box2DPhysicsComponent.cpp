@@ -1,7 +1,7 @@
 #include <cstdint>
 #include "lib/components/Box2DPhysicsComponent.hpp"
 
-Box2DPhysicsComponent::Box2DPhysicsComponent( b2World* physics, GameObject* object, b2BodyType type ) :
+Box2DPhysicsComponent::Box2DPhysicsComponent( GameObject* object ) :
         mSensors()
         , mGameObject( object )
         , mBodyDef()
@@ -11,7 +11,6 @@ Box2DPhysicsComponent::Box2DPhysicsComponent( b2World* physics, GameObject* obje
         , mFixtureDef()
 {
     this->setType( "PhysicsComponent" );
-    createCollisionBody( physics, object, type );
 }
 
 Box2DPhysicsComponent::~Box2DPhysicsComponent()
@@ -27,7 +26,7 @@ void Box2DPhysicsComponent::update( GameObject* object, sf::Time dt )
     }
 }
 
-void Box2DPhysicsComponent::createCollisionBody( b2World* physics, GameObject* object, b2BodyType type )
+void Box2DPhysicsComponent::createCollisionBody( b2World* physics, GameObject* object, b2BodyType type, bool sensorOnly )
 {
     // Create instances
     mBodyDef = b2BodyDef();
@@ -97,6 +96,12 @@ void Box2DPhysicsComponent::createCollisionBody( b2World* physics, GameObject* o
         mFixtureDef.shape = &mPolygonShape;
         mFixtureDef.density = 1.f;
         mFixtureDef.friction = 1.0f;
+
+        if( sensorOnly )
+        {
+            mFixtureDef.isSensor = true;
+        }
+
         mBody->CreateFixture( &mFixtureDef );
     }
 }

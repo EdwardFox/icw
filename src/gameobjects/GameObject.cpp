@@ -69,7 +69,10 @@ void GameObject::onHit( GameObject* hitBy, Contact contact )
 {
     if ( hitBy )
     {
-        std::cout << "Object '" << this->getName() << "' collided with object '" << hitBy->getName() << "'" << std::endl;
+        if( Contact::Begin == contact )
+            std::cout << "BEGIN: Object '" << this->getName() << "' collided with object '" << hitBy->getName() << "'" << std::endl;
+        else
+            std::cout << "END: Object '" << this->getName() << "' collided with object '" << hitBy->getName() << "'" << std::endl;
     }
     else
     {

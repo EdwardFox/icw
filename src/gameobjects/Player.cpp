@@ -108,7 +108,8 @@ void Player::createDefaultComponents()
 
 
     /** Add a physics component with fixed rotations and default sensors **/
-    Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( world->getPhysicsWorld(), this, b2_dynamicBody );
+    Box2DPhysicsComponent* dynPhysics = new Box2DPhysicsComponent( this );
+    dynPhysics->createCollisionBody( world->getPhysicsWorld(), this, b2_dynamicBody, false );
     dynPhysics->setFixedRotation( true );
     dynPhysics->createDefaultSensors( world->getPhysicsWorld(), this );
     dynPhysics->setContactable( true );
@@ -127,7 +128,7 @@ void Player::createDefaultComponents()
     ac->addAction(
             "shoot", []( GameObject* object )
     {
-        sf::Vector2f velocity( 10.f, 0.f );
+        sf::Vector2f velocity( 1.f, 0.f );
         sf::Vector2f size( 4.f, 4.f );
         sf::Vector2f pos = object->getPosition();
 
@@ -150,16 +151,8 @@ void Player::createDefaultComponents()
 
         pos.x += offsetX;
 
-        /** Create a bunch of projectiles that fly in different directions **/
-        for ( float i = 3.f; i > -4.f; --i )
-        {
-            sf::Vector2f pos2 = pos;
-            pos2.y += i * 5;
-            velocity.y = i;
-
-            Fireball* projectile = dynamic_cast<Fireball*>( object->getWorld()->createGameObject( "Fireball", pos2, size ) );
-            projectile->setMovementSpeed( velocity );
-        }
+        Fireball* projectile = dynamic_cast<Fireball*>( object->getWorld()->createGameObject( "Fireball", pos, size ) );
+        projectile->setMovementSpeed( velocity );
     } );
     this->attachComponent( "ActionComponent", ac );
 }

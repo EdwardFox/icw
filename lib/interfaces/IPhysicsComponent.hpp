@@ -15,7 +15,7 @@ public:
 
     virtual ~IPhysicsComponent(){};
 
-    virtual void createCollisionBody( b2World* physics, GameObject* object, b2BodyType type ) = 0;
+    virtual void createCollisionBody( b2World* physics, GameObject* object, b2BodyType type, bool sensorOnly ) = 0;
 
     virtual void setFixedRotation( bool rotation ) = 0;
 

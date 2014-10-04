@@ -12,6 +12,8 @@ public:
 
     void setMovementSpeed( sf::Vector2f movespeed );
 
+
+
 private:
 
     void createDefaultComponents();

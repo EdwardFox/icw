@@ -34,6 +34,7 @@ set(SOURCE_FILES
     lib/interfaces/IComponent.hpp
     lib/interfaces/IContactable.hpp
     lib/interfaces/IGraphicsComponent.hpp
+    lib/interfaces/IHealthComponent.hpp
     lib/interfaces/IInputComponent.hpp
     lib/interfaces/IPhysicsComponent.hpp
     lib/interfaces/IProjectileMovementComponent.hpp
@@ -42,6 +43,7 @@ set(SOURCE_FILES
     lib/components/AnimationGraphicsComponent.hpp
     lib/components/Box2DPhysicsComponent.hpp
     lib/components/DefaultStateHandlerComponent.hpp
+    lib/components/HealthComponent.hpp
     lib/components/PlayerInputComponent.hpp
     lib/components/PlayerMovementComponent.hpp
     lib/components/SolidColorGraphicsComponent.hpp
@@ -67,6 +69,7 @@ set(SOURCE_FILES
     src/components/AnimationGraphicsComponent.cpp
     src/components/Box2DPhysicsComponent.cpp
     src/components/DefaultStateHandlerComponent.cpp
+    src/components/HealthComponent.cpp
     src/components/PlayerInputComponent.cpp
     src/components/PlayerMovementComponent.cpp
     src/components/SolidColorGraphicsComponent.cpp

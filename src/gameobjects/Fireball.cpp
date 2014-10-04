@@ -16,8 +16,10 @@ void Fireball::createDefaultComponents()
     SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( this, this->getSize() );
     this->setGraphicComponent( solid );
 
-    Box2DPhysicsComponent* box = new Box2DPhysicsComponent( this->getWorld()->getPhysicsWorld(), this, b2_dynamicBody );
+    Box2DPhysicsComponent* box = new Box2DPhysicsComponent( this );
+    box->createCollisionBody( this->getWorld()->getPhysicsWorld(), this, b2_dynamicBody, true );
     box->setContactable( true );
+    box->setGravityScale( 0.f );
     this->attachComponent( "PhysicsComponent", box );
 
     ProjectileAIComponent* proj = new ProjectileAIComponent( this );
@@ -32,7 +34,7 @@ void Fireball::onHit( GameObject* hitBy, Contact contact )
 {
     GameObject::onHit( hitBy, contact );
 
-    this->setExpired( true );
+//    this->setExpired( true );
 }
 
 void Fireball::setMovementSpeed( sf::Vector2f movespeed )

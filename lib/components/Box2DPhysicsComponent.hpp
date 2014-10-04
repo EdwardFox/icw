@@ -22,7 +22,7 @@ public:
     /**
     * Automatically creates the collision body on initialization
     */
-    Box2DPhysicsComponent( b2World* physics, GameObject* object, b2BodyType type );
+    Box2DPhysicsComponent( GameObject* object );
 
     /**
     * Destructor
@@ -48,7 +48,7 @@ public:
     * to guarantee smooth movement for movable game objects along the edges of the
     * body.
     */
-    virtual void createCollisionBody( b2World* physics, GameObject* object, b2BodyType type ) override;
+    virtual void createCollisionBody( b2World* physics, GameObject* object, b2BodyType type, bool sensorOnly ) override;
 
     /**
     * Enable or disable rotation for the body
