@@ -19,8 +19,30 @@ public:
         return mGameObject;
     }
 
+    int getTimeAlive() const
+    {
+        return mTimeAlive;
+    }
+
+    void setTimeAlive( int timeAlive )
+    {
+        mTimeAlive = timeAlive;
+    }
+
+    int getMaxTimeAlive() const
+    {
+        return mMaxTimeAlive;
+    }
+
+    void setMaxTimeAlive( int maxTimeAlive )
+    {
+        mMaxTimeAlive = maxTimeAlive;
+    }
+
 private:
     GameObject* mGameObject;
+    int mTimeAlive;
+    int mMaxTimeAlive;
 };
 
 #endif

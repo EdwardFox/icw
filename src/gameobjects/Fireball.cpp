@@ -43,7 +43,6 @@ void Fireball::onHit( GameObject* hitBy, Contact contact )
             enemyHP->receiveDamage( "none", 34.f );
         }
     }
-    // TODO: Make sure projectile is destroyed after leaving visible space or living for x seconds
 //    this->setExpired( true );
 }
 
