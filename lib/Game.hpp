@@ -4,6 +4,8 @@
 #include <string>
 #include "lib/World.hpp"
 
+class GameState;
+
 class Game
 {
 public:
@@ -17,10 +19,14 @@ public:
 
     void run();
 
+    void changeState( GameState* state );
+    void pushState( GameState* state );
+    void popState();
+
 private:
     sf::RenderWindow mWindow;
     sf::Time mTimePerFrame;
-    World mWorld;
+    std::vector<GameState*> mStates;
 };
 
 #endif

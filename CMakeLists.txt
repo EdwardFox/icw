@@ -55,6 +55,8 @@ set(SOURCE_FILES
     lib/gameobjects/GameObjectFactory.hpp
     lib/gameobjects/Player.hpp
     lib/gameobjects/EnemyA.hpp
+    lib/gamestates/GameState.hpp
+    lib/gamestates/PlayState.hpp
 
     src/Animation.cpp
     src/Camera.cpp
@@ -82,6 +84,7 @@ set(SOURCE_FILES
     src/gameobjects/GameObjectFactory.cpp
     src/gameobjects/Player.cpp
     src/gameobjects/EnemyA.cpp
+    src/gamestates/PlayState.cpp
 )
 
 # Executable

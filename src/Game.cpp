@@ -1,11 +1,12 @@
 #include "lib/Game.hpp"
+#include <lib/gamestates/PlayState.hpp>
 
 Game::Game( sf::Vector2i size, std::string title ) :
         mWindow( sf::VideoMode( size.x, size.y, 32 ), title )
         , mTimePerFrame( sf::seconds( 1.f / UPDATES_PER_SECOND ) )
-        , mWorld()
+        , mStates()
 {
-
+    this->changeState( PlayState::instance() );
 }
 
 void Game::processEvents()
@@ -18,19 +19,37 @@ void Game::processEvents()
 
         if ( event.key.code == sf::Keyboard::Escape )
             mWindow.close();
+
+        mStates.back()->processEvents( this, &event );
     }
 }
 
 void Game::render( sf::Time dt )
 {
     mWindow.clear( sf::Color( 0, 100, 150) );
-    mWorld.render( mWindow, dt );
+
+    /**
+    * There are states we always want to draw, even while
+    * they are not on top of the stack (e.g. game with
+    * overlaying menu).
+    */
+    for( const auto val : mStates )
+    {
+        if( val->isAlwaysDrawn() )
+        {
+            val->render( this, mWindow, dt );
+        }
+    }
+
+    /** Draw stack at the top of the stack **/
+    mStates.back()->render( this, mWindow, dt );
+
     mWindow.display();
 }
 
 void Game::update( sf::Time dt )
 {
-    mWorld.update( dt, mWindow.getSize() );
+    mStates.back()->update( this, mWindow.getSize(), dt );
 }
 
 void Game::run()
@@ -56,5 +75,42 @@ void Game::run()
         timeSinceLastRender += renderClock.restart();
         render( timeSinceLastRender );
         timeSinceLastRender = sf::Time::Zero;
+    }
+}
+
+void Game::changeState( GameState* state )
+{
+    if( !mStates.empty() )
+    {
+        mStates.back()->cleanup();
+        mStates.pop_back();
+    }
+
+    mStates.push_back( state );
+    mStates.back()->init();
+}
+
+void Game::pushState( GameState* state )
+{
+    if( !mStates.empty() )
+    {
+        mStates.back()->pause();
+    }
+
+    mStates.push_back( state );
+    mStates.back()->init();
+}
+
+void Game::popState()
+{
+    if( !mStates.empty() )
+    {
+        mStates.back()->cleanup();
+        mStates.pop_back();
+    }
+
+    if( !mStates.empty() )
+    {
+        mStates.back()->resume();
     }
 }
