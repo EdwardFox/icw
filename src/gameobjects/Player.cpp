@@ -128,7 +128,7 @@ void Player::createDefaultComponents()
     ac->addAction(
             "shoot", []( GameObject* object )
     {
-        sf::Vector2f velocity( 1.f, 0.f );
+        sf::Vector2f velocity( 10.f, 0.f );
         sf::Vector2f size( 4.f, 4.f );
         sf::Vector2f pos = object->getPosition();
 

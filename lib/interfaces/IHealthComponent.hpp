@@ -20,9 +20,8 @@ public:
 
     virtual void receiveDamage( std::string element, float damage ) = 0;
 
-    virtual void addDamageResponse( std::string element, std::function<void( std::string element, float damage )> ) = 0;
+    virtual void addDamageResponse( std::string element, std::function<void( GameObject* object, float damage )> ) = 0;
 
-protected:
     virtual void setHealth( float health ) = 0;
 
     virtual void setMaximumHealth( float health ) = 0;

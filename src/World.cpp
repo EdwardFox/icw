@@ -216,14 +216,7 @@ void World::createEnemies()
     {
         sf::Vector2f position( sf::Vector2f( obj.position.left, obj.position.top ) );
         sf::Vector2f size( 16.f, 16.f );
-        GameObject* box = this->createGameObject( obj.name, position, size );
 
-        SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );
-        box->setGraphicComponent( solid );
-
-        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( box );
-        physBox->createCollisionBody( &mPhysics, box, b2_dynamicBody, false );
-        physBox->setContactable( true );
-        box->attachComponent( "PhysicsComponent", physBox );
+        this->createGameObject(obj.name, position, size);
     }
 }

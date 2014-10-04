@@ -1,4 +1,5 @@
 #include <lib/components/ProjectileMovementComponent.hpp>
+#include <lib/components/HealthComponent.hpp>
 #include "lib/gameobjects/Fireball.hpp"
 #include "lib/components/SolidColorGraphicsComponent.hpp"
 #include "lib/components/Box2DPhysicsComponent.hpp"
@@ -34,6 +35,15 @@ void Fireball::onHit( GameObject* hitBy, Contact contact )
 {
     GameObject::onHit( hitBy, contact );
 
+    if( Contact::Begin == contact && hitBy )
+    {
+        HealthComponent* enemyHP = dynamic_cast<HealthComponent*>( hitBy->getComponent( "HealthComponent" ) );
+        if( enemyHP )
+        {
+            enemyHP->receiveDamage( "none", 34.f );
+        }
+    }
+    // TODO: Make sure projectile is destroyed after leaving visible space or living for x seconds
 //    this->setExpired( true );
 }
 

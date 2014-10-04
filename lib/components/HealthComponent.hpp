@@ -20,19 +20,18 @@ public:
 
     virtual float getHealth() const override;
 
-    virtual float getMaximumHealth() const override;
-
-    virtual void receiveDamage( std::string element, float damage ) override;
-
-    virtual void addDamageResponse( std::string element, std::function<void( std::string, float )> function ) override;
-
-protected:
     virtual void setHealth( float health ) override;
+
+    virtual float getMaximumHealth() const override;
 
     virtual void setMaximumHealth( float health ) override;
 
+    virtual void receiveDamage( std::string element, float damage ) override;
+
+    virtual void addDamageResponse( std::string element, std::function<void( GameObject* object, float damage )> function ) override;
+
 private:
-    std::unordered_map<std::string, std::function<void( std::string, float )>> mResponses;
+    std::unordered_map<std::string, std::function<void( GameObject* object, float damage )>> mResponses;
     GameObject* mGameObject;
     float mMaxHealth;
     float mHealth;

@@ -12,7 +12,10 @@ HealthComponent::HealthComponent( GameObject* gameObject ) :
 
 void HealthComponent::update( GameObject* object, sf::Time dt )
 {
-
+    if( mHealth <= 0.f )
+    {
+        mGameObject->setExpired( true );
+    }
 }
 
 GameObject* HealthComponent::getGameObject() const
@@ -34,20 +37,16 @@ void HealthComponent::receiveDamage( std::string element, float damage )
 {
     try
     {
-        mResponses.at( element )( damage );
+        mResponses.at( element )( mGameObject, damage );
     }
     catch ( std::out_of_range oor )
     {
         /** No special response found => flat reduction */
         mHealth -= damage;
-        if( mHealth < 0.f )
-        {
-            mHealth = 0.f;
-        }
     }
 }
 
-void HealthComponent::addDamageResponse( std::string element, std::function<void( std::string, float )> function )
+void HealthComponent::addDamageResponse( std::string element, std::function<void( GameObject* object, float damage )> function )
 {
     mResponses.emplace( element, function );
 }
