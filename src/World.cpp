@@ -199,6 +199,7 @@ void World::loadMap( std::string path )
 void World::initializeTextures()
 {
     mTextures.load( "ror", "media/textures/ror.png" );
+    mTextures.load( "golem", "media/textures/golem/golem.png" );
 }
 
 GameObject* World::createGameObject( std::string name, sf::Vector2f position, sf::Vector2f size )

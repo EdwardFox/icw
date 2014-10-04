@@ -10,7 +10,6 @@ EnemyA::EnemyA( World* world, std::string name, sf::Vector2f position, sf::Vecto
         GameObject( world, name, position, size )
 {
 
-    this->getWorld()->getTextureHolder()->load( "golem", "media/textures/golem/golem.png" );
     createDefaultComponents();
 
 }
