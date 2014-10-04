@@ -10033,11 +10033,12 @@
   <object name="EnemyA" type="enemya" x="1044" y="94">
    <properties>
     <property name="hp" value="100"/>
-    <property name="hp" value="100"/>
-    <property name="hp" value="100"/>
-    <property name="hp" value="100"/>
-    <property name="hp" value="100"/>
    </properties>
   </object>
+  <object name="EnemyA" x="238" y="104"/>
+  <object name="EnemyA" x="307" y="39"/>
+  <object name="EnemyA" x="194" y="158"/>
+  <object name="EnemyA" x="224" y="67"/>
+  <object name="EnemyA" x="254" y="65"/>
  </objectgroup>
 </map>
