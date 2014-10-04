@@ -61,7 +61,7 @@ void PlayerInputComponent::update( GameObject* object, sf::Time dt )
         stateComp->changeState( object, "jump" );
     }
 
-    if ( sf::Keyboard::isKeyPressed( sf::Keyboard::E ) )
+    if ( sf::Keyboard::isKeyPressed( sf::Keyboard::J ) )
     {
         IActionComponent* actionComp = dynamic_cast<IActionComponent*>(object->getComponent( "ActionComponent" ));
         if ( actionComp && stateComp->getCurrentState() != "attack" )

@@ -129,7 +129,7 @@ void Player::createDefaultComponents()
             "shoot", []( GameObject* object )
     {
         sf::Vector2f velocity( 10.f, 0.f );
-        sf::Vector2f size( 4.f, 4.f );
+        sf::Vector2f size( 1.f, 1.f );
         sf::Vector2f pos = object->getPosition();
 
         float offsetX = 15.f;

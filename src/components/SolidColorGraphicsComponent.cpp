@@ -8,8 +8,8 @@ SolidColorGraphicsComponent::SolidColorGraphicsComponent( GameObject* gameObject
     this->setType( "GraphicsComponent" );
 
     mShape.setFillColor( sf::Color::White );
-    mShape.setOutlineColor( sf::Color::Black );
-    mShape.setOutlineThickness( 1.f );
+//    mShape.setOutlineColor( sf::Color::Black );
+//    mShape.setOutlineThickness( 1.f );
 }
 
 SolidColorGraphicsComponent::SolidColorGraphicsComponent( GameObject* gameObject, sf::Vector2f size ) : SolidColorGraphicsComponent( gameObject )

@@ -98,6 +98,7 @@ configure_file(media/maps/Temple.tmx media/maps/Temple.tmx COPYONLY)
 configure_file(media/textures/temple.png media/textures/temple.png COPYONLY)
 configure_file(media/textures/ruins.png media/textures/ruins.png COPYONLY)
 configure_file(media/textures/ror.png media/textures/ror.png COPYONLY)
+configure_file(media/textures/golem/golem.png media/textures/golem/golem.png COPYONLY)
 
 # Detect and add cmake modules
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})

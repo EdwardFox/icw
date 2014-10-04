@@ -43,7 +43,7 @@ void Fireball::onHit( GameObject* hitBy, Contact contact )
             enemyHP->receiveDamage( "none", 34.f );
         }
     }
-//    this->setExpired( true );
+    this->setExpired( true );
 }
 
 void Fireball::setMovementSpeed( sf::Vector2f movespeed )
