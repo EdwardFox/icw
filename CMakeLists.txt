@@ -38,6 +38,7 @@ set(SOURCE_FILES
     lib/interfaces/IInputComponent.hpp
     lib/interfaces/IPhysicsComponent.hpp
     lib/interfaces/IProjectileMovementComponent.hpp
+    lib/interfaces/ISoundComponent.hpp
     lib/interfaces/IStateHandlerComponent.hpp
     lib/components/ActionComponent.hpp
     lib/components/AnimationGraphicsComponent.hpp
@@ -49,6 +50,7 @@ set(SOURCE_FILES
     lib/components/SolidColorGraphicsComponent.hpp
     lib/components/ProjectileAIComponent.hpp
     lib/components/ProjectileMovementComponent.hpp
+    lib/components/SoundComponent.hpp
     lib/components/TextureGraphicsComponent.hpp
     lib/gameobjects/Fireball.hpp
     lib/gameobjects/GameObject.hpp
@@ -78,6 +80,7 @@ set(SOURCE_FILES
     src/components/SolidColorGraphicsComponent.cpp
     src/components/ProjectileAIComponent.cpp
     src/components/ProjectileMovementComponent.cpp
+    src/components/SoundComponent.cpp
     src/components/TextureGraphicsComponent.cpp
     src/gameobjects/Fireball.cpp
     src/gameobjects/GameObject.cpp
@@ -90,6 +93,7 @@ set(SOURCE_FILES
 # Executable
 add_executable(ICW ${SOURCE_FILES})
 
+
 # Copy resource files
 ## Maps
 configure_file(media/maps/Temple.tmx media/maps/Temple.tmx COPYONLY)
@@ -99,6 +103,10 @@ configure_file(media/textures/temple.png media/textures/temple.png COPYONLY)
 configure_file(media/textures/ruins.png media/textures/ruins.png COPYONLY)
 configure_file(media/textures/ror.png media/textures/ror.png COPYONLY)
 configure_file(media/textures/golem/golem.png media/textures/golem/golem.png COPYONLY)
+
+## Sounds
+configure_file(media/sounds/shoot.wav media/sounds/shoot.wav COPYONLY)
+
 
 # Detect and add cmake modules
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})

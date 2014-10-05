@@ -2,6 +2,7 @@
 #define WORLD_HPP
 
 #include <Box2D/Box2D.h>
+#include <SFML/Audio.hpp>
 #include "lib/Grid.hpp"
 #include "lib/ResourceHolder.hpp"
 #include "lib/Camera.hpp"
@@ -26,6 +27,8 @@ public:
     * TODO: Replace this function by making game objects take care of loading the needed textures on their own (similar to the map loading)
     */
     void initializeTextures();
+
+    void initializeSounds();
 
     /**
     * Updates the world and all its inhabitants
@@ -80,6 +83,10 @@ public:
         return &mTextures;
     }
 
+    ResourceHolder<sf::SoundBuffer, std::string>* getSoundHolder()
+    {
+        return &mSounds;
+    }
 
 private:
 
@@ -89,6 +96,11 @@ private:
     * ResourceHolder for textures
     */
     ResourceHolder<sf::Texture, std::string> mTextures;
+
+    /**
+    * ResourceHolder for sounds
+    */
+    ResourceHolder<sf::SoundBuffer, std::string> mSounds;
 
     /**
     * Holds all the grids (layers) of the map in form of game objects

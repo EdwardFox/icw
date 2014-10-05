@@ -1,3 +1,4 @@
+#include <lib/interfaces/ISoundComponent.hpp>
 #include "lib/components/AnimationGraphicsComponent.hpp"
 #include "lib/interfaces/IActionComponent.hpp"
 #include "lib/interfaces/ICharacterMovementComponent.hpp"
@@ -67,6 +68,12 @@ void PlayerInputComponent::update( GameObject* object, sf::Time dt )
         if ( actionComp && stateComp->getCurrentState() != "attack" )
         {
             actionComp->executeAction( "shoot", object );
+
+            ISoundComponent* soundComp = dynamic_cast<ISoundComponent*>(object->getComponent( "SoundComponent" ));
+            if( soundComp )
+            {
+                soundComp->getSound( "shoot" )->play();
+            }
         }
 
         stateComp->changeState( object, "attack" );

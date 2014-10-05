@@ -12,6 +12,7 @@
 
 World::World() :
         mTextures()
+        , mSounds()
         , mGrids()
         , mObjects()
         , mObjectsToCreate()
@@ -26,7 +27,9 @@ World::World() :
     /** Initialize textures (as long as the objects do not do it for themselves **/
     initializeTextures();
 
-    /** We need to set out custom contact listener **/
+    initializeSounds();
+
+    /** We need to set our custom contact listener **/
     mPhysics.SetContactListener( &mListener );
 
     /**
@@ -200,6 +203,11 @@ void World::initializeTextures()
 {
     mTextures.load( "ror", "media/textures/ror.png" );
     mTextures.load( "golem", "media/textures/golem/golem.png" );
+}
+
+void World::initializeSounds()
+{
+    mSounds.load( "shoot", "media/sounds/shoot.wav" );
 }
 
 GameObject* World::createGameObject( std::string name, sf::Vector2f position, sf::Vector2f size )

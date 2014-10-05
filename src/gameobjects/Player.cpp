@@ -6,6 +6,7 @@
 #include <lib/components/PlayerMovementComponent.hpp>
 #include <lib/components/ActionComponent.hpp>
 #include <lib/gameobjects/Fireball.hpp>
+#include <lib/components/SoundComponent.hpp>
 #include "lib/gameobjects/Player.hpp"
 
 
@@ -18,7 +19,6 @@ Player::Player( World* world, std::string name, sf::Vector2f position, sf::Vecto
 void Player::createDefaultComponents()
 {
     World* world = this->getWorld();
-    const Map* map = world->getMap();
 
     /** Animation **/
     sf::Texture& tex = world->getTextureHolder()->get( "ror" );
@@ -155,6 +155,14 @@ void Player::createDefaultComponents()
         projectile->setMovementSpeed( velocity );
     } );
     this->attachComponent( "ActionComponent", ac );
+
+
+    SoundComponent* sound = new SoundComponent( this );
+    sf::Sound shoot;
+    shoot.setBuffer( world->getSoundHolder()->get( "shoot" ) );
+    sound->addSound( "shoot", shoot );
+
+    this->attachComponent( "SoundComponent", sound );
 }
 
 void Player::onHit( GameObject* hitBy, Contact contact )
