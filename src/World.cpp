@@ -216,7 +216,7 @@ void World::createEnemies()
     for ( auto obj : mMap.getObjectGroups()->at( 1 ).objects )
     {
         sf::Vector2f position( sf::Vector2f( obj.position.left, obj.position.top ) );
-        sf::Vector2f size( 16.f, 16.f );
+        sf::Vector2f size( 20.f, 31.5f );
 
         this->createGameObject(obj.name, position, size);
     }

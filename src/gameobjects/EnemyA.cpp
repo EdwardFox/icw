@@ -22,23 +22,21 @@ void EnemyA::createDefaultComponents()
     agc->setTexture( &tex );
 
     Animation idle( "idle" );
-    idle.addFrame( sf::Vector2f( 0.f, 0.f ), sf::Vector2f( 6.f, 11.f ) );
+    idle.addFrame( sf::Vector2f( 0.f, 91.f ), sf::Vector2f( 20.f, 29.f ) );
     idle.setTimePerFrame( 100000 );
     agc->addAnimation( "idle", idle );
 
     Animation run( "run" );
-    run.addFrame( sf::Vector2f( 0.f, 22.f ), sf::Vector2f( 7.f, 11.f ) );
-    run.addFrame( sf::Vector2f( 10.f, 22.f ), sf::Vector2f( 5.f, 11.f ) );
-    run.addFrame( sf::Vector2f( 19.f, 22.f ), sf::Vector2f( 4.f, 11.f ) );
-    run.addFrame( sf::Vector2f( 27.f, 22.f ), sf::Vector2f( 6.f, 11.f ) );
-    run.addFrame( sf::Vector2f( 35.f, 22.f ), sf::Vector2f( 8.f, 11.f ) );
-    run.addFrame( sf::Vector2f( 45.f, 22.f ), sf::Vector2f( 6.f, 11.f ) );
-    run.addFrame( sf::Vector2f( 55.f, 22.f ), sf::Vector2f( 5.f, 11.f ) );
-    run.addFrame( sf::Vector2f( 64.f, 22.f ), sf::Vector2f( 5.f, 11.f ) );
-    run.setTimePerFrame( 50 );
+    run.addFrame( sf::Vector2f( 0.f, 329.f ), sf::Vector2f( 20.f, 28.f ) );
+    run.addFrame( sf::Vector2f( 20.f, 328.f ), sf::Vector2f( 20.f, 29.f ) );
+    run.addFrame( sf::Vector2f( 40.f, 327.f ), sf::Vector2f( 20.f, 30.f ) );
+    run.addFrame( sf::Vector2f( 60.f, 329.f ), sf::Vector2f( 20.f, 28.f ) );
+    run.addFrame( sf::Vector2f( 80.f, 328.f ), sf::Vector2f( 20.f, 29.f ) );
+    run.addFrame( sf::Vector2f( 100.f, 327.f ), sf::Vector2f( 20.f, 31.f ) );
+    run.setTimePerFrame( 100 );
     agc->addAnimation( "run", run );
 
-    agc->setAnimation( "idle" );
+    agc->setAnimation( "run" );
     this->setGraphicComponent( agc );
 
 
@@ -46,6 +44,7 @@ void EnemyA::createDefaultComponents()
     Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( this );
     physBox->createCollisionBody( this->getWorld()->getPhysicsWorld(), this, b2_dynamicBody, false );
     physBox->setContactable( true );
+    physBox->setFixedRotation( true );
     this->attachComponent( "PhysicsComponent", physBox );
 
     HealthComponent* health = new HealthComponent( this );
