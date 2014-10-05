@@ -156,7 +156,7 @@ void Player::createDefaultComponents()
     } );
     this->attachComponent( "ActionComponent", ac );
 
-
+    /** Sound component **/
     SoundComponent* sound = new SoundComponent( this );
     sf::Sound shoot;
     shoot.setBuffer( world->getSoundHolder()->get( "shoot" ) );
@@ -167,5 +167,6 @@ void Player::createDefaultComponents()
 
 void Player::onHit( GameObject* hitBy, Contact contact )
 {
+    GameObject::onHit( hitBy, contact );
 
 }
