@@ -15,9 +15,6 @@ AnimationGraphicsComponent::AnimationGraphicsComponent( GameObject* gameObject )
 
 void AnimationGraphicsComponent::update( GameObject* object, sf::Time dt )
 {
-    mSprite.setPosition( object->getPosition() );
-    mSprite.setRotation( object->getRotation() );
-
     if ( mCurrentAnimation != nullptr )
     {
         if ( mTimeToNextFrame > mCurrentAnimation->getTimePerFrame() )
@@ -30,6 +27,21 @@ void AnimationGraphicsComponent::update( GameObject* object, sf::Time dt )
             mTimeToNextFrame += dt.asMilliseconds();
         }
     }
+
+    /**
+    * Origin x: Centered on objects width to allow for wider frames
+    * Origin y: At the bottom of the frame, to always align the bottom
+    *           of each frame at the ground, allowing for bumps in the
+    *           animation
+    *
+    * Finally adjust the sprite position to align with the new origin
+    */
+    mSprite.setOrigin( object->getSize().x/2.f, mCurrentAnimation->getCurrentFrame().height );
+    sf::Vector2f pos = object->getPosition();
+    pos.y += mCurrentAnimation->getCurrentFrame().height/2.f;
+
+    mSprite.setPosition( pos );
+    mSprite.setRotation( object->getRotation() );
 }
 
 void AnimationGraphicsComponent::render( sf::RenderTarget& target, sf::Time dt ) const
@@ -62,7 +74,6 @@ void AnimationGraphicsComponent::setAnimation( std::string key )
                 mCurrentAnimation = &mAnimations.at( key );
                 sf::IntRect frame = mCurrentAnimation->getCurrentFrame();
                 mSprite.setTextureRect( frame );
-//                mSprite.setOrigin( frame.width / 2.f, frame.height / 2.f );
 
                 mTimeToNextFrame = 0;
             }
@@ -79,7 +90,6 @@ void AnimationGraphicsComponent::setAnimation( std::string key )
             mCurrentAnimation = &mAnimations.at( key );
             sf::IntRect frame = mCurrentAnimation->getStartFrame();
             mSprite.setTextureRect( frame );
-            mSprite.setOrigin( frame.width / 2.f, frame.height / 2.f );
 
             mTimeToNextFrame = 0;
         }
