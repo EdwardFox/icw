@@ -1,3 +1,4 @@
+#include <lib/gamestates/StartState.hpp>
 #include "lib/gamestates/PlayState.hpp"
 
 /** Make our static members known **/
@@ -37,7 +38,10 @@ void PlayState::render( Game* game, sf::RenderTarget& target, sf::Time dt )
 
 void PlayState::processEvents( Game* game, const sf::Event* event )
 {
-
+    if( event->key.code == sf::Keyboard::Escape )
+    {
+        game->changeState( StartState::instance() );
+    }
 }
 
 bool PlayState::isAlwaysDrawn() const

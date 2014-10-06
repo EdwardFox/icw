@@ -60,6 +60,7 @@ set(SOURCE_FILES
     lib/gameobjects/EnemyA.hpp
     lib/gamestates/GameState.hpp
     lib/gamestates/PlayState.hpp
+    lib/gamestates/StartState.hpp
 
     src/Animation.cpp
     src/Camera.cpp
@@ -90,6 +91,7 @@ set(SOURCE_FILES
     src/gameobjects/Player.cpp
     src/gameobjects/EnemyA.cpp
     src/gamestates/PlayState.cpp
+    src/gamestates/StartState.cpp
 )
 
 # Executable
@@ -97,6 +99,9 @@ add_executable(ICW ${SOURCE_FILES})
 
 
 # Copy resource files
+## Fonts
+configure_file(media/fonts/Arial.ttf media/fonts/Arial.ttf COPYONLY)
+
 ## Maps
 configure_file(media/maps/Temple.tmx media/maps/Temple.tmx COPYONLY)
 

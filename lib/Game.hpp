@@ -20,8 +20,12 @@ public:
     void run();
 
     void changeState( GameState* state );
+
     void pushState( GameState* state );
+
     void popState();
+
+    void quit();
 
 private:
     sf::RenderWindow mWindow;

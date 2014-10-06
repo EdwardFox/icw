@@ -1,12 +1,12 @@
 #include "lib/Game.hpp"
-#include <lib/gamestates/PlayState.hpp>
+#include <lib/gamestates/StartState.hpp>
 
 Game::Game( sf::Vector2i size, std::string title ) :
         mWindow( sf::VideoMode( size.x, size.y, 32 ), title )
         , mTimePerFrame( sf::seconds( 1.f / UPDATES_PER_SECOND ) )
         , mStates()
 {
-    this->changeState( PlayState::instance() );
+    this->changeState( StartState::instance() );
 }
 
 void Game::processEvents()
@@ -17,8 +17,8 @@ void Game::processEvents()
         if ( event.type == sf::Event::Closed )
             mWindow.close();
 
-        if ( event.key.code == sf::Keyboard::Escape )
-            mWindow.close();
+//        if ( event.key.code == sf::Keyboard::Escape )
+//            mWindow.close();
 
         mStates.back()->processEvents( this, &event );
     }
@@ -113,4 +113,9 @@ void Game::popState()
     {
         mStates.back()->resume();
     }
+}
+
+void Game::quit()
+{
+    mWindow.close();
 }
