@@ -10027,18 +10027,38 @@
   </data>
  </layer>
  <objectgroup name="Player" width="100" height="20">
-  <object name="Player" type="player" x="288" y="160" width="16" height="16"/>
+  <object name="Player" type="player" x="170" y="148" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="Enemies" width="100" height="20">
-  <object name="EnemyA" type="enemya" x="1044" y="94">
+  <object name="EnemyA" type="enemya" x="474" y="155">
    <properties>
-    <property name="hp" value="100"/>
+    <property name="acceleration" value="0.1"/>
+    <property name="hp" value="200"/>
+    <property name="speed" value="2.5"/>
    </properties>
   </object>
-  <object name="EnemyA" x="238" y="104"/>
-  <object name="EnemyA" x="307" y="39"/>
-  <object name="EnemyA" x="194" y="158"/>
-  <object name="EnemyA" x="224" y="67"/>
-  <object name="EnemyA" x="254" y="65"/>
+  <object name="EnemyA" type="enemya" x="426" y="44">
+   <properties>
+    <property name="acceleration" value="0.1"/>
+    <property name="hp" value="100"/>
+    <property name="speed" value="1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="Boxes" width="100" height="20">
+  <object x="736" y="52"/>
+  <object x="736" y="27"/>
+  <object x="736" y="3"/>
+  <object x="737" y="-21"/>
+  <object x="849" y="55"/>
+  <object x="874" y="55"/>
+  <object x="899" y="54"/>
+  <object x="924" y="54"/>
+  <object x="902" y="28"/>
+  <object x="879" y="28"/>
+  <object x="856" y="27"/>
+  <object x="866" y="0"/>
+  <object x="892" y="0"/>
+  <object x="880" y="-27"/>
  </objectgroup>
 </map>

@@ -24,7 +24,7 @@ public:
 
     virtual void setHealth( float health ) = 0;
 
-    virtual void setMaximumHealth( float health ) = 0;
+    virtual void setMaximumHealth( float health, bool setHealth = true ) = 0;
 
 };
 

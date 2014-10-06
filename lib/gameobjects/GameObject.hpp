@@ -91,6 +91,8 @@ public:
         GameObject::mName = name;
     }
 
+    virtual void setProperties( std::vector<std::tuple<std::string, std::string>> vector );
+
 private:
 
     World* mWorld;

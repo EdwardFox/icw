@@ -56,7 +56,11 @@ void HealthComponent::setHealth( float health )
     mHealth = health;
 }
 
-void HealthComponent::setMaximumHealth( float health )
+void HealthComponent::setMaximumHealth( float health, bool setHealth )
 {
     mMaxHealth = health;
+
+    if(setHealth == true) {
+        mHealth = health;
+    }
 }

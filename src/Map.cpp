@@ -159,13 +159,12 @@ void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textu
             );
 
             MapObject mapObject;
-            std::cout << "Name: " << object->first_attribute( "name" )->value() << std::endl;
+            mapObject.position = rect;
+
             if ( object->first_attribute( "name" ) )
             {
                 mapObject.name = object->first_attribute( "name" )->value();
             }
-
-            mapObject.position = rect;
 
             if ( object->first_attribute( "type" ) )
             {

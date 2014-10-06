@@ -24,7 +24,7 @@ public:
 
     virtual float getMaximumHealth() const override;
 
-    virtual void setMaximumHealth( float health ) override;
+    virtual void setMaximumHealth( float health, bool setHealth = true ) override;
 
     virtual void receiveDamage( std::string element, float damage ) override;
 

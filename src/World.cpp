@@ -224,8 +224,22 @@ void World::createEnemies()
     for ( auto obj : mMap.getObjectGroups()->at( 1 ).objects )
     {
         sf::Vector2f position( sf::Vector2f( obj.position.left, obj.position.top ) );
-        sf::Vector2f size( 20.f, 31.5f );
+        sf::Vector2f size( 20.f, 30.f );
 
-        this->createGameObject(obj.name, position, size);
+        GameObject* object = this->createGameObject(obj.name, position, size);
+        object->setProperties(obj.properties);
+    }
+
+
+    for ( auto obj : mMap.getObjectGroups()->at( 2 ).objects )
+    {
+        GameObject* box = this->createGameObject( "Test", sf::Vector2f( obj.position.left, obj.position.top ), sf::Vector2f( 16.f, 16.f ) );
+        SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );
+        box->setGraphicComponent( solid );
+
+        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( box );
+        physBox->createCollisionBody( this->getPhysicsWorld(), box, b2_dynamicBody, false );
+        physBox->setContactable( true );
+        box->attachComponent( "PhysicsComponent", physBox );
     }
 }

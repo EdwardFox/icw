@@ -10,6 +10,9 @@ public:
 
     virtual void onHit( GameObject* hitBy, Contact contact ) override;
 
+
+    virtual void setProperties( std::vector<std::tuple<std::string, std::string>> properties ) override;
+
 private:
 
     void createDefaultComponents();

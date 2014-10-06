@@ -47,6 +47,7 @@ set(SOURCE_FILES
     lib/components/HealthComponent.hpp
     lib/components/PlayerInputComponent.hpp
     lib/components/PlayerMovementComponent.hpp
+    lib/components/EnemyAIComponent.hpp
     lib/components/SolidColorGraphicsComponent.hpp
     lib/components/ProjectileAIComponent.hpp
     lib/components/ProjectileMovementComponent.hpp
@@ -79,6 +80,7 @@ set(SOURCE_FILES
     src/components/PlayerMovementComponent.cpp
     src/components/SolidColorGraphicsComponent.cpp
     src/components/ProjectileAIComponent.cpp
+    src/components/EnemyAIComponent.cpp
     src/components/ProjectileMovementComponent.cpp
     src/components/SoundComponent.cpp
     src/components/TextureGraphicsComponent.cpp

@@ -69,13 +69,18 @@ void GameObject::onHit( GameObject* hitBy, Contact contact )
 {
     if ( hitBy )
     {
-        if( Contact::Begin == contact )
+        /*if( Contact::Begin == contact )
             std::cout << "BEGIN: Object '" << this->getName() << "' collided with object '" << hitBy->getName() << "'" << std::endl;
         else
-            std::cout << "END: Object '" << this->getName() << "' collided with object '" << hitBy->getName() << "'" << std::endl;
+            std::cout << "END: Object '" << this->getName() << "' collided with object '" << hitBy->getName() << "'" << std::endl;*/
     }
     else
     {
 //        std::cout << "Object '" << this->getName() << "' collided with object a wall" << std::endl;
     }
+}
+
+void GameObject::setProperties( std::vector<std::tuple<std::string, std::string>> vector )
+{
+
 }

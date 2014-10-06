@@ -1,4 +1,5 @@
 #include <lib/interfaces/IPhysicsComponent.hpp>
+#include <lib/interfaces/IPhysicsComponent.hpp>
 #include "lib/components/ProjectileMovementComponent.hpp"
 
 ProjectileMovementComponent::ProjectileMovementComponent( GameObject* object ) :
