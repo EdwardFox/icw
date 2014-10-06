@@ -45,8 +45,8 @@ void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textu
     rapidxml::xml_node<>* rootMap = doc.first_node( "map" );
 
     /** Root attributes **/
-    rapidxml::xml_attribute<>* version = rootMap->first_attribute( "version" );
-    rapidxml::xml_attribute<>* orientation = rootMap->first_attribute( "orientation" );
+//    rapidxml::xml_attribute<>* version = rootMap->first_attribute( "version" );
+//    rapidxml::xml_attribute<>* orientation = rootMap->first_attribute( "orientation" );
     rapidxml::xml_attribute<>* width = rootMap->first_attribute( "width" );
     rapidxml::xml_attribute<>* height = rootMap->first_attribute( "height" );
     rapidxml::xml_attribute<>* tilewidth = rootMap->first_attribute( "tilewidth" );

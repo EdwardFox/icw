@@ -1,4 +1,5 @@
 #include <lib/gameobjects/Fireball.hpp>
+#include <lib/components/HealthComponent.hpp>
 #include "lib/World.hpp"
 #include "lib/components/ActionComponent.hpp"
 #include "lib/components/AnimationGraphicsComponent.hpp"
