@@ -110,7 +110,7 @@ configure_file(media/textures/temple.png media/textures/temple.png COPYONLY)
 configure_file(media/textures/ruins.png media/textures/ruins.png COPYONLY)
 configure_file(media/textures/ror.png media/textures/ror.png COPYONLY)
 configure_file(media/textures/golem/golem.png media/textures/golem/golem.png COPYONLY)
-configure_file(media/textures/golem/golem.png media/textures/start.png COPYONLY)
+configure_file(media/textures/start.png media/textures/start.png COPYONLY)
 
 ## Sounds
 configure_file(media/sounds/shoot.wav media/sounds/shoot.wav COPYONLY)
