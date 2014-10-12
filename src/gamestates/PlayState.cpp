@@ -1,19 +1,36 @@
 #include <lib/gamestates/StartState.hpp>
 #include "lib/gamestates/PlayState.hpp"
 
-/** Make our static members known **/
-PlayState PlayState::mPlayState;
-World PlayState::mWorld;
-bool PlayState::mDrawAlways;
+PlayState::PlayState( std::string map ) :
+        mWorld()
+        , mDrawAlways( true )
+        , mMap( map )
+{
+
+}
 
 void PlayState::init()
 {
-    mDrawAlways = true;
+    mWorld.loadMap( mMap );
+
+    Map map = *mWorld.getMap();
+
+    /**
+    * Set up the camera
+    */
+    Camera camera;
+    camera.setOffset( sf::Vector2f( 0.f, -50.f ) );
+    camera.setZoom( 3.f );
+    camera.setFollowTarget( mWorld.getPlayer(), true );
+    camera.setLagBehindAmount( 0.2f );
+    sf::IntRect rect( 0, 0, map.getMapSize().x * map.getTileSize().x, map.getMapSize().y * map.getTileSize().x );
+    camera.setBorders( rect );
+
+    mWorld.setCamera( camera );
 }
 
 void PlayState::cleanup()
 {
-
 }
 
 void PlayState::pause()
@@ -40,11 +57,16 @@ void PlayState::processEvents( Game* game, const sf::Event* event )
 {
     if( event->key.code == sf::Keyboard::Escape )
     {
-        game->changeState( StartState::instance() );
+        game->changeState( new StartState() );
     }
 }
 
 bool PlayState::isAlwaysDrawn() const
 {
     return mDrawAlways;
+}
+
+void PlayState::changeState( Game* game, GameState* state )
+{
+    game->changeState( state );
 }

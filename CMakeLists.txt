@@ -61,6 +61,9 @@ set(SOURCE_FILES
     lib/gamestates/GameState.hpp
     lib/gamestates/PlayState.hpp
     lib/gamestates/StartState.hpp
+    lib/menu/Item.hpp
+    lib/menu/Menu.hpp
+    lib/menu/TextButton.hpp
 
     src/Animation.cpp
     src/Camera.cpp
@@ -92,6 +95,8 @@ set(SOURCE_FILES
     src/gameobjects/EnemyA.cpp
     src/gamestates/PlayState.cpp
     src/gamestates/StartState.cpp
+    src/menu/Menu.cpp
+    src/menu/TextButton.cpp
 )
 
 # Executable
@@ -103,6 +108,7 @@ add_executable(ICW ${SOURCE_FILES})
 configure_file(media/fonts/Arial.ttf media/fonts/Arial.ttf COPYONLY)
 
 ## Maps
+configure_file(media/maps/Screen.tmx media/maps/Screen.tmx COPYONLY)
 configure_file(media/maps/Temple.tmx media/maps/Temple.tmx COPYONLY)
 
 ## Textures

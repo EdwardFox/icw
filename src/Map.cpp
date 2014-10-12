@@ -101,8 +101,8 @@ void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textu
                         atoi( tileheight->value() ) );
                 mTiles.push_back( tile );
 
-                std::cout << "Added tile with key: " << tile.key << ", x: " << tile.rect.left << ", y: "
-                        << tile.rect.top << ", width: " << tile.rect.width << ", height: " << tile.rect.height << std::endl;
+//                std::cout << "Added tile with key: " << tile.key << ", x: " << tile.rect.left << ", y: "
+//                        << tile.rect.top << ", width: " << tile.rect.width << ", height: " << tile.rect.height << std::endl;
             }
         }
         std::cout << std::endl;
@@ -187,7 +187,7 @@ void Map::load( std::string map, ResourceHolder<sf::Texture, std::string>& textu
         }
         std::cout << std::endl;
 
-        mGroups.push_back( objGroup );
+        mGroups.emplace( node->first_attribute( "name" )->value(), objGroup );
     }
     std::cout << "... done" << std::endl;
 

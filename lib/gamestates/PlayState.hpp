@@ -1,12 +1,15 @@
 #ifndef PLAYSTATE_HPP
 #define PLAYSTATE_HPP
 
-#include "GameState.hpp"
+#include "lib/gamestates/GameState.hpp"
+#include "lib/World.hpp"
 
 class PlayState : public GameState
 {
 
 public:
+    PlayState( std::string map );
+
     virtual void init() override;
 
     virtual void cleanup() override;
@@ -23,20 +26,12 @@ public:
 
     virtual bool isAlwaysDrawn() const override;
 
-    static PlayState* instance()
-    {
-        return &mPlayState;
-    }
-
-protected:
-    PlayState()
-    {
-    };
+    virtual void changeState( Game* game, GameState* state ) override;
 
 private:
-    static PlayState mPlayState;
-    static World mWorld;
-    static bool mDrawAlways;
+    World mWorld;
+    bool mDrawAlways;
+    std::string mMap;
 };
 
 #endif

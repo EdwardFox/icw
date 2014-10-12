@@ -2,6 +2,7 @@
 #define MAP_LOADER_HPP
 
 #include <SFML/Graphics.hpp>
+#include <unordered_map>
 #include <string>
 #include <vector>
 #include "lib/ResourceHolder.hpp"
@@ -131,9 +132,8 @@ public:
     /**
     * Returns the vector that holds the different objectgroups
     */
-    const std::vector<Map::ObjectGroup>* getObjectGroups() const
+    const std::unordered_map<std::string, Map::ObjectGroup>* getObjectGroups() const
     {
-        // TODO: Return pointers and not copies, as copies invalidate iterators when using loops
         return &mGroups;
     }
 
@@ -176,7 +176,7 @@ private:
     /**
     * Contains the object groups of the map
     */
-    std::vector<ObjectGroup> mGroups;
+    std::unordered_map<std::string, ObjectGroup> mGroups;
 
     /**
     * Contains the maps size

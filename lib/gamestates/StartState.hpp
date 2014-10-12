@@ -1,12 +1,16 @@
 #ifndef STARTSTATE_HPP
 #define STARTSTATE_HPP
 
+#include <lib/Game.hpp>
+#include <lib/menu/Menu.hpp>
 #include "GameState.hpp"
 
 class StartState : public GameState
 {
 
 public:
+    StartState();
+
     virtual void init() override;
 
     virtual void cleanup() override;
@@ -23,19 +27,13 @@ public:
 
     virtual bool isAlwaysDrawn() const override;
 
-    static StartState* instance()
-    {
-        return &mStartState;
-    }
-
-protected:
-    StartState()
-    {
-    };
+    virtual void changeState( Game* game, GameState* state ) override;
 
 private:
-    static StartState mStartState;
-    static bool mDrawAlways;
+    bool mDrawAlways;
+    World mWorld;
+    Menu mMenu;
+    sf::Vector2f mOffset;
 };
 
 #endif

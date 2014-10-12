@@ -42,7 +42,7 @@ public:
     {
         mFollowTarget = object;
 
-        if( startAtTarget )
+        if( startAtTarget && mFollowTarget )
             mPosition = mFollowTarget->getPosition();
     }
 

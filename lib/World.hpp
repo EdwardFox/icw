@@ -88,6 +88,26 @@ public:
         return &mSounds;
     }
 
+    Camera const& getCamera() const
+    {
+        return mCamera;
+    }
+
+    void setCamera( Camera const& camera )
+    {
+        mCamera = camera;
+    }
+
+    const GameObject* getPlayer() const
+    {
+        return mPlayer;
+    }
+
+    const GameObject* getGameObjectById( unsigned id ) const
+    {
+        return mObjectsToCreate.at( id ).get();
+    }
+
 private:
 
     void createEnemies();

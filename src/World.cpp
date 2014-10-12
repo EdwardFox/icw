@@ -37,24 +37,8 @@ World::World() :
     * Load a test map and create the player.
     * TODO: Create proper user interface to allow choosing different maps
     */
-    this->loadMap( "media/maps/Temple.tmx" );
+//    this->loadMap( "media/maps/Temple.tmx" );
 
-    sf::Vector2f position = sf::Vector2f( mMap.getObjectGroups()->at( 0 ).objects.at( 0 ).position.left, mMap.getObjectGroups()->at( 0 ).objects.at( 0 ).position.top );
-    sf::Vector2f size = sf::Vector2f( 10.f, 11.f );
-    mPlayer = this->createGameObject( "Player", position, size );
-
-    this->createEnemies();
-
-    /**
-    * Set up the camera
-    * TODO: Move literals into proper variables
-    */
-    mCamera.setOffset( sf::Vector2f( 0.f, -50.f ) );
-    mCamera.setZoom( 3.f );
-    mCamera.setFollowTarget( mPlayer, true );
-    mCamera.setLagBehindAmount( 0.2f );
-    sf::IntRect rect( 0, 0, mMap.getMapSize().x * mMap.getTileSize().x, mMap.getMapSize().y * mMap.getTileSize().x );
-    mCamera.setBorders( rect );
 }
 
 void World::render( sf::RenderTarget& target, sf::Time dt ) const
@@ -198,6 +182,21 @@ void World::loadMap( std::string path )
 
         mGrids.push_back( std::unique_ptr<Grid>( grid ) );
     }
+
+
+    try
+    {
+        sf::Vector2f position = sf::Vector2f( mMap.getObjectGroups()->at( "Player" ).objects.at( 0 ).position.left,
+                mMap.getObjectGroups()->at( "Player" ).objects.at( 0 ).position.top );
+        sf::Vector2f size = sf::Vector2f( 10.f, 11.f );
+        mPlayer = this->createGameObject( "Player", position, size );
+    }
+    catch ( std::out_of_range oor )
+    {
+        // No player
+    }
+
+    this->createEnemies();
 }
 
 void World::initializeTextures()
@@ -222,25 +221,32 @@ GameObject* World::createGameObject( std::string name, sf::Vector2f position, sf
 
 void World::createEnemies()
 {
-    for ( auto obj : mMap.getObjectGroups()->at( 1 ).objects )
+    try
     {
-        sf::Vector2f position( sf::Vector2f( obj.position.left, obj.position.top ) );
-        sf::Vector2f size( 20.f, 30.f );
+        for ( auto obj : mMap.getObjectGroups()->at( "Enemies" ).objects )
+        {
+            sf::Vector2f position( sf::Vector2f( obj.position.left, obj.position.top ) );
+            sf::Vector2f size( 20.f, 30.f );
 
-        GameObject* object = this->createGameObject(obj.name, position, size);
-        object->setProperties(obj.properties);
+            GameObject* object = this->createGameObject( obj.name, position, size );
+            object->setProperties( obj.properties );
+        }
+    }
+    catch ( std::out_of_range oor )
+    {
+        // No enemies
     }
 
 
-    for ( auto obj : mMap.getObjectGroups()->at( 2 ).objects )
-    {
-        GameObject* box = this->createGameObject( "Test", sf::Vector2f( obj.position.left, obj.position.top ), sf::Vector2f( 16.f, 16.f ) );
-        SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );
-        box->setGraphicComponent( solid );
-
-        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( box );
-        physBox->createCollisionBody( this->getPhysicsWorld(), box, b2_dynamicBody, false );
-        physBox->setContactable( true );
-        box->attachComponent( "PhysicsComponent", physBox );
-    }
+//    for ( auto obj : mMap.getObjectGroups()->at( 2 ).objects )
+//    {
+//        GameObject* box = this->createGameObject( "Test", sf::Vector2f( obj.position.left, obj.position.top ), sf::Vector2f( 16.f, 16.f ) );
+//        SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );
+//        box->setGraphicComponent( solid );
+//
+//        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( box );
+//        physBox->createCollisionBody( this->getPhysicsWorld(), box, b2_dynamicBody, false );
+//        physBox->setContactable( true );
+//        box->attachComponent( "PhysicsComponent", physBox );
+//    }
 }

@@ -6,7 +6,7 @@ Game::Game( sf::Vector2i size, std::string title ) :
         , mTimePerFrame( sf::seconds( 1.f / UPDATES_PER_SECOND ) )
         , mStates()
 {
-    this->changeState( StartState::instance() );
+    this->changeState( new StartState() );
 }
 
 void Game::processEvents()
@@ -26,16 +26,16 @@ void Game::processEvents()
 
 void Game::render( sf::Time dt )
 {
-    mWindow.clear( sf::Color( 0, 100, 150) );
+    mWindow.clear( sf::Color( 0, 100, 150 ) );
 
     /**
     * There are states we always want to draw, even while
     * they are not on top of the stack (e.g. game with
     * overlaying menu).
     */
-    for( const auto val : mStates )
+    for ( const auto& val : mStates )
     {
-        if( val->isAlwaysDrawn() )
+        if ( val->isAlwaysDrawn() )
         {
             val->render( this, mWindow, dt );
         }
@@ -80,36 +80,36 @@ void Game::run()
 
 void Game::changeState( GameState* state )
 {
-    if( !mStates.empty() )
+    if ( !mStates.empty() )
     {
         mStates.back()->cleanup();
         mStates.pop_back();
     }
 
-    mStates.push_back( state );
+    mStates.push_back( std::unique_ptr<GameState>( state ) );
     mStates.back()->init();
 }
 
 void Game::pushState( GameState* state )
 {
-    if( !mStates.empty() )
+    if ( !mStates.empty() )
     {
         mStates.back()->pause();
     }
 
-    mStates.push_back( state );
+    mStates.push_back( std::unique_ptr<GameState>( state ) );
     mStates.back()->init();
 }
 
 void Game::popState()
 {
-    if( !mStates.empty() )
+    if ( !mStates.empty() )
     {
         mStates.back()->cleanup();
         mStates.pop_back();
     }
 
-    if( !mStates.empty() )
+    if ( !mStates.empty() )
     {
         mStates.back()->resume();
     }

@@ -2,11 +2,16 @@
 #define GAMESTATE_HPP
 
 #include <SFML/Window/Event.hpp>
-#include "lib/Game.hpp"
+#include <SFML/Graphics/RenderTarget.hpp>
+
+class Game;
 
 class GameState
 {
 public:
+
+    virtual ~GameState() {};
+
     virtual void init() = 0;
 
     virtual void cleanup() = 0;
@@ -23,15 +28,8 @@ public:
 
     virtual bool isAlwaysDrawn() const = 0;
 
-    void changeState( Game* game, GameState* state )
-    {
-        game->changeState( state );
-    }
+    virtual void changeState( Game* game, GameState* state ) = 0;
 
-protected:
-    GameState()
-    {
-    };
 };
 
 #endif

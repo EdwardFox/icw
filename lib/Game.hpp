@@ -2,6 +2,7 @@
 #define GAME_HPP
 
 #include <string>
+#include "lib/gamestates/GameState.hpp"
 #include "lib/World.hpp"
 
 class GameState;
@@ -30,7 +31,7 @@ public:
 private:
     sf::RenderWindow mWindow;
     sf::Time mTimePerFrame;
-    std::vector<GameState*> mStates;
+    std::vector<std::unique_ptr<GameState>> mStates;
 };
 
 #endif
