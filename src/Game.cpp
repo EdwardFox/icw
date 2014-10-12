@@ -6,7 +6,7 @@ Game::Game( sf::Vector2i size, std::string title ) :
         , mTimePerFrame( sf::seconds( 1.f / UPDATES_PER_SECOND ) )
         , mStates()
 {
-    this->changeState( new StartState() );
+    this->changeState( new StartState( this ) );
 }
 
 void Game::processEvents()
@@ -16,9 +16,6 @@ void Game::processEvents()
     {
         if ( event.type == sf::Event::Closed )
             mWindow.close();
-
-//        if ( event.key.code == sf::Keyboard::Escape )
-//            mWindow.close();
 
         mStates.back()->processEvents( this, &event );
     }

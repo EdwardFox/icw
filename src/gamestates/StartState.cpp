@@ -3,11 +3,12 @@
 #include <lib/menu/TextButton.hpp>
 #include "lib/gamestates/StartState.hpp"
 
-StartState::StartState() :
+StartState::StartState( Game* game ) :
         mDrawAlways( false )
         , mWorld()
         , mMenu()
         , mOffset()
+        , mGame( game )
 {
 
 }
@@ -25,40 +26,51 @@ void StartState::init()
     Camera camera;
     camera.setPosition( sf::Vector2f( mOffset.x, mOffset.y ) );
     camera.setZoom( 3.f );
-
     mWorld.setCamera( camera );
 
     mMenu.setOffset( mOffset );
     mMenu.setZoom( camera.getZoom() );
 
-    sf::Font font;
-    font.loadFromFile( "media/fonts/Arial.ttf" );
-
-    sf::Text text;
-    text.setString( "Play" );
-//    text.setScale( 0.5f, 0.5f );
-    text.setColor( sf::Color::White );
+    sf::Vector2f windowSize( mGame->getTarget()->getSize().x / camera.getZoom(), mGame->getTarget()->getSize().y / camera.getZoom() );
 
     TextButton* play = new TextButton();
-    play->setFont( font );
-    play->setText( text );
-    play->setPosition( sf::Vector2f( 0.f, 0.f ) );
+    play->setFont( "media/fonts/Arial.ttf" );
+    play->setText( "Play" );
+    play->setTextColor( sf::Color::White );
+    play->setHighlightTextColor( sf::Color::Green );
+    play->setPosition( sf::Vector2f( 40.f, 40.f ) );
     play->setOffset( mOffset );
     play->setZoom( camera.getZoom() );
-    play->setSize( sf::Vector2f( 200.f, 50.f ) );
-    play->setBackgroundColor( sf::Color( 100.f, 100.f, 100.f ) );
+    play->setSize( sf::Vector2f( 80.f, 20.f ) );
+    play->setBackgroundColor( sf::Color( 0.f, 0.f, 0.f, 200.f ) );
     play->setVisible( true );
     play->setClickFunction( [] ( Menu* menu, Game* game )
     {
         game->changeState( new PlayState( "media/maps/Temple.tmx" ) );
     });
-
     mMenu.addItem( "Play", play );
+
+    TextButton* quit = new TextButton();
+    quit->setFont( "media/fonts/Arial.ttf" );
+    quit->setText( "Quit" );
+    quit->setTextColor( sf::Color::White );
+    quit->setHighlightTextColor( sf::Color::Green );
+    quit->setPosition( sf::Vector2f( 40.f, windowSize.y - 60.f ) );
+    quit->setOffset( mOffset );
+    quit->setZoom( camera.getZoom() );
+    quit->setSize( sf::Vector2f( 80.f, 20.f ) );
+    quit->setBackgroundColor( sf::Color( 0.f, 0.f, 0.f, 200.f ) );
+    quit->setVisible( true );
+    quit->setClickFunction( [] ( Menu* menu, Game* game )
+    {
+        game->quit();
+    });
+    mMenu.addItem( "Quit", quit );
 }
 
 void StartState::cleanup()
 {
-
+    mMenu.clear();
 }
 
 void StartState::pause()
@@ -82,6 +94,10 @@ void StartState::render( Game* game, sf::RenderTarget& target, sf::Time dt )
 {
     mWorld.render( target, dt );
 
+    sf::RectangleShape rect;
+    rect.setSize( sf::Vector2f(target.getSize().x, target.getSize().y) );
+    rect.setFillColor( sf::Color( 0.f, 0.f, 0.f, 100.f) );
+    target.draw(rect);
 
     mMenu.render( target, dt );
 }

@@ -59,6 +59,11 @@ public:
         mZoom = zoom;
     }
 
+    void clear()
+    {
+        mItems.clear();
+    }
+
 private:
     sf::Vector2f mOffset;
     std::unordered_map<std::string, std::unique_ptr<Item>> mItems;

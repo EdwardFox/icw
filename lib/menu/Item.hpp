@@ -17,7 +17,7 @@ public:
 
     virtual void render( sf::RenderTarget& target, sf::Time dt ) = 0;
 
-    virtual void onHover( Menu* menu ) = 0;
+    virtual void onHover( Menu* menu, bool active ) = 0;
 
     virtual void onClick( Menu* menu, Game* game ) = 0;
 

@@ -9,7 +9,7 @@ class StartState : public GameState
 {
 
 public:
-    StartState();
+    StartState( Game* game );
 
     virtual void init() override;
 
@@ -34,6 +34,7 @@ private:
     World mWorld;
     Menu mMenu;
     sf::Vector2f mOffset;
+    Game* mGame;
 };
 
 #endif

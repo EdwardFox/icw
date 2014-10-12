@@ -57,7 +57,7 @@ void PlayState::processEvents( Game* game, const sf::Event* event )
 {
     if( event->key.code == sf::Keyboard::Escape )
     {
-        game->changeState( new StartState() );
+        game->changeState( new StartState( game ) );
     }
 }
 

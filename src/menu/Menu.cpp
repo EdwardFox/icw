@@ -29,29 +29,49 @@ void Menu::render( sf::RenderTarget& target, sf::Time dt ) const
 
 void Menu::processEvents( Game* game, const sf::Event* event )
 {
-    if ( event->type == sf::Event::MouseButtonPressed )
+    for ( const auto& item : mItems )
     {
-        if ( event->mouseButton.button == sf::Mouse::Left )
+        if ( event->type == sf::Event::MouseButtonPressed )
         {
-            float x = event->mouseButton.x / mZoom;
-            float y = event->mouseButton.y / mZoom;
-
-            for ( const auto& item : mItems )
+            if ( event->mouseButton.button == sf::Mouse::Left )
             {
+                float x = event->mouseButton.x / mZoom;
+                float y = event->mouseButton.y / mZoom;
+
                 sf::FloatRect rect;
                 rect.left = item.second->getPosition().x;
                 rect.top = item.second->getPosition().y;
                 rect.width = item.second->getSize().x;
                 rect.height = item.second->getSize().y;
 
-                std::cout << "[AREA] x: " << rect.left << ", y: " << rect.top << ", width: " << rect.width << ", height: " << rect.height << std::endl;
-                std::cout << "[MOUSE] x: " << x << ", y: " << y << std::endl;
-
                 if ( rect.contains( x, y ) && item.second->isVisible() )
                 {
                     item.second->onClick( this, game );
+                    break;
                 }
             }
         }
+
+        if( event->type == sf::Event::MouseMoved )
+        {
+            float x = event->mouseMove.x / mZoom;
+            float y = event->mouseMove.y / mZoom;
+
+            sf::FloatRect rect;
+            rect.left = item.second->getPosition().x;
+            rect.top = item.second->getPosition().y;
+            rect.width = item.second->getSize().x;
+            rect.height = item.second->getSize().y;
+
+            if ( rect.contains( x, y ) && item.second->isVisible() )
+            {
+                item.second->onHover( this, true );
+            }
+            else
+            {
+                item.second->onHover( this, false );
+            }
+        }
     }
+
 }

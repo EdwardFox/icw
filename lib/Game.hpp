@@ -28,6 +28,11 @@ public:
 
     void quit();
 
+    const sf::RenderTarget* getTarget() const
+    {
+        return &mWindow;
+    }
+
 private:
     sf::RenderWindow mWindow;
     sf::Time mTimePerFrame;

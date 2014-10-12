@@ -18,7 +18,7 @@ public:
 
     virtual void render( sf::RenderTarget& target, sf::Time dt ) override;
 
-    virtual void onHover( Menu* menu ) override;
+    virtual void onHover( Menu* menu, bool active ) override;
 
     virtual void onClick( Menu* menu, Game* game ) override;
 
@@ -27,9 +27,9 @@ public:
         return mFont;
     }
 
-    void setFont( sf::Font const font )
+    void setFont( std::string font )
     {
-        mFont = font;
+        mFont.loadFromFile( font );
         mText.setFont( mFont );
     }
 
@@ -38,9 +38,9 @@ public:
         return mText;
     }
 
-    void setText( sf::Text const text )
+    void setText( std::string text )
     {
-        mText = text;
+        mText.setString( text );
     }
 
     sf::Color const getBackgroundColor() const
@@ -53,17 +53,41 @@ public:
         mBackgroundColor = backgroundColor;
     }
 
+    void setTextColor( sf::Color const color )
+    {
+        mText.setColor( color );
+        mTextColor = color;
+    }
+
+    void setHighlightTextColor( sf::Color const color )
+    {
+        mHighlightTextColor = color;
+    }
+
     void setClickFunction( std::function<void(Menu*, Game*)> clickFunction )
     {
         mClickFunction = clickFunction;
     }
 
+    bool isHighlighted() const
+    {
+        return mHighlighted;
+    }
+
+    void setHighlighted( bool highlighted )
+    {
+        mHighlighted = highlighted;
+    }
+
 private:
     sf::Font mFont;
     sf::Text mText;
+    sf::Color mTextColor;
+    sf::Color mHighlightTextColor;
     sf::Color mBackgroundColor;
     sf::RectangleShape mShape;
     std::function<void( Menu* menu, Game* game )> mClickFunction;
+    bool mHighlighted;
 };
 
 #endif
