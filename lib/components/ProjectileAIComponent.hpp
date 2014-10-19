@@ -1,5 +1,5 @@
-#ifndef TEST_AI_COMPONENT_HPP
-#define TEST_AI_COMPONENT_HPP
+#ifndef PROJECTILE_AI_COMPONENT
+#define PROJECTILE_AI_COMPONENT
 
 #include <lib/gameobjects/GameObject.hpp>
 #include "lib/interfaces/IComponent.hpp"

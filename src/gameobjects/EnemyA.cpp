@@ -5,6 +5,10 @@
 #include <lib/components/EnemyAIComponent.hpp>
 #include <lib/components/DefaultStateHandlerComponent.hpp>
 #include <lib/components/PlayerInputComponent.hpp>
+#include <lib/components/ActionComponent.hpp>
+#include <lib/components/ProjectileAIComponent.hpp>
+#include <lib/gameobjects/Slash.hpp>
+#include <lib/components/SoundComponent.hpp>
 #include "lib/gameobjects/EnemyA.hpp"
 #include "lib/components/SolidColorGraphicsComponent.hpp"
 #include "lib/components/Box2DPhysicsComponent.hpp"
@@ -39,6 +43,23 @@ void EnemyA::createDefaultComponents()
     run.addFrame( sf::Vector2f( 100.f, 327.f ), sf::Vector2f( 20.f, 31.f ) );
     run.setTimePerFrame( 100 );
     agc->addAnimation( "run", run );
+
+    Animation attack( "attack" );
+    attack.addFrame( sf::Vector2f( 10.f, 248.f ), sf::Vector2f( 22.f, 29.f ) );
+    attack.addFrame( sf::Vector2f( 42.f, 247.f ), sf::Vector2f( 42.f, 30.f ) );
+    attack.addFrame( sf::Vector2f( 84.f, 247.f ), sf::Vector2f( 43.f, 30.f ) );
+    attack.addFrame( sf::Vector2f( 127.f, 248.f ), sf::Vector2f( 40.f, 29.f ) );
+    attack.addFrame( sf::Vector2f( 174.f, 249.f ), sf::Vector2f( 28.f, 28.f ) );
+    attack.addFrame( sf::Vector2f( 217.f, 248.f ), sf::Vector2f( 26.f, 29.f ) );
+    attack.addFrame( sf::Vector2f( 258.f, 248.f ), sf::Vector2f( 27.f, 29.f ) );
+    attack.addFrame( sf::Vector2f( 302.f, 249.f ), sf::Vector2f( 21.f, 28.f ) );
+    attack.addFrame( sf::Vector2f( 348.f, 248.f ), sf::Vector2f( 19.f, 29.f ) );
+    attack.addFrame( sf::Vector2f( 388.f, 248.f ), sf::Vector2f( 20.f, 29.f ) );
+    attack.addFrame( sf::Vector2f( 431.f, 248.f ), sf::Vector2f( 21.f, 29.f ) );
+    attack.addFrame( sf::Vector2f( 473.f, 248.f ), sf::Vector2f( 20.f, 29.f ) );
+    attack.setTimePerFrame( 75 );
+    attack.setRepeatable( false );
+    agc->addAnimation( "attack", attack );
 
     agc->setAnimation( "idle" );
     this->setGraphicComponent( agc );
@@ -101,11 +122,11 @@ void EnemyA::createDefaultComponents()
     physBox->createDefaultSensors( this->getWorld()->getPhysicsWorld(), this );
     this->attachComponent( "PhysicsComponent", physBox );
 
-    HealthComponent* health = new HealthComponent( this );
-
     PlayerMovementComponent* pmc = new PlayerMovementComponent( this );
+    pmc->setJumpHeight( -2.5f );
     this->attachComponent( "MovementComponent", pmc );
 
+    HealthComponent* health = new HealthComponent( this );
     /** No element **/
     health->addDamageResponse( "none",
             []( GameObject* object, float damage )
@@ -115,9 +136,48 @@ void EnemyA::createDefaultComponents()
                 {
                     hp->setHealth( hp->getHealth() - damage );
                 }
+
+                AnimationGraphicsComponent* graphics = dynamic_cast<AnimationGraphicsComponent*>( object->getGraphicComponent() );
+                if( graphics )
+                {
+                    graphics->highlight();
+                }
+            }
+    );
+    /** Slash damage **/
+    health->addDamageResponse( "slash",
+            []( GameObject* object, float damage )
+            {
+                // Immune, do nothing
             }
     );
     this->attachComponent( "HealthComponent", health );
+
+    /** Test for action components which can define their own actions **/
+    ActionComponent* ac = new ActionComponent( this );
+    ac->addAction(
+            "shoot", []( GameObject* object )
+    {
+        sf::Vector2f velocity( 0.f, 0.f );
+        sf::Vector2f size( 20.f, 30.f );
+        sf::Vector2f pos = object->getPosition();
+
+        Slash* projectile = dynamic_cast<Slash*>( object->getWorld()->createGameObject( "Slash", pos, size ) );
+        ProjectileAIComponent* ai = dynamic_cast<ProjectileAIComponent*>( projectile->getComponent( "InputComponent" ) );
+        if( ai )
+        {
+            ai->setMaxTimeAlive( 15 );
+        }
+        projectile->setMovementSpeed( velocity );
+    } );
+    this->attachComponent( "ActionComponent", ac );
+
+    /** Sound component **/
+    SoundComponent* sound = new SoundComponent( this );
+    sf::Sound shoot;
+    shoot.setBuffer( this->getWorld()->getSoundHolder()->get( "clap" ) );
+    sound->addSound( "clap", shoot );
+    this->attachComponent( "SoundComponent", sound );
 }
 
 void EnemyA::onHit( GameObject* hitBy, Contact contact )
@@ -144,7 +204,8 @@ void EnemyA::setProperties( std::vector<std::tuple<std::string, std::string>> pr
         if ( std::get<0>( property ) == "speed" )
         {
             PlayerMovementComponent* movement = dynamic_cast<PlayerMovementComponent*>( this->getComponent( "MovementComponent" ) );
-            movement->setMoveSpeed( atof( std::get<1>( property ).c_str() ) );
+            float val = atof( std::get<1>( property ).c_str() );
+            movement->setMoveSpeed( val );
         }
 
         if ( std::get<0>( property ) == "acceleration" )

@@ -153,7 +153,7 @@ void Box2DPhysicsComponent::createDefaultSensors( b2World* physics, GameObject* 
     this->addSensor( "right", physics, b2Vec2( 1.f / SCALE, (object->getSize().y / 2.f - 2.f) / SCALE ), b2Vec2( (object->getSize().y / 2.f) / SCALE, 0 ) );
 }
 
-void Box2DPhysicsComponent::onContact( Contact contact, IContactable* other )
+void Box2DPhysicsComponent::onContact( Contact contact, IContactable* other, b2BodyType type )
 {
     if ( other )
     {

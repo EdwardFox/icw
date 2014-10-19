@@ -6,6 +6,8 @@ HealthComponent::HealthComponent( GameObject* gameObject ) :
         , mGameObject( gameObject )
         , mMaxHealth( 100.f )
         , mHealth( mMaxHealth )
+        , mHitTimer()
+        , mHitTime( 150.f )
 {
     this->setType( "HealthComponent" );
 }
@@ -35,14 +37,18 @@ float HealthComponent::getMaximumHealth() const
 
 void HealthComponent::receiveDamage( std::string element, float damage )
 {
-    try
+    if( mHitTimer.getElapsedTime().asMilliseconds() > mHitTime )
     {
-        mResponses.at( element )( mGameObject, damage );
-    }
-    catch ( std::out_of_range oor )
-    {
-        /** No special response found => flat reduction */
-        mHealth -= damage;
+        try
+        {
+            mResponses.at( element )( mGameObject, damage );
+        }
+        catch ( std::out_of_range oor )
+        {
+            /** No special response found => flat reduction */
+            mHealth -= damage;
+        }
+        mHitTimer.restart();
     }
 }
 

@@ -24,7 +24,7 @@ public:
 
     virtual void render( Game* game, sf::RenderTarget& target, sf::Time dt ) = 0;
 
-    virtual void processEvents( Game* game, const sf::Event* event ) = 0;
+    virtual bool processEvents( Game* game, const sf::Event* event ) = 0;
 
     virtual bool isAlwaysDrawn() const = 0;
 

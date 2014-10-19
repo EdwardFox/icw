@@ -20,7 +20,7 @@ public:
 
     virtual void onHover( Menu* menu, bool active ) override;
 
-    virtual void onClick( Menu* menu, Game* game ) override;
+    virtual bool onClick( Menu* menu, Game* game ) override;
 
     sf::Font const getFont() const
     {

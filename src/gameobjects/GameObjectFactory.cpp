@@ -1,3 +1,4 @@
+#include <lib/gameobjects/Slash.hpp>
 #include "lib/gameobjects/Player.hpp"
 #include "lib/gameobjects/GameObjectFactory.hpp"
 #include "lib/gameobjects/Fireball.hpp"
@@ -16,6 +17,8 @@ GameObject* GameObjectFactory::createObject( World* world, std::string name, sf:
         return new Player( world, name, position, size );
     else if ( name == "EnemyA" )
         return new EnemyA( world, name, position, size );
+    else if ( name == "Slash" )
+        return new Slash( world, name, position, size );
     else
         return new GameObject( world, name, position, size );
 }

@@ -35,6 +35,8 @@ private:
     GameObject* mGameObject;
     float mMaxHealth;
     float mHealth;
+    sf::Clock mHitTimer;
+    float mHitTime;
 
 };
 

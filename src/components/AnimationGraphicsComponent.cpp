@@ -9,6 +9,9 @@ AnimationGraphicsComponent::AnimationGraphicsComponent( GameObject* gameObject )
         , mAnimations()
         , mCurrentAnimation( nullptr )
         , mTimeToNextFrame( 0 )
+        , mHightlightColor( sf::Color::Red )
+        , mHighlightTimer()
+        , mHighlightTime( 75.f )
 {
     this->setType( "GraphicsComponent" );
 }
@@ -42,12 +45,20 @@ void AnimationGraphicsComponent::update( GameObject* object, sf::Time dt )
 
     mSprite.setPosition( pos );
     mSprite.setRotation( object->getRotation() );
+
+    /** Highlight **/
+    if( mHighlightTimer.getElapsedTime().asMilliseconds() < mHighlightTime )
+        mSprite.setColor( mHightlightColor );
+    else
+        mSprite.setColor( sf::Color::White );
 }
 
 void AnimationGraphicsComponent::render( sf::RenderTarget& target, sf::Time dt ) const
 {
     if ( mCurrentAnimation != nullptr )
+    {
         target.draw( mSprite );
+    }
 }
 
 void AnimationGraphicsComponent::setTexture( sf::Texture* texture )
@@ -123,4 +134,9 @@ bool AnimationGraphicsComponent::isAnimationFinished() const
 GameObject* AnimationGraphicsComponent::getGameObject() const
 {
     return mGameObject;
+}
+
+void AnimationGraphicsComponent::highlight()
+{
+    mHighlightTimer.restart();
 }

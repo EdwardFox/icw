@@ -1,15 +1,15 @@
-#ifndef STARTSTATE_HPP
-#define STARTSTATE_HPP
+#ifndef PAUSESTATE_HPP
+#define PAUSESTATE_HPP
 
 #include <lib/Game.hpp>
 #include <lib/menu/Menu.hpp>
 #include "GameState.hpp"
 
-class StartState : public GameState
+class PauseState : public GameState
 {
 
 public:
-    StartState( Game* game );
+    PauseState( Game* game, std::string map );
 
     virtual void init() override;
 
@@ -31,11 +31,10 @@ public:
 
 private:
     bool mDrawAlways;
-    World mWorld;
     Menu mMenu;
     sf::Vector2f mOffset;
     Game* mGame;
-    sf::Vector2f mButtonSize;
+    std::string mMap;
 };
 
 #endif

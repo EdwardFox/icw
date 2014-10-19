@@ -13,7 +13,7 @@ public:
 
     void setFriction( float friction );
 
-    virtual void onContact( Contact contact, IContactable* other );
+    virtual void onContact( Contact contact, IContactable* other, b2BodyType type ) override;
 
     int getContacts() const;
 

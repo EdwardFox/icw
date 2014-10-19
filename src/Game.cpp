@@ -5,6 +5,7 @@ Game::Game( sf::Vector2i size, std::string title ) :
         mWindow( sf::VideoMode( size.x, size.y, 32 ), title )
         , mTimePerFrame( sf::seconds( 1.f / UPDATES_PER_SECOND ) )
         , mStates()
+        , mEscapeClock()
 {
     this->changeState( new StartState( this ) );
 }
@@ -17,7 +18,13 @@ void Game::processEvents()
         if ( event.type == sf::Event::Closed )
             mWindow.close();
 
-        mStates.back()->processEvents( this, &event );
+        if( mEscapeClock.getElapsedTime().asMilliseconds() > 100 )
+        {
+            if( mStates.back()->processEvents( this, &event ) )
+            {
+                mEscapeClock.restart();
+            }
+        }
     }
 }
 
@@ -29,6 +36,8 @@ void Game::render( sf::Time dt )
     * There are states we always want to draw, even while
     * they are not on top of the stack (e.g. game with
     * overlaying menu).
+    *
+    * TODO: Check if states that are always drawn are drawn twice
     */
     for ( const auto& val : mStates )
     {

@@ -26,14 +26,16 @@ void DefaultStateHandlerComponent::update( GameObject* object, sf::Time dt )
 
 }
 
-void DefaultStateHandlerComponent::changeState( GameObject* object, std::string state )
+bool DefaultStateHandlerComponent::changeState( GameObject* object, std::string state )
 {
     if ( mCurrent->hasState( state ) )
     {
         mPrevious = mCurrent;
         mCurrent = &mStates.at( state );
         changeAnimation( object, mCurrent->getAnimation() );
+        return true;
     }
+    return false;
 }
 
 void DefaultStateHandlerComponent::changeToPreviousState( GameObject* object )

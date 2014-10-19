@@ -22,7 +22,7 @@ public:
 
     virtual void render( Game* game, sf::RenderTarget& target, sf::Time dt ) override;
 
-    virtual void processEvents( Game* game, const sf::Event* event ) override;
+    virtual bool processEvents( Game* game, const sf::Event* event ) override;
 
     virtual bool isAlwaysDrawn() const override;
 

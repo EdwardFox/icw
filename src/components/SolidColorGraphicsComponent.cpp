@@ -4,6 +4,7 @@
 SolidColorGraphicsComponent::SolidColorGraphicsComponent( GameObject* gameObject ) :
         mShape()
         , mGameObject( gameObject )
+        , mDrawn( true )
 {
     this->setType( "GraphicsComponent" );
 
@@ -27,7 +28,8 @@ void SolidColorGraphicsComponent::update( GameObject* object, sf::Time dt )
 
 void SolidColorGraphicsComponent::render( sf::RenderTarget& target, sf::Time dt ) const
 {
-    target.draw( mShape );
+    if( this->isDrawn() )
+        target.draw( mShape );
 }
 
 GameObject* SolidColorGraphicsComponent::getGameObject() const

@@ -34,6 +34,26 @@ public:
 
     bool isAnimationFinished() const;
 
+    void highlight();
+
+    const Animation* getAnimation(std::string key ) const
+    {
+        try
+        {
+            return &mAnimations.at( key );
+        }
+        catch( std::out_of_range oor )
+        {
+            return nullptr;
+        }
+
+    }
+
+    const Animation* getCurrentAnimation() const
+    {
+        return mCurrentAnimation;
+    }
+
 private:
     sf::Texture* mTexture;
     GameObject* mGameObject;
@@ -41,6 +61,9 @@ private:
     std::unordered_map<std::string, Animation> mAnimations;
     Animation* mCurrentAnimation;
     int mTimeToNextFrame;
+    sf::Color mHightlightColor;
+    sf::Clock mHighlightTimer;
+    float mHighlightTime;
 };
 
 #endif

@@ -1,5 +1,7 @@
 #include <lib/gameobjects/Fireball.hpp>
 #include <lib/components/HealthComponent.hpp>
+#include <lib/components/SpawnerComponent.hpp>
+#include <lib/gamestates/LostState.hpp>
 #include "lib/World.hpp"
 #include "lib/components/ActionComponent.hpp"
 #include "lib/components/AnimationGraphicsComponent.hpp"
@@ -10,6 +12,7 @@
 #include "lib/components/ProjectileAIComponent.hpp"
 #include "lib/components/SolidColorGraphicsComponent.hpp"
 #include "lib/components/TextureGraphicsComponent.hpp"
+#include "lib/Game.hpp"
 
 World::World() :
         mTextures()
@@ -24,6 +27,8 @@ World::World() :
         , mWorldGrid( nullptr )
         , mListener()
         , mGameObjectFactory()
+        , mSurvivalTimer()
+        , mKillCount( 0 )
 {
     /** Initialize textures (as long as the objects do not do it for themselves **/
     initializeTextures();
@@ -60,11 +65,14 @@ void World::render( sf::RenderTarget& target, sf::Time dt ) const
             {
                 object->render( target, dt );
             }
+
+            if( mPlayer )
+                mPlayer->render( target, dt );
         }
     }
 }
 
-void World::update( sf::Time dt, sf::Vector2u windowSize )
+void World::update( sf::Time dt, sf::Vector2u windowSize, Game* game )
 {
     mPhysics.Step( dt.asSeconds(), 8, 3 );
 
@@ -94,9 +102,20 @@ void World::update( sf::Time dt, sf::Vector2u windowSize )
         obj->update( dt );
         if ( obj->isExpired() )
         {
+            std::string name = i->get()->getName();
             IPhysicsComponent* boxComp = dynamic_cast<IPhysicsComponent*>(obj->getComponent( "PhysicsComponent" ));
             boxComp->destroyBody();
             i = mObjects.erase( i );
+
+            if( name == "Player" )
+            {
+                game->changeState( new LostState( game, std::round(mSurvivalTimer.getElapsedTime().asSeconds()), mKillCount ) );
+                return;
+            }
+            else if( name == "EnemyA" )
+            {
+                mKillCount++;
+            }
         }
         else
         {
@@ -208,6 +227,7 @@ void World::initializeTextures()
 void World::initializeSounds()
 {
     mSounds.load( "shoot", "media/sounds/shoot.wav" );
+    mSounds.load( "clap", "media/sounds/clap.wav" );
 }
 
 GameObject* World::createGameObject( std::string name, sf::Vector2f position, sf::Vector2f size )
@@ -231,22 +251,47 @@ void World::createEnemies()
             GameObject* object = this->createGameObject( obj.name, position, size );
             object->setProperties( obj.properties );
         }
+
+        for ( auto obj : mMap.getObjectGroups()->at( "EnemySpawner" ).objects )
+        {
+            sf::Vector2f position( sf::Vector2f( obj.position.left, obj.position.top ) );
+            sf::Vector2f size( 20.f, 30.f );
+
+            GameObject* object = this->createGameObject( obj.name, position, size );
+            SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( object );
+            solid->setDrawn( false );
+            object->setGraphicComponent( solid );
+
+            SpawnerComponent* spawn = new SpawnerComponent( object );
+
+            for ( std::tuple<std::string, std::string> property : obj.properties )
+            {
+                if ( std::get<0>( property ) == "amountMax" )
+                {
+                    spawn->setAmountMax( atoi( std::get<1>( property ).c_str() ) );
+                }
+
+                if ( std::get<0>( property ) == "intervalMin" )
+                {
+                    spawn->setIntervalMin( atoi( std::get<1>( property ).c_str() ) );
+                }
+
+                if ( std::get<0>( property ) == "intervalMax" )
+                {
+                    spawn->setIntervalMax( ( atoi( std::get<1>( property ).c_str() ) ) );
+                }
+
+                if ( std::get<0>( property ) == "type" )
+                {
+                    spawn->setGameObjectType( std::get<1>( property ).c_str() );
+                }
+            }
+
+            object->attachComponent( "SpawnerComponent", spawn );
+        }
     }
     catch ( std::out_of_range oor )
     {
         // No enemies
     }
-
-
-//    for ( auto obj : mMap.getObjectGroups()->at( 2 ).objects )
-//    {
-//        GameObject* box = this->createGameObject( "Test", sf::Vector2f( obj.position.left, obj.position.top ), sf::Vector2f( 16.f, 16.f ) );
-//        SolidColorGraphicsComponent* solid = new SolidColorGraphicsComponent( box, box->getSize() );
-//        box->setGraphicComponent( solid );
-//
-//        Box2DPhysicsComponent* physBox = new Box2DPhysicsComponent( box );
-//        physBox->createCollisionBody( this->getPhysicsWorld(), box, b2_dynamicBody, false );
-//        physBox->setContactable( true );
-//        box->attachComponent( "PhysicsComponent", physBox );
-//    }
 }

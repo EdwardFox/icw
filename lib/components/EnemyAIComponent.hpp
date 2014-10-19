@@ -39,11 +39,32 @@ public:
         mMaxTimeAlive = maxTimeAlive;
     }
 
+    int getRunLeft() const
+    {
+        return mRunLeft;
+    }
+
+    void setRunLeft( int runLeft )
+    {
+        mRunLeft = runLeft;
+    }
+
+    sf::Vector2f getSearchAreaSize() const
+    {
+        return mSearchAreaSize;
+    }
+
+    void setSearchAreaSize( sf::Vector2f searchAreaSize )
+    {
+        mSearchAreaSize = searchAreaSize;
+    }
+
 private:
     GameObject* mGameObject;
     int mTimeAlive;
     int mMaxTimeAlive;
     int mRunLeft;
+    sf::Vector2f mSearchAreaSize;
 };
 
 #endif

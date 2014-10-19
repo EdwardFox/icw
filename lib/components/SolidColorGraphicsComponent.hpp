@@ -19,9 +19,20 @@ public:
 
     virtual GameObject* getGameObject() const override;
 
+    bool isDrawn() const
+    {
+        return mDrawn;
+    }
+
+    void setDrawn( bool drawn )
+    {
+        mDrawn = drawn;
+    }
+
 private:
     sf::RectangleShape mShape;
     GameObject* mGameObject;
+    bool mDrawn;
 };
 
 #endif

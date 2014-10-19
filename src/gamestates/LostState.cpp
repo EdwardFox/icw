@@ -1,20 +1,23 @@
 #include <lib/gamestates/PlayState.hpp>
 #include <lib/Game.hpp>
 #include <lib/menu/TextButton.hpp>
-#include "lib/gamestates/StartState.hpp"
+#include <sstream>
+#include "lib/gamestates/LostState.hpp"
 
-StartState::StartState( Game* game ) :
+LostState::LostState( Game* game, float survived, float killed ) :
         mDrawAlways( false )
         , mWorld()
         , mMenu()
         , mOffset()
         , mGame( game )
         , mButtonSize( 200.f, 60.f )
+        , mSurvived( survived )
+        , mKilled( killed )
 {
 
 }
 
-void StartState::init()
+void LostState::init()
 {
     mWorld.loadMap( "media/maps/Screen.tmx" );
 
@@ -62,28 +65,28 @@ void StartState::init()
     mMenu.addItem( "2_Quit", quit );
 }
 
-void StartState::cleanup()
+void LostState::cleanup()
 {
 }
 
-void StartState::pause()
-{
-
-}
-
-void StartState::resume()
+void LostState::pause()
 {
 
 }
 
-void StartState::update( Game* game, sf::Vector2u windowSize, sf::Time dt )
+void LostState::resume()
+{
+
+}
+
+void LostState::update( Game* game, sf::Vector2u windowSize, sf::Time dt )
 {
     mWorld.update( dt, windowSize, game );
 
     mMenu.update( windowSize, dt );
 }
 
-void StartState::render( Game* game, sf::RenderTarget& target, sf::Time dt )
+void LostState::render( Game* game, sf::RenderTarget& target, sf::Time dt )
 {
     mWorld.render( target, dt );
 
@@ -95,9 +98,21 @@ void StartState::render( Game* game, sf::RenderTarget& target, sf::Time dt )
     target.draw(rect);
 
     mMenu.render( target, dt );
+
+    sf::Font font;
+    font.loadFromFile( DEFAULT_FONT );
+    sf::Text text;
+    std::stringstream message;
+    message << "You have survived " << mSurvived << " seconds" << std::endl;
+    message << mKilled << " foes lost their lives";
+    text.setString( message.str() );
+    text.setFont( font );
+    text.setColor( sf::Color::White );
+    text.setPosition( target.getSize().x/2.f - text.getGlobalBounds().width/2.f, target.getSize().y/3.f - text.getGlobalBounds().height/2.f );
+    target.draw( text );
 }
 
-bool StartState::processEvents( Game* game, const sf::Event* event )
+bool LostState::processEvents( Game* game, const sf::Event* event )
 {
     if ( event->key.code == sf::Keyboard::Escape )
     {
@@ -114,12 +129,12 @@ bool StartState::processEvents( Game* game, const sf::Event* event )
     return false;
 }
 
-bool StartState::isAlwaysDrawn() const
+bool LostState::isAlwaysDrawn() const
 {
     return mDrawAlways;
 }
 
-void StartState::changeState( Game* game, GameState* state )
+void LostState::changeState( Game* game, GameState* state )
 {
     game->changeState( state );
 }

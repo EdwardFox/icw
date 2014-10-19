@@ -19,7 +19,7 @@ public:
 
     virtual void onHover( Menu* menu, bool active ) = 0;
 
-    virtual void onClick( Menu* menu, Game* game ) = 0;
+    virtual bool onClick( Menu* menu, Game* game ) = 0;
 
     sf::Vector2f getPosition() const
     {
@@ -41,26 +41,6 @@ public:
         mSize = size;
     }
 
-    sf::Vector2f getOffset() const
-    {
-        return mOffset;
-    }
-
-    void setOffset( sf::Vector2f offset )
-    {
-        mOffset = offset;
-    }
-
-    float getZoom() const
-    {
-        return mZoom;
-    }
-
-    void setZoom( float zoom )
-    {
-        mZoom = zoom;
-    }
-
     bool isVisible() const
     {
         return mVisible;
@@ -74,8 +54,6 @@ public:
 private:
     sf::Vector2f mPosition;
     sf::Vector2f mSize;
-    sf::Vector2f mOffset;
-    float mZoom;
     bool mVisible;
 };
 

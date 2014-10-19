@@ -39,6 +39,7 @@ set(SOURCE_FILES
     lib/interfaces/IPhysicsComponent.hpp
     lib/interfaces/IProjectileMovementComponent.hpp
     lib/interfaces/ISoundComponent.hpp
+    lib/interfaces/ISpawnerComponent.hpp
     lib/interfaces/IStateHandlerComponent.hpp
     lib/components/ActionComponent.hpp
     lib/components/AnimationGraphicsComponent.hpp
@@ -52,13 +53,17 @@ set(SOURCE_FILES
     lib/components/ProjectileAIComponent.hpp
     lib/components/ProjectileMovementComponent.hpp
     lib/components/SoundComponent.hpp
+    lib/components/SpawnerComponent.hpp
     lib/components/TextureGraphicsComponent.hpp
     lib/gameobjects/Fireball.hpp
     lib/gameobjects/GameObject.hpp
     lib/gameobjects/GameObjectFactory.hpp
     lib/gameobjects/Player.hpp
     lib/gameobjects/EnemyA.hpp
+    lib/gameobjects/Slash.hpp
     lib/gamestates/GameState.hpp
+    lib/gamestates/LostState.hpp
+    lib/gamestates/PauseState.hpp
     lib/gamestates/PlayState.hpp
     lib/gamestates/StartState.hpp
     lib/menu/Item.hpp
@@ -87,12 +92,16 @@ set(SOURCE_FILES
     src/components/EnemyAIComponent.cpp
     src/components/ProjectileMovementComponent.cpp
     src/components/SoundComponent.cpp
+    src/components/SpawnerComponent.cpp
     src/components/TextureGraphicsComponent.cpp
     src/gameobjects/Fireball.cpp
     src/gameobjects/GameObject.cpp
     src/gameobjects/GameObjectFactory.cpp
     src/gameobjects/Player.cpp
     src/gameobjects/EnemyA.cpp
+    src/gameobjects/Slash.cpp
+    src/gamestates/LostState.cpp
+    src/gamestates/PauseState.cpp
     src/gamestates/PlayState.cpp
     src/gamestates/StartState.cpp
     src/menu/Menu.cpp
@@ -120,6 +129,7 @@ configure_file(media/textures/start.png media/textures/start.png COPYONLY)
 
 ## Sounds
 configure_file(media/sounds/shoot.wav media/sounds/shoot.wav COPYONLY)
+configure_file(media/sounds/clap.wav media/sounds/clap.wav COPYONLY)
 
 
 # Detect and add cmake modules

@@ -131,6 +131,11 @@ public:
         mAnimationName = anim;
     }
 
+    unsigned int getCurrentFrameNumber() const
+    {
+        return mCurrentFrame;
+    }
+
 private:
     /**
     * Stores frames by position and size relative to a spritesheet

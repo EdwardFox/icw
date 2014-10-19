@@ -37,6 +37,7 @@ private:
     sf::RenderWindow mWindow;
     sf::Time mTimePerFrame;
     std::vector<std::unique_ptr<GameState>> mStates;
+    sf::Clock mEscapeClock;
 };
 
 #endif

@@ -164,7 +164,7 @@ public:
     * IContactable* other   - The other contactable we collided with. This will
     *                         most likely be another game object that has a box2d component attached.
     */
-    virtual void onContact( Contact contact, IContactable* other ) override;
+    virtual void onContact( Contact contact, IContactable* other, b2BodyType type ) override;
 
     /**
     * Sets whether is component can be listened to via the customized contact listener

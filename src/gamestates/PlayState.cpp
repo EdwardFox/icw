@@ -1,4 +1,5 @@
 #include <lib/gamestates/StartState.hpp>
+#include <lib/gamestates/PauseState.hpp>
 #include "lib/gamestates/PlayState.hpp"
 
 PlayState::PlayState( std::string map ) :
@@ -45,7 +46,7 @@ void PlayState::resume()
 
 void PlayState::update( Game* game, sf::Vector2u windowSize, sf::Time dt )
 {
-    mWorld.update( dt, windowSize );
+    mWorld.update( dt, windowSize, game );
 }
 
 void PlayState::render( Game* game, sf::RenderTarget& target, sf::Time dt )
@@ -53,12 +54,15 @@ void PlayState::render( Game* game, sf::RenderTarget& target, sf::Time dt )
     mWorld.render( target, dt );
 }
 
-void PlayState::processEvents( Game* game, const sf::Event* event )
+bool PlayState::processEvents( Game* game, const sf::Event* event )
 {
     if( event->key.code == sf::Keyboard::Escape )
     {
-        game->changeState( new StartState( game ) );
+        game->pushState( new PauseState( game, mMap ) );
+        return true;
     }
+
+    return false;
 }
 
 bool PlayState::isAlwaysDrawn() const

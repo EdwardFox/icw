@@ -4,7 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <memory>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <SFML/Window/Event.hpp>
 #include "lib/menu/Item.hpp"
 
@@ -20,16 +20,6 @@ public:
     void render( sf::RenderTarget& target, sf::Time dt ) const;
 
     void processEvents( Game* game, const sf::Event* event );
-
-    sf::Vector2f getOffset() const
-    {
-        return mOffset;
-    }
-
-    void setOffset( sf::Vector2f offset )
-    {
-        mOffset = offset;
-    }
 
     void addItem( std::string key, Item* item )
     {
@@ -49,25 +39,8 @@ public:
 
     }
 
-    float getZoom() const
-    {
-        return mZoom;
-    }
-
-    void setZoom( float zoom )
-    {
-        mZoom = zoom;
-    }
-
-    void clear()
-    {
-        mItems.clear();
-    }
-
 private:
-    sf::Vector2f mOffset;
-    std::unordered_map<std::string, std::unique_ptr<Item>> mItems;
-    float mZoom;
+    std::map<std::string, std::unique_ptr<Item>> mItems;
 };
 
 #endif

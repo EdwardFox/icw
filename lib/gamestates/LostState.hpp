@@ -1,15 +1,15 @@
-#ifndef STARTSTATE_HPP
-#define STARTSTATE_HPP
+#ifndef LOSTSTATE_HPP
+#define LOSTSTATE_HPP
 
 #include <lib/Game.hpp>
 #include <lib/menu/Menu.hpp>
 #include "GameState.hpp"
 
-class StartState : public GameState
+class LostState : public GameState
 {
 
 public:
-    StartState( Game* game );
+    LostState( Game* game, float survived, float killed );
 
     virtual void init() override;
 
@@ -36,6 +36,8 @@ private:
     sf::Vector2f mOffset;
     Game* mGame;
     sf::Vector2f mButtonSize;
+    float mSurvived;
+    float mKilled;
 };
 
 #endif

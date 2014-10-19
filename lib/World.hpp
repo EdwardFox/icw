@@ -10,6 +10,8 @@
 #include "lib/Map.hpp"
 #include "lib/gameobjects/GameObjectFactory.hpp"
 
+class Game;
+
 /**
 * Class that contains and manages all objects that make up the game world
 */
@@ -36,7 +38,7 @@ public:
     * sf::Time dt   - Time since last update
     * sf::Vector2u  - The current window size
     */
-    void update( sf::Time dt, sf::Vector2u windowSize );
+    void update( sf::Time dt, sf::Vector2u windowSize, Game* game );
 
     /**
     * Renders the world
@@ -169,6 +171,9 @@ private:
     PhysicsContactListener mListener;
 
     GameObjectFactory mGameObjectFactory;
+
+    sf::Clock mSurvivalTimer;
+    float mKillCount;
 };
 
 #endif

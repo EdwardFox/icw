@@ -11,7 +11,6 @@ TextButton::TextButton() :
         , mClickFunction()
         , mHighlighted( false )
 {
-    mText.setScale( 0.33f, 0.33f );
 }
 
 void TextButton::update( sf::Vector2u windowSize, sf::Time dt )
@@ -25,16 +24,13 @@ void TextButton::update( sf::Vector2u windowSize, sf::Time dt )
         mText.setColor( mTextColor );
     }
 
-    sf::Vector2f window( windowSize.x, windowSize.y );
-    sf::Vector2f basePos = this->getPosition() + this->getOffset() - (window / 2.f) / this->getZoom();
-
-    mShape.setPosition( basePos );
+    mShape.setPosition( this->getPosition() );
     mShape.setSize( this->getSize() );
     mShape.setFillColor( this->mBackgroundColor );
 
     sf::Vector2f textPos;
-    textPos.x = basePos.x + this->getSize().x / 2.f - mText.getGlobalBounds().width / 2.f;
-    textPos.y = basePos.y + this->getSize().y / 2.f - mText.getGlobalBounds().height / 2.f;
+    textPos.x = this->getPosition().x + this->getSize().x / 2.f - mText.getGlobalBounds().width / 2.f;
+    textPos.y = this->getPosition().y + this->getSize().y / 2.f - mText.getGlobalBounds().height / 2.f;
     mText.setPosition( textPos );
 }
 
@@ -57,10 +53,12 @@ void TextButton::onHover( Menu* menu, bool active )
 
 }
 
-void TextButton::onClick( Menu* menu, Game* game )
+bool TextButton::onClick( Menu* menu, Game* game )
 {
     if ( mClickFunction )
     {
         this->mClickFunction( menu, game );
+        return true;
     }
+    return false;
 }

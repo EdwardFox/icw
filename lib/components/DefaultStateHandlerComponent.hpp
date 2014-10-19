@@ -17,7 +17,7 @@ public:
 
     virtual void update( GameObject* object, sf::Time dt ) override;
 
-    virtual void changeState( GameObject* object, std::string state ) override;
+    virtual bool changeState( GameObject* object, std::string state ) override;
 
     virtual void changeToPreviousState( GameObject* object ) override;
 

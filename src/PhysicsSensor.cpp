@@ -26,12 +26,15 @@ void PhysicsSensor::setFriction( float friction )
     mFixtureDef.friction = friction;
 }
 
-void PhysicsSensor::onContact( Contact contact, IContactable* other )
+void PhysicsSensor::onContact( Contact contact, IContactable* other, b2BodyType type )
 {
-    if ( Contact::Begin == contact )
-        mContacts++;
-    else if ( Contact::End == contact )
-        mContacts--;
+    if( b2_dynamicBody != type )
+    {
+        if ( Contact::Begin == contact )
+            mContacts++;
+        else if ( Contact::End == contact )
+            mContacts--;
+    }
 }
 
 int PhysicsSensor::getContacts() const

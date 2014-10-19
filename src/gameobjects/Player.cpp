@@ -7,6 +7,7 @@
 #include <lib/components/ActionComponent.hpp>
 #include <lib/gameobjects/Fireball.hpp>
 #include <lib/components/SoundComponent.hpp>
+#include <lib/components/HealthComponent.hpp>
 #include "lib/gameobjects/Player.hpp"
 
 
@@ -54,7 +55,7 @@ void Player::createDefaultComponents()
     attack.addFrame( sf::Vector2f( 194.f, 33.f ), sf::Vector2f( 57.f, 11.f ) );
     attack.addFrame( sf::Vector2f( 258.f, 33.f ), sf::Vector2f( 14.f, 11.f ) );
     attack.setRepeatable( false );
-    attack.setTimePerFrame( 1 );
+    attack.setTimePerFrame( 15 );
     agc->addAnimation( "attack", attack );
     agc->setAnimation( "idle" );
 
@@ -150,23 +151,42 @@ void Player::createDefaultComponents()
         }
 
         pos.x += offsetX;
+        pos.y -= 3.f; // Adjust position
 
         Fireball* projectile = dynamic_cast<Fireball*>( object->getWorld()->createGameObject( "Fireball", pos, size ) );
         projectile->setMovementSpeed( velocity );
     } );
     this->attachComponent( "ActionComponent", ac );
 
+    HealthComponent* health = new HealthComponent( this );
+    /** Slash damage **/
+    health->addDamageResponse( "slash",
+            []( GameObject* object, float damage )
+            {
+                HealthComponent* hp = dynamic_cast<HealthComponent*>( object->getComponent( "HealthComponent" ) );
+                if ( hp )
+                {
+                    hp->setHealth( hp->getHealth() - damage );
+                }
+
+                AnimationGraphicsComponent* graphics = dynamic_cast<AnimationGraphicsComponent*>( object->getGraphicComponent() );
+                if( graphics )
+                {
+                    graphics->highlight();
+                }
+            }
+    );
+    this->attachComponent( "HealthComponent", health );
+
     /** Sound component **/
     SoundComponent* sound = new SoundComponent( this );
     sf::Sound shoot;
     shoot.setBuffer( world->getSoundHolder()->get( "shoot" ) );
     sound->addSound( "shoot", shoot );
-
     this->attachComponent( "SoundComponent", sound );
 }
 
 void Player::onHit( GameObject* hitBy, Contact contact )
 {
     GameObject::onHit( hitBy, contact );
-
 }
